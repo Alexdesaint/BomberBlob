@@ -122,7 +122,7 @@ bool Physics::CollisionDetector::ComputeCirclesToLineCollision(Geometrie::Circle
 	if (Object.Rayon + Speed->Length() > vecFA.Length()){
 		if (ProduitScalaire(vecFA, *Speed) < 0) {
 
-			point2f E;
+			point2f E, I;
 			vec2f vecAD = *Speed;
 			point2f D = Object.Position + vecAD;
 
@@ -132,13 +132,14 @@ bool Physics::CollisionDetector::ComputeCirclesToLineCollision(Geometrie::Circle
 			//	"C = (" << Target.PointB.x << ", " << Target.PointB.y << ") --> " <<
 			//	"D = (" << D.x << ", " << D.y << ")" << std::endl;
 
-			if (Geometrie::Intersection(Target, Line(D, Object.Position), &E)) {
+			if (Geometrie::Intersection(Target, Line(D, Object.Position + vec2f(Object.Position, F).setLength(Object.Rayon)), &I)) {
 
+				Geometrie::Intersection(Target, Line(D, Object.Position), &E);
 				//cercle de milieu de du segment à demi seg + rayon cercle
 
 				point2f M = (Target.PointA + Target.PointB) / 2;
 
-				if(vec2f(M, E).Length() <= (Target.Length() / 2)) {//TODO point d'inter
+				if(vec2f(M, I).Length() <= (Target.Length() / 2)) {
 
 					point2f G = E - (vecAD * Object.Rayon * vec2f(E, Object.Position).Length()) /
 									(vecFA.Length() * vecAD.Length());
@@ -169,7 +170,7 @@ bool Physics::CollisionDetector::ComputeCirclesToLineCollision(Geometrie::Circle
 						return true;
 					}
 				}
-				else if(vec2f(M, E).Length() <= (Target.Length() / 2 + Object.Rayon)) {
+				else if(vec2f(M, I).Length() <= (Target.Length() / 2 + Object.Rayon)) {
 					point2f B;
 
 					if(vec2f(Target.PointA,E).Length2() < vec2f(Target.PointB, E).Length2()){

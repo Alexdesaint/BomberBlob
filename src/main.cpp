@@ -14,6 +14,41 @@ enum directions{
 	RIGHT = 3
 };
 
+class Explosion : Physics::CircleDynamic{
+private:
+	CircleShape shape;
+	sf::Clock clock;
+	Geometrie::point2f position;
+	float lenght;
+
+	bool update(){
+
+
+		return Geometrie::vec2f(position, mainCircle.Position).Length() > lenght;
+	}
+public:
+	explicit Explosion(Physics::CollisionDetector *collisionDetector1, Geometrie::point2f p, Geometrie::vec2f s, float l) : CircleDynamic(collisionDetector1){
+		mainCircle.Position.x = position.x;
+		mainCircle.Position.y = position.y;
+		mainCircle.Rayon = 4;
+
+		speed = s;
+		lenght = l;
+		position = p;
+
+		shape.setRadius(mainCircle.Rayon);
+		shape.setOrigin(4, 4);
+		shape.setPosition(Vector2f(mainCircle.Position.x, mainCircle.Position.y));
+		shape.setFillColor(Color::Blue);
+	}
+
+	bool draw(RenderWindow *window) {
+		bool r = update();
+		window->draw(shape);
+		return r;
+	}
+};
+
 class Bomb : Physics::CircleDynamic{
 private:
 	CircleShape shape;
