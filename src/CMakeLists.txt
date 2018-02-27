@@ -4,7 +4,10 @@ add_executable(${EXECUTABLE_NAME}
         Geometrie.hpp Geometrie.cpp
         )
 
-find_package(SFML REQUIRED system window graphics network audio)
+set(CMAKE_MODULE_PATH "C:/msys64/home/alexa/local/cmake/Modules")
+
+set(SFML_STATIC_LIBRARIES TRUE)
+find_package(SFML REQUIRED window graphics network audio system)
 IF (SFML_FOUND)
     include_directories(${SFML_INCLUDE_DIR})
     message("SFML found")
@@ -12,7 +15,7 @@ else()
     message(WARNING "SFML not found")
 endif()
 
-message("Include : ${SFML_LIBRARIES}")
+message("Include : ${FIND_SFML_PATHS}")
+message("Include : ${SFML_INCLUDE_DIR}")
 
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES})
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
+target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)

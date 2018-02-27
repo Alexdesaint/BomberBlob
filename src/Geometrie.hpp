@@ -1,11 +1,16 @@
 #pragma once
 
+#define PI 3.14159265
+
 namespace  Geometrie
 {
 	struct point2i {
 		int x, y;
 
-		point2i();
+		point2i() {
+			x = 0;
+			y = 0;
+		}
 		point2i(int ix, int iy);
 	};
 
@@ -18,11 +23,11 @@ namespace  Geometrie
 		point2f(float ix, float iy);
 
 		point2f operator+(point2f a) {
-			return point2f(a.x + x, a.y + y);
+			return {a.x + x, a.y + y};
 		}
 
 		point2f operator-(point2f a) {
-			return point2f(x - a.x, y - a.y);
+			return {x - a.x, y - a.y};
 		}
 
 		point2f operator+(vec2f a); 
@@ -30,30 +35,45 @@ namespace  Geometrie
 		point2f operator-(vec2f a);
 
 		point2f operator*(point2f a) {
-			return point2f(a.x * x, a.y * y);
+			return {a.x * x, a.y * y};
+		}
+
+		point2f operator*(float a) {
+			return {a * x, a * y};
+		}
+
+		point2f operator/(float a) {
+			return {x / a, y / a};
 		}
 
 		point2f operator*(int a) {
-			return point2f(a * x, a * y);
+			return {a * x, a * y};
 		}
 
 		point2f operator/(int a) {
-			return point2f(x / a, y / a);
+			return {x / a, y / a};
 		}
 	};
 
-	struct vec2i//100 x 100
-	{
+	struct vec2i {
 		int x, y;
 
-		vec2i();
-		vec2i(int ix, int iy);
+		vec2i() {
+			x = 0;
+			y = 0;
+		}
+		vec2i(int ix, int iy) {
+			x = ix;
+			y = iy;
+		}
 	};
 
-	struct vec2f {
+	class vec2f {
+	public:
 		float x, y;
 
 		vec2f();
+		vec2f(const vec2f& v);
 		vec2f(float ix, float iy);
 		vec2f(point2f ix, point2f iy);
 
@@ -91,8 +111,7 @@ namespace  Geometrie
 		point2f Position;
 	};
 
-	struct Line
-	{
+	struct Line	{
 		Line(point2f a, point2f b);
 		vec2f getVector();
 

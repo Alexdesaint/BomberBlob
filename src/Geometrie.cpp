@@ -4,20 +4,15 @@
 
 using namespace Geometrie;
 
-Geometrie::vec2i::vec2i() {
-	x = 0;
-	y = 0;
-}
-
-Geometrie::vec2i::vec2i(int ix, int iy) {
-	x = ix;
-	y = iy;
-}
-
 Geometrie::vec2f::vec2f()
 {
 	y = 0;
 	x = 0;
+}
+
+vec2f::vec2f(const vec2f &v) {
+	x = v.x;
+	y = v.y;
 }
 
 Geometrie::vec2f::vec2f(float ix, float iy)

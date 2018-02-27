@@ -5,6 +5,7 @@
 
 #include "CollisionClass.hpp"
 
+
 using  namespace sf;
 
 enum directions{
@@ -14,37 +15,65 @@ enum directions{
 	RIGHT = 3
 };
 
+enum objectTypeEnum{
+	EXPLOSION = 0,
+	BOMB = 1,
+	PLAYER = 2
+};
+
 class Explosion : Physics::CircleDynamic{
 private:
+
 	CircleShape shape;
+	RectangleShape rectShape;
 	sf::Clock clock;
-	Geometrie::point2f position;
-	float lenght;
+	Geometrie::point2f positionInitial;
+	float mexLength;
 
 	bool update(){
+		float TimeFlow = clock.restart().asSeconds();
+		Geometrie::vec2f v(speed * TimeFlow);
 
+		bool hit = CheckCollision(&v);
 
-		return Geometrie::vec2f(position, mainCircle.Position).Length() > lenght;
+		mainCircle.Position = mainCircle.Position + v;
+
+		shape.setPosition(Vector2f(mainCircle.Position.x, mainCircle.Position.y));
+
+		float length = Geometrie::vec2f(positionInitial, mainCircle.Position).Length();
+
+		rectShape.setSize(Vector2f(length + 4, 8));
+
+		return ( length > mexLength) || hit;
 	}
-public:
-	explicit Explosion(Physics::CollisionDetector *collisionDetector1, Geometrie::point2f p, Geometrie::vec2f s, float l) : CircleDynamic(collisionDetector1){
-		mainCircle.Position.x = position.x;
-		mainCircle.Position.y = position.y;
-		mainCircle.Rayon = 4;
 
-		speed = s;
-		lenght = l;
-		position = p;
+public:
+	explicit Explosion(Physics::CollisionDetector *collisionDetector1, Geometrie::point2f positionInitial, Geometrie::vec2f speed, float mexLength) :
+			CircleDynamic(collisionDetector1, EXPLOSION),
+			mexLength(mexLength),
+			positionInitial(positionInitial) {
+
+		this->speed = speed;
+
+		mainCircle.Position = positionInitial;
+		mainCircle.Rayon = 4;
 
 		shape.setRadius(mainCircle.Rayon);
 		shape.setOrigin(4, 4);
 		shape.setPosition(Vector2f(mainCircle.Position.x, mainCircle.Position.y));
 		shape.setFillColor(Color::Blue);
+
+		rectShape.setFillColor(Color::Blue);
+		rectShape.setSize(Vector2f(8, 8));
+		rectShape.setPosition(Vector2f(mainCircle.Position.x, mainCircle.Position.y));
+		rectShape.setOrigin(Vector2f(4, 4));
+		rectShape.setRotation(static_cast<float>(std::atan2(speed.x, speed.y) * -180 / PI) + 90);
 	}
 
 	bool draw(RenderWindow *window) {
 		bool r = update();
 		window->draw(shape);
+		window->draw(rectShape);
 		return r;
 	}
 };
@@ -56,12 +85,10 @@ private:
 	float timeDelay = 2;
 
 	bool update(){
-		if(clock.getElapsedTime().asSeconds() > timeDelay)
-			return true;
-		return false;
+		return clock.getElapsedTime().asSeconds() > timeDelay;
 	}
 public:
-	explicit Bomb(Physics::CollisionDetector *collisionDetector1, Geometrie::point2f position) : CircleDynamic(collisionDetector1){
+	explicit Bomb(Physics::CollisionDetector *collisionDetector1, Geometrie::point2f position) : CircleDynamic(collisionDetector1, BOMB){
 		mainCircle.Position.x = position.x;
 		mainCircle.Position.y = position.y;
 		mainCircle.Rayon = 8;
@@ -79,12 +106,19 @@ public:
 		window->draw(shape);
 		return r;
 	}
+
+	Geometrie::point2f getPosition(){
+		return mainCircle.Position;
+	}
 };
 
 class BombManager{
 private:
 	std::list<Bomb>	bombs;
+	std::list<Explosion> explosions;
 	Physics::CollisionDetector *collisionDetector;
+	float explosionSpeed = 500;
+
 public:
 	explicit BombManager(Physics::CollisionDetector *c){
 		collisionDetector = c;
@@ -96,16 +130,28 @@ public:
 
 	void draw(RenderWindow *window) {
 
-		unsigned int toDestroy = 0;
+		unsigned int bombsToDestroy = 0, explosionsToDestroy = 0;
 
-		for(Bomb bomb : bombs){
-			if(bomb.draw(window)){
-				toDestroy++;
-			}
+		auto bombIt = bombs.begin();
+		while(bombIt != bombs.end()){
+			if(bombIt->draw(window)){
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::vec2f(explosionSpeed, 0), 100);
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::vec2f(-explosionSpeed, 0), 100);
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::vec2f(0, explosionSpeed), 100);
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::vec2f(0, -explosionSpeed), 100);
+
+				bombIt = bombs.erase(bombIt);
+			}else
+				bombIt++;
 		}
 
-		for(unsigned int i = 0; i < toDestroy; i++)
-			bombs.pop_back();
+		auto explosionIt = explosions.begin();
+		while(explosionIt != explosions.end()){
+			if(explosionIt->draw(window)){
+				explosionIt = explosions.erase(explosionIt);
+			}else
+				explosionIt++;
+		}
 	}
 };
 
@@ -170,7 +216,7 @@ private:
 			orientation = std::atan2(Acceleration.y, Acceleration.x);
 			speed = Acceleration.setLength(maxSpeed);
 			ActualSpeed = speed * TimeFlow;
-			Checkcollision(&ActualSpeed);
+			CheckCollision(&ActualSpeed);
 		}
 		else {
 			speed = Geometrie::vec2f();
@@ -182,7 +228,7 @@ private:
 	}
 public:
 
-	explicit BomberMan(Physics::CollisionDetector *collisionDetector, BombManager *bm) : CircleDynamic(collisionDetector){
+	explicit BomberMan(Physics::CollisionDetector *collisionDetector, BombManager *bm) : CircleDynamic(collisionDetector, PLAYER){
 		bombManager = bm;
 
 		mainCircle.Position.x = 30;

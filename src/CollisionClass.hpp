@@ -6,28 +6,50 @@
 namespace Physics {
 	class CollisionDetector;
 
-	class CircleStatic {
-		friend class CollisionDetector;
-	public:
-		explicit CircleStatic(CollisionDetector* c);
+	class CircleDynamic;
+
+	class PhysicalObject{
 	protected:
-		Geometrie::Circle mainCircle;
-		std::list<Geometrie::Circle> circles;
+		unsigned int objectType;
+	public:
+		explicit PhysicalObject(unsigned int objectType) : objectType(objectType) { };
+
+		virtual void hit(const PhysicalObject& from) { }
 	};
 
-	class CircleDynamic {
+	class CircleStatic : PhysicalObject {
 		friend class CollisionDetector;
+		friend class CircleDynamic;
+	private:
+		CollisionDetector* collisionDetector;
+
 	public:
-		explicit CircleDynamic(CollisionDetector* c);
-		~CircleDynamic();
+		explicit CircleStatic(CollisionDetector* c, unsigned int objectType) : PhysicalObject(objectType), collisionDetector(c) { }
+
+		virtual ~CircleStatic();
 	protected:
 		Geometrie::Circle mainCircle;
 		std::list<Geometrie::Circle> circles;
-		Geometrie::vec2f speed;
 
-		void Checkcollision(Geometrie::vec2f *ActualVector);
-	private:
-		CollisionDetector* collisionDetector;
+		virtual void enableCollision();
+
+		virtual void disableCollision();
+	};
+
+	class CircleDynamic : CircleStatic{
+		friend class CollisionDetector;
+	public:
+		explicit CircleDynamic(CollisionDetector* c, unsigned int objectType) : CircleStatic(c, objectType){ }
+		~CircleDynamic() override;
+	protected:
+		Geometrie::vec2f speed;
+		Geometrie::Circle mainCircle;
+
+		bool CheckCollision(Geometrie::vec2f *ActualVector);
+		bool HitCircle(CircleStatic *circleStatic);
+
+		void enableCollision() override;
+		void disableCollision() override;
 	};
 
 	class LineStatic {
@@ -62,11 +84,14 @@ namespace Physics {
 		std::list<LineStatic*>		LineStaticElements;
 		std::list<LineDynamic*>		LineDynamicElements;
 
-		void CheckCollision(CircleDynamic *Object, Geometrie::vec2f *speed);
+		static bool collision(CircleStatic circle1, CircleStatic circle2);
 
-		bool ComputeCirclesToCirclesCollision(Geometrie::Circle Object, Geometrie::Circle Target,
-											  Geometrie::vec2f *Speed, Geometrie::vec2f *LongSpeed);
+		bool checkCollision(CircleDynamic *Object, Geometrie::vec2f *speed);
 
-		bool ComputeCirclesToLineCollision(Geometrie::Circle Object, Geometrie::Line Target, Geometrie::vec2f *Speed, Geometrie::vec2f * LongSpeed);
+		bool computeCollision(Geometrie::Circle Object, Geometrie::Circle Target, Geometrie::vec2f *Speed,
+							  Geometrie::vec2f *LongSpeed);
+
+		bool computeCollision(Geometrie::Circle Object, Geometrie::Line Target, Geometrie::vec2f *Speed,
+							  Geometrie::vec2f *LongSpeed);
 	};
 }
