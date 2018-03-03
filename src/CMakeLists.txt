@@ -1,10 +1,9 @@
 add_executable(${EXECUTABLE_NAME}
         main.cpp
-        CollisionClass.hpp CollisionClass.cpp
-        Geometrie.hpp Geometrie.cpp
-        )
+        BomberMan.cpp BomberMan.hpp)
 
-set(CMAKE_MODULE_PATH "C:/msys64/home/alexa/local/cmake/Modules")
+subdirs(BlobEngine)
+set(CMAKE_MODULE_PATH "C:/msys64/mingw64/cmake/Modules")
 
 set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML REQUIRED window graphics network audio system)
@@ -18,4 +17,4 @@ endif()
 message("Include : ${FIND_SFML_PATHS}")
 message("Include : ${SFML_INCLUDE_DIR}")
 
-target_link_libraries(${EXECUTABLE_NAME} ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)
+target_link_libraries(${EXECUTABLE_NAME} BlobEngine ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)
