@@ -3,6 +3,7 @@ add_executable(${EXECUTABLE_NAME}
         BomberMan.cpp BomberMan.hpp)
 
 subdirs(BlobEngine)
+
 set(CMAKE_MODULE_PATH "C:/msys64/mingw64/cmake/Modules")
 
 set(SFML_STATIC_LIBRARIES TRUE)
@@ -14,7 +15,8 @@ else()
     message(WARNING "SFML not found")
 endif()
 
-message("Include : ${FIND_SFML_PATHS}")
 message("Include : ${SFML_INCLUDE_DIR}")
+message("Include : ${SFML_DEPENDENCIES}")
+message("Include : ${SFML_LIBRARIES}")
 
 target_link_libraries(${EXECUTABLE_NAME} BlobEngine ${SFML_LIBRARIES};${SFML_DEPENDENCIES} -static-libgcc -static-libstdc++ -static -lpthread)

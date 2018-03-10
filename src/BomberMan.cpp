@@ -6,11 +6,11 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <list>
+#include <iostream>
 
 #include "BlobEngine/CollisionClass.hpp"
 
 #include "BomberMan.hpp"
-
 
 using  namespace sf;
 
@@ -31,47 +31,42 @@ enum objectTypeEnum{
 
 class Explosion : Physics::CircleDynamic{
 private:
-
 	CircleShape shape;
 	RectangleShape rectShape;
 	Clock clock;
-	Geometrie::Point2f positionInitial;
-	float mexLength, totalTimeFlow = 0;
+	Geometrie::Point2f positionInitial, positionFinal;
+	float maxSpeed = 500;
+	bool arrived = false;
 
-	bool update(){
-		float TimeFlow = clock.restart().asSeconds();
-		totalTimeFlow += TimeFlow;
+	Physics::Reaction hit(const Physics::PhysicalObject& from) override {
 
-		Geometrie::Vec2f v(speed * TimeFlow);
+		if(from.objectType == INDESCTRUCTIBLEBOX || from.objectType == BOX){
+			arrived = true;
+			return Physics::STOP;
+		}
+		return Physics::IGNORE;
+	}
 
-		if(CheckCollision(&v)){
-			speed.x = 0;
-			speed.y = 0;
+	bool update() {
+
+		if(!arrived) {
+			if(Geometrie::Line(positionInitial, mainCircle.position).Length2() > Geometrie::Line(positionInitial, positionFinal).Length2()) {
+				arrived = true;
+			}
+
+			CheckCollision();
 		}
 
-		mainCircle.position = mainCircle.position + v;
-
-		shape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
-
-		float length = Geometrie::Vec2f(positionInitial, mainCircle.position).Length();
-
-		rectShape.setSize(Vector2f(length + 4, 8));
-
-		if(length > mexLength){
-			speed.x = 0;
-			speed.y = 0;
-		}
-
-		return totalTimeFlow > 0.75f;
+		return clock.getElapsedTime().asSeconds() > 5;//0.75f;
 	}
 
 public:
-	explicit Explosion(Physics::CollisionDetector *collisionDetector1, Geometrie::Point2f positionInitial, Geometrie::Vec2f speed, float mexLength) :
+	explicit Explosion(Physics::CollisionDetector *collisionDetector1, Geometrie::Point2f positionInitial, Geometrie::Point2f positionFinal) :
 			CircleDynamic(collisionDetector1, EXPLOSION),
-			mexLength(mexLength),
+			positionFinal(positionFinal),
 			positionInitial(positionInitial) {
 
-		this->speed = speed;
+		speed = Geometrie::Line(positionInitial, positionFinal).getVector().setLength(maxSpeed);
 
 		mainCircle.position = positionInitial;
 		mainCircle.rayon = 4;
@@ -85,12 +80,15 @@ public:
 		rectShape.setSize(Vector2f(8, 8));
 		rectShape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 		rectShape.setOrigin(Vector2f(4, 4));
-		rectShape.setRotation(static_cast<float>(std::atan2(speed.x, speed.y) * -180 / PI) + 90);
+		rectShape.setRotation((Geometrie::Line(positionInitial, positionFinal).getOrientation() * -180 / PI) + 90);
 	}
 
 	bool draw(RenderWindow *window) {
 		bool r = update();
+		shape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 		window->draw(shape);
+
+		rectShape.setSize(Vector2f(Geometrie::Line(positionInitial, mainCircle.position).Length() + 4, 8));
 		window->draw(rectShape);
 		return r;
 	}
@@ -103,9 +101,11 @@ private:
 	float timeDelay = 2;
 	bool destroyed = false;
 
-	void hit(const Physics::PhysicalObject& from) override {
+	Physics::Reaction hit(const Physics::PhysicalObject& from) override {
 		if(from.objectType == EXPLOSION)
 			destroyed = true;
+
+		return Physics::IGNORE;
 	}
 
 	bool update(){
@@ -141,7 +141,7 @@ private:
 	std::list<Bomb>	bombs;
 	std::list<Explosion> explosions;
 	Physics::CollisionDetector *collisionDetector;
-	float explosionSpeed = 500;
+	float explosionLenght = 100;
 
 public:
 	explicit BombManager(Physics::CollisionDetector *c){
@@ -159,10 +159,10 @@ public:
 		auto bombIt = bombs.begin();
 		while(bombIt != bombs.end()){
 			if(bombIt->draw(window)){
-				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::Vec2f(explosionSpeed, 0), 100);
-				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::Vec2f(-explosionSpeed, 0), 100);
-				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::Vec2f(0, explosionSpeed), 100);
-				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), Geometrie::Vec2f(0, -explosionSpeed), 100);
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), bombs.back().getPosition() + Geometrie::Vec2f(explosionLenght, 0));
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), bombs.back().getPosition() + Geometrie::Vec2f(-explosionLenght, 0));
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), bombs.back().getPosition() + Geometrie::Vec2f(0, explosionLenght));
+				explosions.emplace_back(collisionDetector, bombs.back().getPosition(), bombs.back().getPosition() + Geometrie::Vec2f(0, -explosionLenght));
 
 				bombIt = bombs.erase(bombIt);
 			}else
@@ -212,9 +212,11 @@ private:
 	RectangleShape shape;
 	bool destroyed = false;
 
-	void hit(const Physics::PhysicalObject& from) override {
+	Physics::Reaction hit(const Physics::PhysicalObject& from) override {
 		if(from.objectType == EXPLOSION)
 			destroyed = true;
+
+		return Physics::IGNORE;
 	}
 
 public:
@@ -271,21 +273,14 @@ private:
 			Acceleration.y += 1;
 		}
 
-		Geometrie::Vec2f ActualSpeed;
-
 		if (Acceleration.x != 0 || Acceleration.y != 0) {
-			orientation = std::atan2(Acceleration.y, Acceleration.x);
+			orientation = Acceleration.getOrientation();
 			speed = Acceleration.setLength(maxSpeed);
-			ActualSpeed = speed * TimeFlow;
-			CheckCollision(&ActualSpeed);
+			CheckCollision();
 		}
 		else {
 			speed = Geometrie::Vec2f();
 		}
-
-		mainCircle.position = mainCircle.position + ActualSpeed;
-
-		shape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 	}
 public:
 
@@ -305,6 +300,8 @@ public:
 
 	void draw(RenderWindow *window) {
 		update();
+
+		shape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 		window->draw(shape);
 	}
 
@@ -438,6 +435,8 @@ BomberMan::BomberMan() {
 		}
 
 		window.clear();
+
+		collisionDetector.update();
 
 		bombManager.draw(&window);
 
