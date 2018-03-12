@@ -26,8 +26,8 @@ enum objectTypeEnum{
 	EXPLOSION = 0,
 	BOMB = 1,
 	PLAYER = 2,
-	INDESCTRUCTIBLEBOX,
-	BOX
+	INDESTRUCTIBLE_BOX = 3,
+	BOX = 4
 };
 
 class Explosion : CircleDynamic{
@@ -40,7 +40,7 @@ private:
 	bool arrived = false;
 
 	Reaction hit(const BlobEngine::PhysicalObject& from) override {
-		if(from.objectType == INDESCTRUCTIBLEBOX || from.objectType == BOX){
+		if(from.objectType == INDESTRUCTIBLE_BOX || from.objectType == BOX){
 			arrived = true;
 			return STOP;
 		}
@@ -48,29 +48,29 @@ private:
 	}
 
 	bool update() {
-
 		if(!arrived) {
 			if(Line(positionInitial, mainCircle.position).Length2() > Line(positionInitial, positionFinal).Length2()) {
 				arrived = true;
+				speed.reset();
 			}
 		}
 
-		return clock.getElapsedTime().asSeconds() > 5;//0.75f;
+		return clock.getElapsedTime().asSeconds() > 0.75f;
 	}
 
 public:
 	explicit Explosion(Point2f positionInitial, Point2f positionFinal) :
 			CircleDynamic(EXPLOSION),
-			positionFinal(positionFinal),
-			positionInitial(positionInitial) {
+			positionInitial(positionInitial),
+			positionFinal(positionFinal) {
 
-		speed = Line(positionInitial, positionFinal).getVector().setLength(maxSpeed);
+		speed = Vec2f(positionInitial, positionFinal);
 
 		mainCircle.position = positionInitial;
 		mainCircle.rayon = 4;
 
 		shape.setRadius(mainCircle.rayon);
-		shape.setOrigin(4, 4);
+		shape.setOrigin(mainCircle.rayon, mainCircle.rayon);
 		shape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 		shape.setFillColor(Color::Blue);
 
@@ -78,7 +78,9 @@ public:
 		rectShape.setSize(Vector2f(8, 8));
 		rectShape.setPosition(Vector2f(mainCircle.position.x, mainCircle.position.y));
 		rectShape.setOrigin(Vector2f(4, 4));
-		rectShape.setRotation(Line(positionInitial, positionFinal).getOrientation() * 180);
+		rectShape.setRotation(speed.getOrientationDeg());
+
+		speed.setLength(maxSpeed);
 	}
 
 	bool draw(RenderWindow *window) {
@@ -179,7 +181,7 @@ private:
 	RectangleShape shape;
 
 public:
-	explicit IndestructibleBox(Point2f position) : LineStatic(INDESCTRUCTIBLEBOX){
+	explicit IndestructibleBox(Point2f position) : LineStatic(INDESTRUCTIBLE_BOX){
 
 		shape.setSize(Vector2f(20, 20));
 		shape.setOrigin(10, 10);
@@ -242,7 +244,7 @@ public:
 
 class Player : CircleDynamic{
 private:
-	float maxSpeed, orientation;
+	float maxSpeed;
 	CircleShape shape;
 	Clock clock;
 	bool alive = true;
@@ -273,7 +275,6 @@ private:
 		}
 
 		if (Acceleration.x != 0 || Acceleration.y != 0) {
-			orientation = Acceleration.getOrientation();
 			speed = Acceleration.setLength(maxSpeed);
 		}
 		else {
@@ -288,7 +289,6 @@ public:
 		mainCircle.position.x = 30;
 		mainCircle.position.y = 30;
 		mainCircle.rayon = 10;
-		orientation = 0;
 
 		shape.setRadius(mainCircle.rayon);
 		shape.setOrigin(10, 10);
@@ -403,6 +403,7 @@ BomberMan::BomberMan() {
 							break;
 						case Keyboard::Space :
 							player.putBomb();
+							break;
 						default:
 							break;
 					}

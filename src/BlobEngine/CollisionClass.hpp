@@ -252,6 +252,13 @@ namespace BlobEngine {
 
 			return vecAF + vecFH;
 		}
+
+		Vec2f getStop(Vec2f *speed) {
+			speed->x = 0;
+			speed->y = 0;
+
+			return vecAF;
+		}
 	};
 
 	class CollisionDetector {

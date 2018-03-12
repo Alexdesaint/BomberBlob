@@ -95,8 +95,17 @@ namespace  BlobEngine {
 			return {-y, x};
 		}
 
-		float getOrientation() {
+		float getOrientationRad() {
 			return std::atan2(y, x);
+		}
+
+		float getOrientationDeg() {
+			return std::atan2(y, x) * 180 / PI;
+		}
+
+		void reset(){
+			x = 0;
+			y = 0;
 		}
 	};
 

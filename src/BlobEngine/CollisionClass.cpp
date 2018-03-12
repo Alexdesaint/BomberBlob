@@ -57,8 +57,7 @@ namespace BlobEngine {
 							frameMove = c.getBounce(&object->speed);
 							break;
 						case STOP:
-							frameMove = {0, 0};
-							object->speed = {0, 0};
+							frameMove = c.getStop(&object->speed);
 							break;
 						case ROLL:
 							frameMove = c.getRoll(&object->speed);
@@ -82,8 +81,7 @@ namespace BlobEngine {
 						frameMove = c.getBounce(&object->speed);
 						break;
 					case STOP:
-						frameMove = {0, 0};
-						object->speed = {0, 0};
+						frameMove = c.getStop(&object->speed);
 						break;
 					case ROLL:
 						frameMove = c.getRoll(&object->speed);
@@ -107,8 +105,7 @@ namespace BlobEngine {
 							frameMove = c.getBounce(&object->speed);
 							break;
 						case STOP:
-							frameMove = {0, 0};
-							object->speed = {0, 0};
+							frameMove = c.getStop(&object->speed);
 							break;
 						case ROLL:
 							frameMove = c.getRoll(&object->speed);
