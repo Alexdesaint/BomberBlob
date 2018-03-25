@@ -8,7 +8,7 @@
 #include <list>
 #include <iostream>
 
-#include "BlobEngine/CollisionClass.hpp"
+#include <BlobEngine/CollisionDetector.hpp>
 
 #include "BomberMan.hpp"
 
@@ -30,7 +30,7 @@ enum objectTypeEnum{
 	BOX = 4
 };
 
-class Explosion : CircleDynamic{
+class Explosion : public  CircleDynamic{
 private:
 	CircleShape shape;
 	RectangleShape rectShape;
@@ -94,7 +94,7 @@ public:
 	}
 };
 
-class Bomb : CircleDynamic{
+class Bomb : public  CircleDynamic{
 private:
 	CircleShape shape;
 	sf::Clock clock;
@@ -140,13 +140,17 @@ class BombManager{
 private:
 	std::list<Bomb>	bombs;
 	std::list<Explosion> explosions;
+	CollisionDetector *collisionDetector;
 
 	float explosionLenght = 100;
 
 public:
+	
+	explicit BombManager(CollisionDetector *c) : collisionDetector(c) {}
 
 	void addBomb(Point2f pos){
 		bombs.emplace_front(pos);
+		collisionDetector->addObject(&bombs.back());
 	}
 
 	void draw(RenderWindow *window) {
@@ -157,9 +161,16 @@ public:
 		while(bombIt != bombs.end()){
 			if(bombIt->draw(window)){
 				explosions.emplace_back(bombs.back().getPosition(), bombs.back().getPosition() + Vec2f(explosionLenght, 0));
+				collisionDetector->addObject(&explosions.back());
+				
 				explosions.emplace_back(bombs.back().getPosition(), bombs.back().getPosition() + Vec2f(-explosionLenght, 0));
+				collisionDetector->addObject(&explosions.back());
+				
 				explosions.emplace_back(bombs.back().getPosition(), bombs.back().getPosition() + Vec2f(0, explosionLenght));
+				collisionDetector->addObject(&explosions.back());
+				
 				explosions.emplace_back(bombs.back().getPosition(), bombs.back().getPosition() + Vec2f(0, -explosionLenght));
+				collisionDetector->addObject(&explosions.back());
 
 				bombIt = bombs.erase(bombIt);
 			}else
@@ -204,7 +215,7 @@ public:
 	}
 };
 
-class Box : LineStatic{
+class Box : public LineStatic{
 private:
 	RectangleShape shape;
 	bool destroyed = false;
@@ -242,7 +253,7 @@ public:
 	}
 };
 
-class Player : CircleDynamic{
+class Player : public CircleDynamic{
 private:
 	float maxSpeed;
 	CircleShape shape;
@@ -330,52 +341,69 @@ BomberMan::BomberMan() {
 
 	CollisionDetector collisionDetector;
 
-	BombManager bombManager;
+	BombManager bombManager(&collisionDetector);
 
 	Player player(&bombManager);
-
+	collisionDetector.addObject(&player);
+	
 	std::list<IndestructibleBox> indestructibleBoxs;
 	std::list<Box> boxs;
 
 	for(int i = 80; i < width - 80; i+=40) {
 		boxs.emplace_back(Point2f(10 + i, 10 + 20));
+		collisionDetector.addObject(&boxs.back());
+		
 		boxs.emplace_back(Point2f(10 + i, height - 10 - 20));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 80; i < height - 80; i+=40){
 		boxs.emplace_back(Point2f(10 + 20, 10 + i));
+		collisionDetector.addObject(&boxs.back());
+		
 		boxs.emplace_back(Point2f(width - 10 - 20, 10 + i));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 60; i < width - 60; i+=40){
-		for(int j = 40; j < height - 40; j+=40)
+		for(int j = 40; j < height - 40; j+=40) {
 			boxs.emplace_back(Point2f(10 + i, 10 + j));
+			collisionDetector.addObject(&boxs.back());
+		}
 	}
 
 	for(int i = 40; i < width - 40; i+=40){
-		for(int j = 60; j < height - 60; j+=40)
+		for(int j = 60; j < height - 60; j+=40) {
 			boxs.emplace_back(Point2f(10 + i, 10 + j));
+			collisionDetector.addObject(&boxs.back());
+		}
 	}
 
 	for(int i = 0; i < width; i+=20){
 		indestructibleBoxs.emplace_back(Point2f(10 + i, 10));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 0; i < width; i+=20){
 		indestructibleBoxs.emplace_back(Point2f(10 + i, height - 10));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 20; i < height - 20; i+=20){
 		indestructibleBoxs.emplace_back(Point2f(10, 10 + i));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 20; i < height - 20; i+=20){
 		indestructibleBoxs.emplace_back(Point2f(width - 10, 10 + i));
+		collisionDetector.addObject(&boxs.back());
 	}
 
 	for(int i = 40; i < width - 40; i+=40){
-		for(int j = 40; j < height - 40; j+=40)
+		for(int j = 40; j < height - 40; j+=40) {
 			indestructibleBoxs.emplace_back(Point2f(10 + i, 10 + j));
+			collisionDetector.addObject(&boxs.back());
+		}
 	}
 
 	while (window.isOpen()) {

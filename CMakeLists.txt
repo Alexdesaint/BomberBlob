@@ -10,6 +10,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
 set(CMAKE_MODULE_PATH "C:/msys64/mingw64/cmake/Modules")
 
+include_directories(../BlobEngine/include)
+link_directories(../BlobEngine/lib)
+
 set(SFML_STATIC_LIBRARIES TRUE)
 find_package(SFML REQUIRED window graphics network audio system)
 IF (SFML_FOUND)
