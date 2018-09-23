@@ -1,16 +1,12 @@
-//
-// Created by alexa on 02/03/2018.
-//
-
 #ifndef BOMBERMAN_BOMBERMAN_HPP
 #define BOMBERMAN_BOMBERMAN_HPP
 
+#include <SFML/Graphics.hpp>
 
-class BomberMan {
+class BomberBlob {
 private:
 public:
-	BomberMan();
+	explicit BomberBlob(sf::RenderWindow &window);
 };
-
 
 #endif //BOMBERMAN_BOMBERMAN_HPP

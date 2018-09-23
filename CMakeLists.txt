@@ -8,17 +8,13 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-set(CMAKE_MODULE_PATH "C:/msys64/mingw64/cmake/Modules")
+include_directories(include)
 
-include_directories(../BlobEngine/include)
-link_directories(../BlobEngine/lib)
+set(SFML_DIR "${PROJECT_SOURCE_DIR}/../SFML/lib/cmake/SFML")
 
 set(SFML_STATIC_LIBRARIES TRUE)
-find_package(SFML REQUIRED window graphics network audio system)
-IF (SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-    message("SFML found")
-else()
+find_package(SFML 2.5 COMPONENTS window graphics network audio system REQUIRED)
+if (NOT SFML_FOUND)
     message(WARNING "SFML not found")
 endif()
 
