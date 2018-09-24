@@ -15,7 +15,22 @@
 using  namespace sf;
 
 BomberBlob::BomberBlob(sf::RenderWindow &window) {
-	unsigned int width = 620, height = 620;
+	int width = window.getSize().x, height = window.getSize().y;
+
+	////////////
+
+	sf::Image img;
+	img.loadFromFile("../data/grass.bmp");
+
+	sf::Texture texture;
+	texture.loadFromImage(img);
+	texture.setRepeated(true);
+
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
+	sprite.setTextureRect({ 0, 0, width, height });
+
+	////////////
 
 	b2Vec2 gravity(0.0f, 0.0f);
 	b2World world(gravity);
@@ -132,6 +147,7 @@ BomberBlob::BomberBlob(sf::RenderWindow &window) {
 		}
 
 		window.clear();
+		window.draw(sprite);
 
 		bombManager.draw(&window);
 

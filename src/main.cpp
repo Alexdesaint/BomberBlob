@@ -4,7 +4,7 @@
 
 int main() {
 	sf::ContextSettings settings;
-	settings.antialiasingLevel = 8;
+	settings.antialiasingLevel = 0;
 
 	unsigned int width = 620, height = 620;
 

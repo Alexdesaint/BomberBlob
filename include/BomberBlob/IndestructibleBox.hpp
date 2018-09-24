@@ -8,6 +8,7 @@
 class IndestructibleBox : StaticRect{
 private:
 	sf::RectangleShape shape;
+	sf::Texture texture;
 
 	UserData userData = {INDESTRUCTIBLE_BOX, this};
 

@@ -17,7 +17,7 @@ add_executable(game
 		BomberBlob/StaticRect.cpp
 		)
 
-target_link_libraries(game Box2D sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread -lfreetype)
+target_link_libraries(game Box2D sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
 
 add_executable(Server Server.cpp)
 target_link_libraries(Server sfml-network)

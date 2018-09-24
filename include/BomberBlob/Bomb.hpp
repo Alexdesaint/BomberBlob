@@ -9,6 +9,7 @@
 class Bomb : StaticCircle{
 private:
 	sf::CircleShape shape;
+	sf::Texture texture;
 	sf::Clock clock;
 	float timeDelay = 2;
 	bool destroyed = false, playerOnBomb = true, bombAlone = false;

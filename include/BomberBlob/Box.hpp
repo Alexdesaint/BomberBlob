@@ -9,6 +9,7 @@
 class Box : StaticRect {
 private:
 	sf::RectangleShape shape;
+	sf::Texture texture;
 	bool destroyed = false;
 
 	UserData userData = {BOX, this};

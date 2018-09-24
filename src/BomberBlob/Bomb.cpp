@@ -6,15 +6,22 @@ bool Bomb::update() {
 	return (clock.getElapsedTime().asSeconds() > timeDelay) || destroyed;
 }
 
-Bomb::Bomb(b2Vec2 p, b2World *world) : StaticCircle( p.x, p.y, 8, &userData, world){
+Bomb::Bomb(b2Vec2 p, b2World *world) : StaticCircle( p.x, p.y, 9, &userData, world){
 	position = p;
 
-	shape.setRadius(8);
-	shape.setOrigin(8, 8);
+	shape.setRadius(9);
+	shape.setOrigin(9, 9);
 	shape.setPosition(sf::Vector2f(position.x, position.y));
-	shape.setFillColor(Color::Yellow);
 
 	clock.restart();
+
+	Image image;
+	image.loadFromFile("../data/Bomb.bmp");
+	image.createMaskFromColor(sf::Color(0, 255, 0), 0);
+
+	texture.loadFromImage(image);
+
+	shape.setTexture(&texture);
 }
 
 bool Bomb::draw(RenderWindow *window) {
