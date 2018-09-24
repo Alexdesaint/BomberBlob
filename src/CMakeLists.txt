@@ -15,7 +15,7 @@ add_executable(game
 		BomberBlob/Player.cpp
 		BomberBlob/StaticCircle.cpp
 		BomberBlob/StaticRect.cpp
-		)
+		BomberBlob/InfoBar.cpp)
 
 target_link_libraries(game Box2D sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
 

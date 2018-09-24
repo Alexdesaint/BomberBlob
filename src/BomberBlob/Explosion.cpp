@@ -27,13 +27,15 @@ Explosion::Explosion(b2Vec2 positionInitial, b2Vec2 dirrection, float distanceMa
 	shape.setRadius(rayon);
 	shape.setOrigin(rayon, rayon);
 	shape.setPosition(Vector2f(positionInitial.x, positionInitial.y));
-	shape.setFillColor(Color::Blue);
+	shape.setFillColor(Color::Red);
+	//shape.setTexture(&texture);
 
-	rectShape.setFillColor(Color::Blue);
 	rectShape.setSize(Vector2f(8, 8));
 	rectShape.setPosition(Vector2f(positionInitial.x, positionInitial.y));
 	rectShape.setOrigin(Vector2f(4, 4));
 	rectShape.setRotation(std::atan2(dirrection.y, dirrection.x) * 180 / b2_pi);
+	texture.loadFromFile("../data/Explosion.bmp");
+	rectShape.setTexture(&texture);
 
 }
 

@@ -8,7 +8,7 @@ private:
 	sf::Font font;
 	sf::RenderWindow &window;
 
-	sf::Text createText(sf::String str, unsigned int size, int x, int y);
+	sf::Text createText(const sf::String &str, unsigned int size, int x, int y);
 public:
 	explicit GameMenu(sf::RenderWindow &window);
 };

@@ -11,11 +11,12 @@
 #include <BomberBlob/Player.hpp>
 #include <BomberBlob/IndestructibleBox.hpp>
 #include <BomberBlob/Box.hpp>
+#include <BomberBlob/InfoBar.hpp>
 
 using  namespace sf;
 
 BomberBlob::BomberBlob(sf::RenderWindow &window) {
-	int width = window.getSize().x, height = window.getSize().y;
+	int width = window.getSize().x - 100, height = window.getSize().y;
 
 	////////////
 
@@ -41,7 +42,9 @@ BomberBlob::BomberBlob(sf::RenderWindow &window) {
 	BombManager bombManager(&world);
 
 	Player player(&bombManager, world);
-	
+
+	InfoBar infoBar;
+
 	std::list<IndestructibleBox> indestructibleBoxs;
 	std::list<Box> boxs;
 
@@ -166,6 +169,8 @@ BomberBlob::BomberBlob(sf::RenderWindow &window) {
 			} else
 				BoxsIt++;
 		}
+
+		infoBar.draw(&window);
 
 		world.Step(1.f/60.f, 8, 3);
 		window.display();

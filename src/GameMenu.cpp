@@ -4,7 +4,7 @@
 
 using namespace sf;
 
-sf::Text GameMenu::createText(sf::String str, unsigned int size, int x , int y) {
+sf::Text GameMenu::createText(const sf::String &str, unsigned int size, int x , int y) {
 	sf::Text text(str, font);
 	text.setCharacterSize(size);
 	text.setStyle(sf::Text::Bold);
