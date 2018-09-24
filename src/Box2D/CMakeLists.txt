@@ -1,4 +1,4 @@
-add_library(Box2D
+add_library(Box2D STATIC
 		./Collision/b2BroadPhase.cpp
 		./Collision/b2CollideCircle.cpp
 		./Collision/b2CollideEdge.cpp
