@@ -6,7 +6,7 @@ int main() {
 	sf::ContextSettings settings;
 	settings.antialiasingLevel = 0;
 
-	unsigned int width = 620+100, height = 620;
+	unsigned int width = 1920, height = 1080;
 
 	sf::RenderWindow window(sf::VideoMode(width, height), "BomberMan", sf::Style::Default, settings);
 

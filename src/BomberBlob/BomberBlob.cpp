@@ -94,6 +94,8 @@ BomberBlob::BomberBlob(sf::RenderWindow &window) {
 
 	bool gameIsRunning = true;
 
+	clock.restart();
+
 	while (window.isOpen() && gameIsRunning) {
 		Keyboard::Key Key;
 		Event event{};
@@ -172,7 +174,19 @@ BomberBlob::BomberBlob(sf::RenderWindow &window) {
 
 		infoBar.draw(&window);
 
-		world.Step(1.f/60.f, 8, 3);
+		Time time = clock.restart();
+
+		frameTime += time.asMicroseconds();
+
+		world.Step(time.asSeconds(), 8, 3);
+
+		if(count > 9) {
+			frameTime
+
+		}
+
+		box2dTime = clock.getElapsedTime().asMicroseconds();
+
 		window.display();
 
 		if(!player.isAlive())

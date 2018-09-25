@@ -1,3 +1,4 @@
+add_subdirectory(BlobEngine)
 add_subdirectory(Box2D)
 add_subdirectory(BomberBlob)
 
@@ -15,9 +16,10 @@ add_executable(game
 		BomberBlob/Player.cpp
 		BomberBlob/StaticCircle.cpp
 		BomberBlob/StaticRect.cpp
-		BomberBlob/InfoBar.cpp)
+		BomberBlob/InfoBar.cpp
+		)
 
-target_link_libraries(game Box2D sfml-system sfml-graphics sfml-window -static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
+target_link_libraries(game Box2D -static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
 
 add_executable(Server Server.cpp)
 target_link_libraries(Server sfml-network)

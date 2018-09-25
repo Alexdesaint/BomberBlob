@@ -5,6 +5,9 @@
 
 class BomberBlob {
 private:
+	sf::Clock clock;
+	int64_t frameTime, imputTime, drawTime, box2dTime, count = 0;
+
 public:
 	explicit BomberBlob(sf::RenderWindow &window);
 };
