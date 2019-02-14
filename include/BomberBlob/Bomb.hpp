@@ -1,45 +1,24 @@
 #ifndef BOMBERMAN_BOMB_HPP
 #define BOMBERMAN_BOMB_HPP
 
-#include <BomberBlob/StaticCircle.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
+
 #include <BomberBlob/UserData.hpp>
 
-#include <SFML/Graphics.hpp>
+class Player;
 
-class Bomb : StaticCircle{
+class Bomb : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
-	sf::CircleShape shape;
-	sf::Texture texture;
-	sf::Clock clock;
-	float timeDelay = 2;
-	bool destroyed = false, playerOnBomb = true, bombAlone = false;
 
-	UserData userData = {BOMB, this};
-
-	b2Vec2 position;
-
-	bool update();
+	bool destroyed = false;
 
 public:
-	explicit Bomb(b2Vec2 p, b2World *world);
+	explicit Bomb(BlobEngine::Vec2f pos);
 
-	bool draw(sf::RenderWindow *window);
+	void hit(int objectType, const void *objectData) final;
 
-	b2Vec2 getPosition(){
-		return position;
-	}
-
-	void hit() {
-		destroyed = true;
-	}
-
-	bool bombNotFree() {
-		if(bombAlone)
-			return false;
-		playerOnBomb = true;
-		return playerOnBomb;
-	}
+	bool isDestroyed();
 };
-
 
 #endif //BOMBERMAN_BOMB_HPP

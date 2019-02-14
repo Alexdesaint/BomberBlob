@@ -1,23 +1,19 @@
-add_subdirectory(BomberBlob)
+add_executable(BomberMan
+		main.cpp
+		BomberBlob/GameMenu.cpp
+		BomberBlob/BomberBlob.cpp
 
-add_executable(game
-        main.cpp
-#		GameMenu.cpp GameMenu.hpp
-#		BomberBlob/BomberBlob.cpp
-#		BomberBlob/Bomb.cpp
- #       BomberBlob/BombManager.cpp
-  #      BomberBlob/Box.cpp
-#        BomberBlob/ContactListener.cpp
-#		BomberBlob/DynamicCircle.cpp
-#		BomberBlob/Explosion.cpp
-#		BomberBlob/IndestructibleBox.cpp
-#		BomberBlob/Player.cpp
-#		BomberBlob/StaticCircle.cpp
-#		BomberBlob/StaticRect.cpp
-#		BomberBlob/InfoBar.cpp
+		BomberBlob/Bomb.cpp
+		BomberBlob/Bonus.cpp
+		BomberBlob/BombManager.cpp
+		BomberBlob/Box.cpp
+		BomberBlob/Explosion.cpp
+		BomberBlob/IndestructibleBox.cpp
+		BomberBlob/Player.cpp
+		BomberBlob/InfoBar.cpp
 		)
 
-target_link_libraries(game -lBlobGL -lCollision -lGeometrie -lFileReader -lglad sfml-system sfml-graphics sfml-window) #-static-libgcc -static-libstdc++ -static -lpthread )#-lfreetype)
+target_link_libraries(BomberMan libbmpread Collision Geometrie BlobGL FileReader Time glad glfw3 imgui -static -static-libgcc -static-libstdc++ -lpthread)
 
 add_executable(Server Server.cpp)
 target_link_libraries(Server sfml-network)

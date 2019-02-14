@@ -1,24 +1,17 @@
 #ifndef BOMBERMAN_INDESTRUCTIBLEBOX_HPP
 #define BOMBERMAN_INDESTRUCTIBLEBOX_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
 
-#include <BomberBlob/StaticRect.hpp>
+#include <BomberBlob/UserData.hpp>
 
-class IndestructibleBox : StaticRect{
+class IndestructibleBox : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
-	sf::RectangleShape shape;
-	sf::Texture texture;
-
-	UserData userData = {INDESTRUCTIBLE_BOX, this};
+	bool destroyed = false;
 
 public:
-	explicit IndestructibleBox(int x, int y, b2World &world);
-
-	void draw(sf::RenderWindow *window) {
-		window->draw(shape);
-	}
+	IndestructibleBox(float x, float y);
 };
-
 
 #endif //BOMBERMAN_INDESTRUCTIBLEBOX_HPP

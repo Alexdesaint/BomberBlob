@@ -1,26 +1,22 @@
 #ifndef BOMBERMAN_BOX_HPP
 #define BOMBERMAN_BOX_HPP
 
-#include <SFML/Graphics.hpp>
+#include <BlobEngine/Collision/CollisionDetector.hpp>
+#include <BlobEngine/BlobGL/Form.hpp>
 
-#include <BomberBlob/StaticRect.hpp>
 #include <BomberBlob/UserData.hpp>
 
-class Box : StaticRect {
+class Box : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
 private:
-	sf::RectangleShape shape;
-	sf::Texture texture;
 	bool destroyed = false;
 
-	UserData userData = {BOX, this};
-
 public:
-	explicit Box(int x, int y,  b2World &world);
+	explicit Box(float x, float y);
 
-	bool draw(sf::RenderWindow *window);
+	void hit(int objectType, const void *objectData) final;
 
-	void hit() {
-		destroyed = true;
+	bool isDestroy() const {
+		return destroyed;
 	}
 };
 

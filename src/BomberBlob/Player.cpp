@@ -1,48 +1,71 @@
-//
-// Created by Patapouf on 23/09/2018.
-//
-
 #include <BomberBlob/Player.hpp>
 
-void Player::update() {
-	float TimeFlow = clock.restart().asSeconds();
-	b2Vec2 speed;
+using namespace BlobEngine;
 
-	if (command[directions::LEFT]) {
-		speed.x -= 1;
-	}
-	if (command[directions::RIGHT]) {
-		speed.x += 1;
-	}
-	if (command[directions::UP]) {
-		speed.y -= 1;
-	}
-	if (command[directions::DOWN]) {
-		speed.y += 1;
-	}
+Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic(PLAYER, this), bombs(bombs) {
+	position = {x, y};
+	size = {0.8f, 0.8f};
 
-	if (speed.x != 0 || speed.y != 0) {
-		speed.Normalize();
-		speed *= maxSpeed;
-	}
+	setPosition(x, y, 0.4f);
+	setScale(0.8f, 0.8f, 0.8f);
 
-	setSpeed(speed);
+	setColor(255, 255, 255);
 }
 
-Player::Player(BombManager *bm, b2World &world) : DynamicCircle(30, 30, 10, &userData, world) {
-	bombManager = bm;
+void Player::preCollisionUpdate() {
+	Vec2f Acceleration;
 
-	shape.setRadius(rayon);
-	shape.setOrigin(10, 10);
-	shape.setPosition(getPosition());
-	maxSpeed = 200;
+	if (*keys[Actions::up]) {
+		Acceleration.x -= 1;
+	}
+	if (*keys[Actions::down]) {
+		Acceleration.x += 1;
+	}
+	if (*keys[Actions::left]) {
+		Acceleration.y -= 1;
+	}
+	if (*keys[Actions::right]) {
+		Acceleration.y += 1;
+	}
+
+	if (!Acceleration.isNull()) {
+		speed = Acceleration.setLength(maxSpeed);
+	} else
+		speed.reset();
+
+	if (*keys[Actions::putBomb] && !onBomb && bombPosed < maxBomb) {
+		bombs.emplace_front(position, *this);
+		lastBomb = &bombs.front();
+		onBomb = true;
+		bombPosed++;
+	}
 }
 
-void Player::draw(sf::RenderWindow *window) {
-	update();
+void Player::postCollisionUpdate() {
+	setPosition(position.x, position.y, 0.4f);
 
-	shape.setPosition(getPosition());
-	shape.setRotation(getRotation());
+	if (onBomb) {
+		Bomb *bomb = lastBomb->getBomb();
+		if (bomb == nullptr || !bomb->overlap(*this)) {
+			onBomb = false;
+		}
+	}
+}
 
-	window->draw(shape);
+Reaction Player::hit(const int objectType, const void *objectData) {
+	if (onBomb && objectType == BOMB && objectData == lastBomb->getBomb()) {
+		return Reaction::IGNORE;
+	}
+	if (objectType == EXTRABOMB) {
+		maxBomb++;
+	} else if (objectType == EXTRASPEED) {
+		maxSpeed += 1;
+	} else if (objectType == EXTRAPOWER) {
+		bombPower++;
+	} else if (objectType == EXPLOSION) {
+		alive = false;
+		return Reaction::IGNORE;
+	}
+
+	return Reaction::STOP;
 }
