@@ -1,4 +1,3 @@
-[submodule "libs/BlobEngine"]
+ [submodule "libs/BlobEngine"]
 	path = libs/BlobEngine
 	url = https://github.com/Alexdesaint/BlobEngine.git
-	
