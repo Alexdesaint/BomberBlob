@@ -6,7 +6,7 @@
 
 #include <BomberBlob/UserData.hpp>
 
-class Box : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
+class Box : public Blob::Collision::RectStatic, public Blob::GL::Shapes::Cube {
 private:
 	bool destroyed = false;
 

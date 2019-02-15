@@ -1,6 +1,6 @@
 #include <BomberBlob/Explosion.hpp>
 
-Explosion::Explosion(BlobEngine::Vec2f positionInitial, BlobEngine::Vec2f dirrection, float distanceMax) :
+Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax) :
 		RectDynamic(EXPLOSION, this),
 		distanceMax(distanceMax),
 		positionInitial(positionInitial),

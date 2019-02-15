@@ -11,7 +11,7 @@
 
 #include <BomberBlob/BombManager.hpp>
 
-class Player : public Blob::Collision::RectDynamic, public Blob::GL::Cube {
+class Player : public Blob::Collision::RectDynamic, public Blob::GL::Shapes::Cube {
 	friend BombManager;
 public:
 	enum Actions {
@@ -50,6 +50,12 @@ public:
 	bool isAlive() const {
 		return alive;
 	}
+
+	float getMaxSpeed() const;
+
+	float getBombPower() const;
+
+	unsigned int getMaxBomb() const;
 };
 
 

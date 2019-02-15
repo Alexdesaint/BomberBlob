@@ -12,12 +12,14 @@
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bonus.hpp>
 
-using namespace BlobEngine;
+#include <BlobEngine/imguiForBlob.hpp>
 
-BomberBlob::BomberBlob(BlobGL::Graphic &window) {
+using namespace Blob;
+
+BomberBlob::BomberBlob(GL::Graphic &window) {
 	int width = 11 + 6, height = 11 + 6;
 
-	BlobGL::Plane ground;
+	GL::Shapes::Plane ground;
 
 	ground.loadBMP("data/Grass.bmp");
 	ground.setPosition(height / 2.f, height / 2.f, 0);
@@ -26,16 +28,16 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 
 	//BombManager bombManager(&world);
 
-	const std::array<bool, BlobGL::Key::KeyCount> &keys = BlobGL::Graphic::getKeys();
+	const std::array<bool, GL::Key::KeyCount> &keys = GL::Graphic::getKeys();
 
 	std::list<BombManager> bombs;
 
 	Player player(1.5f, 1.5f, bombs);
-	player.setAction(Player::right, &keys[BlobGL::Key::RIGHT]);
-	player.setAction(Player::left, &keys[BlobGL::Key::LEFT]);
-	player.setAction(Player::up, &keys[BlobGL::Key::UP]);
-	player.setAction(Player::down, &keys[BlobGL::Key::DOWN]);
-	player.setAction(Player::putBomb, &keys[BlobGL::Key::SPACE]);
+	player.setAction(Player::right, &keys[GL::Key::RIGHT]);
+	player.setAction(Player::left, &keys[GL::Key::LEFT]);
+	player.setAction(Player::up, &keys[GL::Key::UP]);
+	player.setAction(Player::down, &keys[GL::Key::DOWN]);
+	player.setAction(Player::putBomb, &keys[GL::Key::SPACE]);
 
 	//InfoBar infoBar;
 
@@ -93,31 +95,28 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 
 	Collision::CollisionDetector collisionDetector{};
 
-	BlobGL::ShaderProgram shaderProgram("data/vertex.glsl", "data/fragment.glsl");
-	BlobGL::ShaderProgram shaderProgram2D("data/vertex2D.glsl", "data/fragment2D.glsl");
-
 	window.setCameraPosition(width, height / 2.f, (width+height)/2.f + 4);
 
 	window.setCameraLookAt(width / 2.f, height / 2.f, 0);
 
 	//window.setOrthoProjection(-width/2.f, width/2.f, -height/2.f, height/2.f, 1,20);
 
-	bool endGmae = false, escape = false;
+	bool endGmae = false, escape = false, pauseMenu = false;
 
 	while(window.isOpen() && !endGmae) {
 
 		window.clear();
 
-		window.draw(ground, shaderProgram);
+		window.draw(ground);
 
 		for (auto &ib : indestructibleBoxs)
-			window.draw(ib, shaderProgram);
+			window.draw(ib);
 
 		for (auto i = bombs.begin(); i != bombs.end();) {
 			if (i->update()) {
 				i = bombs.erase(i);
 			} else {
-				window.draw(*i, shaderProgram);
+				window.draw(*i);
 				i++;
 			}
 		}
@@ -133,7 +132,7 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 				i = boxs.erase(i);
 			}
 			else {
-				window.draw(*i, shaderProgram);
+				window.draw(*i);
 				i++;
 			}
 		}
@@ -143,24 +142,64 @@ BomberBlob::BomberBlob(BlobGL::Graphic &window) {
 				i = bonus.erase(i);
 			}
 			else {
-				window.draw(*i, shaderProgram);
+				window.draw(*i);
 				i++;
 			}
 		}
 
-		window.draw(player, shaderProgram);
+		window.draw(player);
 
-		//window.draw(infoBar, shaderProgram2D);
+		ImGui::NewFrame();
 
+		ImGui::SetNextWindowPos({0, 0});
+		ImGui::Begin("InfoP1", nullptr,
+					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+					 ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+		ImGui::Text("Player 1");
+		ImGui::Text("Bombs : %u", player.getMaxBomb());
+		ImGui::Text("Explosion range : %.1f", player.getBombPower());
+		ImGui::Text("Run speed : %.1f", player.getMaxSpeed());
+
+		ImGui::End();
+
+		if (pauseMenu) {
+
+
+			ImGui::Begin("Pause", nullptr,
+						 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+
+			ImGui::Text("Pause");
+
+			if (ImGui::Button("Resume")) {
+				collisionDetector.unpause();
+				pauseMenu = false;
+			}
+
+			if (ImGui::Button("Main menu"))
+				endGmae = true;
+
+			ImGui::End();
+		}
+
+		window.drawImGUI();
 		window.display();
 
 		//if(!player.isAlive())
 		//	endGmae = true;
 
-		if(keys[BlobGL::ESCAPE] && !escape) {
+		if (keys[GL::ESCAPE] && !escape) {
 			escape = true;
-		} else if(!keys[BlobGL::ESCAPE] && escape) {
-			endGmae = true;
+		} else if (!keys[GL::ESCAPE] && escape) {
+			//endGmae = true;
+			escape = false;
+			if (pauseMenu) {
+				pauseMenu = false;
+				collisionDetector.unpause();
+			} else {
+				pauseMenu = true;
+				collisionDetector.pause();
+			}
 		}
 	}
 }

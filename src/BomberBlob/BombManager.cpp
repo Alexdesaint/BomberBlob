@@ -2,10 +2,10 @@
 
 #include <BomberBlob/Player.hpp>
 
-using namespace BlobEngine;
-using namespace BlobEngine::Time;
+using namespace Blob;
+using namespace Blob::Time;
 
-BombManager::BombManager(BlobEngine::Vec2f pos, Player &player) : player(player){
+BombManager::BombManager(Blob::Vec2f pos, Player &player) : player(player) {
 	bomb = new Bomb(pos);
 
 	addRenderable(bomb);

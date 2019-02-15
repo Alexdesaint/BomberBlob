@@ -8,13 +8,13 @@
 
 class Player;
 
-class Bomb : public Blob::Collision::RectStatic, public Blob::GL::Cube {
+class Bomb : public Blob::Collision::RectStatic, public Blob::GL::Shapes::Cube {
 private:
 
 	bool destroyed = false;
 
 public:
-	explicit Bomb(Blob::Vec2f pos, Blob::GL::ShaderProgram &sp);
+	explicit Bomb(Blob::Vec2f pos);
 
 	void hit(int objectType, const void *objectData) final;
 

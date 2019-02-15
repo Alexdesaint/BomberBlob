@@ -8,7 +8,7 @@ using namespace Blob::GL;
 int main() {
 
 	try {
-		Graphic graphic;//(false);
+		Graphic graphic(false);
 
 		(GameMenu(graphic));
 

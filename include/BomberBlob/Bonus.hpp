@@ -7,12 +7,12 @@
 
 #include <BomberBlob/UserData.hpp>
 
-class Bonus : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
+class Bonus : public Blob::Collision::RectStatic, public Blob::GL::Shapes::Cube {
 private:
 	bool destroyed = false;
 
 public:
-	explicit Bonus(BlobEngine::Vec2f pos);
+	explicit Bonus(Blob::Vec2f pos);
 
 	void hit(int objectType, const void *objectData) final;
 

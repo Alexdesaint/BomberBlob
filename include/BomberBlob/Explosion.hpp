@@ -7,7 +7,7 @@
 
 #include <BomberBlob/UserData.hpp>
 
-class Explosion : public Blob::Collision::RectDynamic, public Blob::GL::Cube {
+class Explosion : public Blob::Collision::RectDynamic, public Blob::GL::Shapes::Cube {
 private:
 	Blob::Vec2f positionInitial, dirrection;
 	float maxSpeed = 8, distanceMax = 2;

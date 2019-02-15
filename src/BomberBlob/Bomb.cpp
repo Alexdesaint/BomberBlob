@@ -2,7 +2,7 @@
 
 #include <BomberBlob/Player.hpp>
 
-Bomb::Bomb(Blob::Vec2f pos, Blob::GL::ShaderProgram &sp) : RectStatic(BOMB, this), Cube(sp) {
+Bomb::Bomb(Blob::Vec2f pos) : RectStatic(BOMB, this), Cube() {
 	position = pos;
 	size = {0.4f, 0.4f};
 

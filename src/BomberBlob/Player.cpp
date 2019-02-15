@@ -1,6 +1,6 @@
 #include <BomberBlob/Player.hpp>
 
-using namespace BlobEngine;
+using namespace Blob;
 
 Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic(PLAYER, this), bombs(bombs) {
 	position = {x, y};
@@ -68,4 +68,16 @@ Reaction Player::hit(const int objectType, const void *objectData) {
 	}
 
 	return Reaction::STOP;
+}
+
+float Player::getMaxSpeed() const {
+	return maxSpeed;
+}
+
+float Player::getBombPower() const {
+	return bombPower;
+}
+
+unsigned int Player::getMaxBomb() const {
+	return maxBomb;
 }

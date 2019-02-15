@@ -1,8 +1,8 @@
 #include <BomberBlob/GameMenu.hpp>
 
-#include <BlobEngine/BlobGL/Text.hpp>
 #include <BlobEngine/Time.hpp>
 #include <BomberBlob/BomberBlob.hpp>
+#include <BlobEngine/imguiForBlob.hpp>
 
 
 using namespace Blob::Time;
@@ -10,47 +10,57 @@ using namespace Blob::GL;
 
 GameMenu::GameMenu(Graphic &window) : window(window) {
 
-	Text::Text title("BOMBERBLOB");
-	title.setScale(0.3, 0.3, 1);
+	ImGuiIO &io = ImGui::GetIO();
+	ImFont *font1 = io.Fonts->AddFontFromFileTTF("Data/fonts/PetMe.ttf", 16.f);
+	ImFont *font2 = io.Fonts->AddFontFromFileTTF("Data/fonts/PetMe128.ttf", 48.f);
 
-	Text::Text start("-- PRESS SPACE BAR --");
-	start.setScale(0.1, 0.1, 1);
-	start.setPosition(0, -0.5f, 0);
-
-	ShaderProgram shaderProgram("data/vertex2D.glsl", "data/fragment2D.glsl");
-
-	const std::array<bool, Key::KeyCount> &keys = Graphic::getKeys();
-
-	TimePoint flow = now();
-
-	bool space = false, escape = false;
+	ImGui::GetIO().FontDefault = font1;
+	window.rebuildFontImGUI();
 
 	while (window.isOpen()) {
 		window.clear();
 
-		//window.draw(title, shader);
+		ImGui::NewFrame();
 
-		Duration d = now() - flow;
+		ImGui::ShowDemoWindow();
 
-		//if(d.count() < 1)
-			//window.draw(start, shader);
-		//else if(d.count() > 2)
-		//	flow = now();
+		ImGui::PushFont(font2);
 
+		ImGui::Begin("main", nullptr,
+					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+
+		ImGui::Text("BOMBERBLOB");
+
+		ImGui::PopFont();
+		ImGui::PushFont(font1);
+
+		static std::vector<const char *> commands = {"None", "Keyboard", "Controller 1", "Controller 2"};
+		static int selected1 = 1;
+		ImGui::Combo("Player 1", &selected1, commands.data(), commands.size());
+
+		//ImGui::SameLine();
+		static int selected2 = 0;
+		ImGui::Combo("Player 2", &selected2, commands.data(), commands.size());
+
+		static int selected3 = 0;
+		ImGui::Combo("Player 3", &selected3, commands.data(), commands.size());
+
+		static int selected4 = 0;
+		ImGui::Combo("Player 4", &selected4, commands.data(), commands.size());
+
+		bool start = ImGui::Button("Start");
+
+		if (ImGui::Button("Quit"))
+			window.close();
+
+		ImGui::End();
+
+
+		ImGui::PopFont();
+		window.drawImGUI();
 		window.display();
 
-		if(keys[SPACE] && !space) {
-			space = true;
-		} else if(!keys[SPACE] && space) {
+		if (start)
 			(BomberBlob(window));
-			space = false;
-		}
-
-		if(keys[ESCAPE] && !escape) {
-			escape = true;
-		} else if(!keys[ESCAPE] && escape) {
-			window.close();
-			escape = false;
-		}
 	}
 }
