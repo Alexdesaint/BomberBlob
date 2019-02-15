@@ -10,19 +10,19 @@
 
 class Player;
 
-class BombManager : public BlobEngine::BlobGL::Shape {
+class BombManager : public Blob::GL::Shape {
 private:
 	Bomb *bomb;
 	float bombDelay = 3;
 
 	Explosion *exUP, *exDO, *exRI, *exLE;
 
-	BlobEngine::Time::TimePoint start;
+	Blob::Time::TimePoint start;
 
 	Player &player;
 
 public:
-	explicit BombManager(BlobEngine::Vec2f pos, Player &player);
+	explicit BombManager(Blob::Vec2f pos, Player &player);
 
 	Bomb *getBomb() const;
 

@@ -5,10 +5,10 @@
 
 class GameMenu {
 private:
-	BlobEngine::BlobGL::Graphic &window;
+	Blob::GL::Graphic &window;
 
 public:
-	explicit GameMenu(BlobEngine::BlobGL::Graphic &window);
+	explicit GameMenu(Blob::GL::Graphic &window);
 };
 
 

@@ -5,7 +5,7 @@
 
 class BomberBlob {
 public:
-	explicit BomberBlob(BlobEngine::BlobGL::Graphic &window);
+	explicit BomberBlob(Blob::GL::Graphic &window);
 };
 
 #endif //BOMBERMAN_BOMBERMAN_HPP

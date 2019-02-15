@@ -2,19 +2,19 @@
 #define BOMBERMAN_BOMB_HPP
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 #include <BomberBlob/UserData.hpp>
 
 class Player;
 
-class Bomb : public BlobEngine::Collision::RectStatic, public BlobEngine::BlobGL::Cube {
+class Bomb : public Blob::Collision::RectStatic, public Blob::GL::Cube {
 private:
 
 	bool destroyed = false;
 
 public:
-	explicit Bomb(BlobEngine::Vec2f pos);
+	explicit Bomb(Blob::Vec2f pos, Blob::GL::ShaderProgram &sp);
 
 	void hit(int objectType, const void *objectData) final;
 

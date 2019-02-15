@@ -2,7 +2,7 @@
 #define PROJECT_EXTRABOMB_HPP
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 #include <BlobEngine/Time.hpp>
 
 #include <BomberBlob/UserData.hpp>

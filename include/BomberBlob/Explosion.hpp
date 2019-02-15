@@ -2,19 +2,19 @@
 #define BOMBERMAN_EXPLOSION_HPP
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 #include <BlobEngine/Time.hpp>
 
 #include <BomberBlob/UserData.hpp>
 
-class Explosion : public BlobEngine::Collision::RectDynamic, public BlobEngine::BlobGL::Cube {
+class Explosion : public Blob::Collision::RectDynamic, public Blob::GL::Cube {
 private:
-	BlobEngine::Vec2f positionInitial, dirrection;
+	Blob::Vec2f positionInitial, dirrection;
 	float maxSpeed = 8, distanceMax = 2;
 	bool active = true;
 
 public:
-	Explosion(BlobEngine::Vec2f positionInitial, BlobEngine::Vec2f dirrection, float distanceMax);
+	Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax);
 
 	bool moove() final;
 

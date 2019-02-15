@@ -2,7 +2,7 @@
 #define BOMBERMAN_PLAYER_HPP
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 #include <BomberBlob/UserData.hpp>
 
@@ -11,7 +11,7 @@
 
 #include <BomberBlob/BombManager.hpp>
 
-class Player : public BlobEngine::Collision::RectDynamic, public BlobEngine::BlobGL::Cube {
+class Player : public Blob::Collision::RectDynamic, public Blob::GL::Cube {
 	friend BombManager;
 public:
 	enum Actions {

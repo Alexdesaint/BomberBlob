@@ -5,8 +5,8 @@
 #include <BomberBlob/BomberBlob.hpp>
 
 
-using namespace BlobEngine::Time;
-using namespace BlobEngine::BlobGL;
+using namespace Blob::Time;
+using namespace Blob::GL;
 
 GameMenu::GameMenu(Graphic &window) : window(window) {
 
@@ -28,14 +28,14 @@ GameMenu::GameMenu(Graphic &window) : window(window) {
 	while (window.isOpen()) {
 		window.clear();
 
-		window.draw(title, shaderProgram);
+		//window.draw(title, shader);
 
 		Duration d = now() - flow;
 
-		if(d.count() < 1)
-			window.draw(start, shaderProgram);
-		else if(d.count() > 2)
-			flow = now();
+		//if(d.count() < 1)
+			//window.draw(start, shader);
+		//else if(d.count() > 2)
+		//	flow = now();
 
 		window.display();
 

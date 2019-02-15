@@ -2,7 +2,7 @@
 #define BOMBERMAN_BOX_HPP
 
 #include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Form.hpp>
+#include <BlobEngine/BlobGL/Shapes.hpp>
 
 #include <BomberBlob/UserData.hpp>
 

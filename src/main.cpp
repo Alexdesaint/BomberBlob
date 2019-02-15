@@ -2,8 +2,8 @@
 
 #include <BomberBlob/GameMenu.hpp>
 
-using namespace BlobEngine;
-using namespace BlobEngine::BlobGL;
+using namespace Blob;
+using namespace Blob::GL;
 
 int main() {
 
