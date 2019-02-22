@@ -8,7 +8,7 @@ Box::Box(float x, float y) : RectStatic(BOX, this) {
 	setScale(0.8f, 0.8f, 0.8f);
 
 	loadBMP("data/box.bmp");
-	setTextureScale(4);
+	setTextureScale({4.f, 4.f});
 }
 
 void Box::hit(int objectType, const void *objectData) {

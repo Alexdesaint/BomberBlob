@@ -15,16 +15,16 @@ Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic(PL
 void Player::preCollisionUpdate() {
 	Vec2f Acceleration;
 
-	if (*keys[Actions::up]) {
+	if (*keys[Actions::left]) {
 		Acceleration.x -= 1;
 	}
-	if (*keys[Actions::down]) {
+	if (*keys[Actions::right]) {
 		Acceleration.x += 1;
 	}
-	if (*keys[Actions::left]) {
+	if (*keys[Actions::down]) {
 		Acceleration.y -= 1;
 	}
-	if (*keys[Actions::right]) {
+	if (*keys[Actions::up]) {
 		Acceleration.y += 1;
 	}
 

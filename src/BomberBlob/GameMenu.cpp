@@ -2,7 +2,7 @@
 
 #include <BlobEngine/Time.hpp>
 #include <BomberBlob/BomberBlob.hpp>
-#include <BlobEngine/imguiForBlob.hpp>
+#include <imgui.h>
 
 
 using namespace Blob::Time;
@@ -22,9 +22,11 @@ GameMenu::GameMenu(Graphic &window) : window(window) {
 
 		ImGui::NewFrame();
 
-		ImGui::ShowDemoWindow();
+		//ImGui::ShowDemoWindow();
 
 		ImGui::PushFont(font2);
+
+		ImGui::SetNextWindowPos(window.getSize()/2, 0, {0.5, 0.5});
 
 		ImGui::Begin("main", nullptr,
 					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
@@ -48,11 +50,12 @@ GameMenu::GameMenu(Graphic &window) : window(window) {
 		static int selected4 = 0;
 		ImGui::Combo("Player 4", &selected4, commands.data(), commands.size());
 
-		bool start = ImGui::Button("Start");
 
-		if (ImGui::Button("Quit"))
+		bool start = ImGui::Button("Start", {ImGui::GetContentRegionAvailWidth(), 0});
+		//ImGui::PushItemWidth(ImGui::GetWindowWidth());
+		if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0}))
 			window.close();
-
+		//ImGui::PopItemWidth();
 		ImGui::End();
 
 

@@ -12,26 +12,13 @@
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bonus.hpp>
 
-#include <BlobEngine/imguiForBlob.hpp>
+#include <imgui.h>
 
 using namespace Blob;
 
 BomberBlob::BomberBlob(GL::Graphic &window) {
-	int width = 11 + 6, height = 11 + 6;
 
-	GL::Shapes::Plane ground;
-
-	ground.loadBMP("data/Grass.bmp");
-	ground.setPosition(height / 2.f, height / 2.f, 0);
-	ground.setScale(width - 2, height - 2, 1);
-	ground.setTextureScale(width - 2);
-
-	//BombManager bombManager(&world);
-
-	const std::array<bool, GL::Key::KeyCount> &keys = GL::Graphic::getKeys();
-
-	std::list<BombManager> bombs;
-
+	//player init
 	Player player(1.5f, 1.5f, bombs);
 	player.setAction(Player::right, &keys[GL::Key::RIGHT]);
 	player.setAction(Player::left, &keys[GL::Key::LEFT]);
@@ -39,11 +26,11 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 	player.setAction(Player::down, &keys[GL::Key::DOWN]);
 	player.setAction(Player::putBomb, &keys[GL::Key::SPACE]);
 
-	//InfoBar infoBar;
-
-	std::list<IndestructibleBox> indestructibleBoxs;
-	std::list<Box> boxs;
-	std::list<Bonus> bonus;
+	//map init
+	ground.loadBMP("data/Grass.bmp");
+	ground.setPosition(width / 2.f, height / 2.f, 0);
+	ground.setScale(width - 2, height - 2, 1);
+	ground.setTextureScale({height - 2.f, width - 2.f});
 
 	for (int i = 4; i < width - 4; i += 2) {
 		boxs.emplace_back(0.5f + i, 0.5f + 1);
@@ -89,26 +76,30 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 		}
 	}
 
-//	Bomb bomb(7.5f, 1.5f);
+	//pannel init
+	speedTex.loadBMP("Data/ExtraSpeed.bmp", true);
+	explosionRangeTex.loadBMP("Data/ExtraPower.bmp", true);
+	maxBombTex.loadBMP("Data/ExtraBomb.bmp", true);
 
-	InfoBar infoBar;
+	//Camera position
+	float cameraAngle = PI / 4;
 
-	Collision::CollisionDetector collisionDetector{};
+	window.setCameraAngle(cameraAngle);
 
-	window.setCameraPosition(width, height / 2.f, (width+height)/2.f + 4);
+	window.setCameraPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
 
-	window.setCameraLookAt(width / 2.f, height / 2.f, 0);
-
-	//window.setOrthoProjection(-width/2.f, width/2.f, -height/2.f, height/2.f, 1,20);
+	window.setCameraLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
 
 	bool endGmae = false, escape = false, pauseMenu = false;
 
+	//mainLoop
 	while(window.isOpen() && !endGmae) {
 
 		window.clear();
 
 		window.draw(ground);
 
+		//static objects
 		for (auto &ib : indestructibleBoxs)
 			window.draw(ib);
 
@@ -124,7 +115,6 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 		collisionDetector.update();
 
 		//evolutive objects :
-
 		for (auto i = boxs.begin(); i != boxs.end();) {
 			if (i->isDestroy()) {
 				bonus.emplace_back(i->position);
@@ -149,6 +139,7 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 
 		window.draw(player);
 
+		//side panel
 		ImGui::NewFrame();
 
 		ImGui::SetNextWindowPos({0, 0});
@@ -157,37 +148,43 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 					 ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 		ImGui::Text("Player 1");
-		ImGui::Text("Bombs : %u", player.getMaxBomb());
-		ImGui::Text("Explosion range : %.1f", player.getBombPower());
-		ImGui::Text("Run speed : %.1f", player.getMaxSpeed());
+		ImGui::Image(&maxBombTex, maxBombTex.getSize()); ImGui::SameLine();
+		ImGui::Text("%u", player.getMaxBomb());
+		ImGui::Image(&explosionRangeTex, explosionRangeTex.getSize()); ImGui::SameLine();
+		ImGui::Text("%.1f", player.getBombPower());
+		ImGui::Image(&speedTex, speedTex.getSize()); ImGui::SameLine();
+		ImGui::Text("%.1f", player.getMaxSpeed());
 
 		ImGui::End();
 
+		//pause menu
 		if (pauseMenu) {
-
+			ImGui::SetNextWindowPos(window.getSize()/2, 0, {0.5, 0.5});
 
 			ImGui::Begin("Pause", nullptr,
 						 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
-			ImGui::Text("Pause");
+			ImGui::Text("   Pause   ");
 
-			if (ImGui::Button("Resume")) {
+			if (ImGui::Button("Resume", {ImGui::GetContentRegionAvailWidth(), 0})) {
 				collisionDetector.unpause();
 				pauseMenu = false;
 			}
 
-			if (ImGui::Button("Main menu"))
+			if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0}))
 				endGmae = true;
 
 			ImGui::End();
 		}
 
+		//draw
 		window.drawImGUI();
 		window.display();
 
 		//if(!player.isAlive())
 		//	endGmae = true;
 
+		//check imput
 		if (keys[GL::ESCAPE] && !escape) {
 			escape = true;
 		} else if (!keys[GL::ESCAPE] && escape) {

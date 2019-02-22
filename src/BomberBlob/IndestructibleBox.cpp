@@ -7,5 +7,5 @@ IndestructibleBox::IndestructibleBox(float x, float y) : RectStatic(INDESTRUCTIB
 	setPosition(x, y, 0.5f);
 
 	loadBMP("data/IndestructibleBox.bmp");
-	setTextureScale(4);
+	setTextureScale({4.f, 4.f});
 }

@@ -26,7 +26,7 @@ Bonus::Bonus(Blob::Vec2f pos) : RectStatic(EXTRABOMB, this) {
 		loadBMP("data/ExtraBomb.bmp");
 	} else
 		destroyed = true;
-	setTextureScale(4);
+	setTextureScale({4.f, 4.f});
 }
 
 bool Bonus::update() {
