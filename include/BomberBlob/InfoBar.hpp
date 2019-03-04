@@ -1,7 +1,7 @@
 #ifndef BOMBERMAN_INFOBAR_HPP
 #define BOMBERMAN_INFOBAR_HPP
 
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <Blob/GL/Shape.hpp>
 
 #include <BomberBlob/Player.hpp>
 

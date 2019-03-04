@@ -148,11 +148,11 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 					 ImGuiWindowFlags_NoBringToFrontOnFocus);
 
 		ImGui::Text("Player 1");
-		ImGui::Image(&maxBombTex, maxBombTex.getSize()); ImGui::SameLine();
+		ImGui::Image(&maxBombTex, maxBombTex.getTextureSize()); ImGui::SameLine();
 		ImGui::Text("%u", player.getMaxBomb());
-		ImGui::Image(&explosionRangeTex, explosionRangeTex.getSize()); ImGui::SameLine();
+		ImGui::Image(&explosionRangeTex, explosionRangeTex.getTextureSize()); ImGui::SameLine();
 		ImGui::Text("%.1f", player.getBombPower());
-		ImGui::Image(&speedTex, speedTex.getSize()); ImGui::SameLine();
+		ImGui::Image(&speedTex, speedTex.getTextureSize()); ImGui::SameLine();
 		ImGui::Text("%.1f", player.getMaxSpeed());
 
 		ImGui::End();

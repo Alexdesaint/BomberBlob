@@ -1,9 +1,9 @@
 #ifndef PROJECT_EXTRABOMB_HPP
 #define PROJECT_EXTRABOMB_HPP
 
-#include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Shapes.hpp>
-#include <BlobEngine/Time.hpp>
+#include <Blob/Collision/CollisionDetector.hpp>
+#include <Blob/GL/Shapes.hpp>
+#include <Blob/Time.hpp>
 
 #include <BomberBlob/UserData.hpp>
 

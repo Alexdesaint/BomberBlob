@@ -1,7 +1,7 @@
 #ifndef BOMBERMAN_GAMEMENU_HPP
 #define BOMBERMAN_GAMEMENU_HPP
 
-#include <BlobEngine/BlobGL/Graphic.hpp>
+#include <Blob/GL/Graphic.hpp>
 
 class GameMenu {
 private:

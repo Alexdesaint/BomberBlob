@@ -4,9 +4,9 @@
 #include <BomberBlob/Bomb.hpp>
 #include <BomberBlob/Explosion.hpp>
 
-#include <BlobEngine/BlobGL/Shape.hpp>
+#include <Blob/GL/Shape.hpp>
 
-#include <BlobEngine/Time.hpp>
+#include <Blob/Time.hpp>
 
 class Player;
 

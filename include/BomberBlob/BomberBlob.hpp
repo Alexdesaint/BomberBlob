@@ -1,7 +1,7 @@
 #ifndef BOMBERMAN_BOMBERMAN_HPP
 #define BOMBERMAN_BOMBERMAN_HPP
 
-#include <BlobEngine/BlobGL/Graphic.hpp>
+#include <Blob/GL/Graphic.hpp>
 
 #include "BombManager.hpp"
 #include "IndestructibleBox.hpp"

@@ -1,8 +1,8 @@
 #ifndef BOMBERMAN_BOMB_HPP
 #define BOMBERMAN_BOMB_HPP
 
-#include <BlobEngine/Collision/CollisionDetector.hpp>
-#include <BlobEngine/BlobGL/Shapes.hpp>
+#include <Blob/Collision/CollisionDetector.hpp>
+#include <Blob/GL/Shapes.hpp>
 
 #include <BomberBlob/UserData.hpp>
 
