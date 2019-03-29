@@ -14,9 +14,3 @@ add_executable(BomberMan
 		)
 
 target_link_libraries(BomberMan Blob::GL Blob::Collision Blob::Geometrie) # -static -static-libgcc -static-libstdc++-lpthread)
-
-add_executable(Server Server.cpp)
-target_link_libraries(Server sfml-network)
-
-add_executable(Client Client.cpp)
-target_link_libraries(Client sfml-network)
