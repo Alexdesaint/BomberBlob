@@ -44,10 +44,10 @@ bool BombManager::update() {
 	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
 		player.bombPosed--;
 
-		exRI = new Explosion(bomb->position, Vec2f(0, 1), player.bombPower);
-		exLE = new Explosion(bomb->position, Vec2f(0, -1), player.bombPower);
-		exDO = new Explosion(bomb->position, Vec2f(1, 0), player.bombPower);
-		exUP = new Explosion(bomb->position, Vec2f(-1, 0), player.bombPower);
+        exRI = new Explosion(bomb->getPosition(), Vec2f(0, 1), player.bombPower);
+        exLE = new Explosion(bomb->getPosition(), Vec2f(0, -1), player.bombPower);
+        exDO = new Explosion(bomb->getPosition(), Vec2f(1, 0), player.bombPower);
+        exUP = new Explosion(bomb->getPosition(), Vec2f(-1, 0), player.bombPower);
 
 		addRenderable(exRI);
 		addRenderable(exLE);

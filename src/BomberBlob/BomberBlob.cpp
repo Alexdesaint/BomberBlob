@@ -117,7 +117,7 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 		//evolutive objects :
 		for (auto i = boxs.begin(); i != boxs.end();) {
 			if (i->isDestroy()) {
-				bonus.emplace_back(i->position);
+                bonus.emplace_back(i->getPosition());
 
 				i = boxs.erase(i);
 			}

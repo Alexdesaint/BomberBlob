@@ -20,7 +20,7 @@ public:
 
 	void postCollisionUpdate() final;
 
-	Reaction hit(int objectType, const void *objectData) final;
+    void hit(int objectType, Object &object) final;
 
 	bool isActive() const {
 		return active;

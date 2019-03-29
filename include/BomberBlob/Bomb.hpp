@@ -16,7 +16,7 @@ private:
 public:
 	explicit Bomb(Blob::Vec2f pos);
 
-	void hit(int objectType, const void *objectData) final;
+    void hit(int objectType, Object &object) final;
 
 	bool isDestroyed();
 };

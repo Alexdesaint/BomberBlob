@@ -13,7 +13,7 @@ private:
 public:
 	explicit Box(float x, float y);
 
-	void hit(int objectType, const void *objectData) final;
+    void hit(int objectType, Object &object) final;
 
 	bool isDestroy() const {
 		return destroyed;

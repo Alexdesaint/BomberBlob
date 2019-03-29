@@ -41,7 +41,7 @@ public:
 
 	void postCollisionUpdate() final;
 
-	Reaction hit(int objectType, const void *objectData) final;
+    void hit(int objectType, Object &object) final;
 
 	void setAction(Actions a, const bool *key) {
 		keys[a] = key;

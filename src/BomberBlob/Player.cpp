@@ -2,11 +2,9 @@
 
 using namespace Blob;
 
-Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic(PLAYER, this), bombs(bombs) {
-	position = {x, y};
-	size = {0.8f, 0.8f};
-
-	setPosition(x, y, 0.4f);
+Player::Player(float x, float y, std::list<BombManager> &bombs) : RectDynamic({x, y}, {0.8f, 0.8f}, PLAYER),
+                                                                  bombs(bombs) {
+    Cube::setPosition(x, y, 0.4f);
 	setScale(0.8f, 0.8f, 0.8f);
 
 	setColor(255, 255, 255);
@@ -34,7 +32,7 @@ void Player::preCollisionUpdate() {
 		speed.reset();
 
 	if (*keys[Actions::putBomb] && !onBomb && bombPosed < maxBomb) {
-		bombs.emplace_front(position, *this);
+        bombs.emplace_front(getPosition(), *this);
 		lastBomb = &bombs.front();
 		onBomb = true;
 		bombPosed++;
@@ -42,7 +40,7 @@ void Player::preCollisionUpdate() {
 }
 
 void Player::postCollisionUpdate() {
-	setPosition(position.x, position.y, 0.4f);
+    Cube::setPosition(getPosition(), 0.4f);
 
 	if (onBomb) {
 		Bomb *bomb = lastBomb->getBomb();
@@ -52,9 +50,10 @@ void Player::postCollisionUpdate() {
 	}
 }
 
-Reaction Player::hit(const int objectType, const void *objectData) {
-	if (onBomb && objectType == BOMB && objectData == lastBomb->getBomb()) {
-		return Reaction::IGNORE;
+void Player::hit(const int objectType, Object &object) {
+    if (onBomb && objectType == BOMB && &object == lastBomb->getBomb()) {
+        setReaction(IGNORE);
+        return;
 	}
 	if (objectType == EXTRABOMB) {
 		maxBomb++;
@@ -64,10 +63,11 @@ Reaction Player::hit(const int objectType, const void *objectData) {
 		bombPower++;
 	} else if (objectType == EXPLOSION) {
 		alive = false;
-		return Reaction::IGNORE;
-	}
+        setReaction(IGNORE);
+        return;
+    }
 
-	return Reaction::STOP;
+    setReaction(STOP);
 }
 
 float Player::getMaxSpeed() const {

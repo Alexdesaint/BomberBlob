@@ -7,11 +7,8 @@ std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dist(0, 5);
 
-Bonus::Bonus(Blob::Vec2f pos) : RectStatic(EXTRABOMB, this) {
-	position = pos;
-	size = {0.4f, 0.4f};
-
-	setPosition(pos.x, pos.y, 0.2f);
+Bonus::Bonus(Blob::Vec2f pos) : RectStatic(pos, {0.4f, 0.4f}, EXTRABOMB) {
+    Cube::setPosition(pos.x, pos.y, 0.2f);
 	setScale(0.4f, 0.4f, 0.4f);
 
 	float val = dist(mt);
@@ -33,7 +30,7 @@ bool Bonus::update() {
 	return destroyed;
 }
 
-void Bonus::hit(int objectType, const void *objectData) {
+void Bonus::hit(int objectType, Object &object) {
 	if (objectType == PLAYER) {
 		destroyed = true;
 	}
