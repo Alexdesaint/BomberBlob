@@ -15,6 +15,6 @@ addons:
       - libxi-dev
       - libstdc++-7-dev
 before_script:
-  - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release  
+  - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
 script:
-- cmake --build build
+  - cmake --build build
