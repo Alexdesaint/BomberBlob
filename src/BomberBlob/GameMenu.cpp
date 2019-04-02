@@ -11,8 +11,8 @@ using namespace Blob::GL;
 GameMenu::GameMenu(Graphic &window) : window(window) {
 
 	ImGuiIO &io = ImGui::GetIO();
-	ImFont *font1 = io.Fonts->AddFontFromFileTTF("Data/fonts/PetMe.ttf", 16.f);
-	ImFont *font2 = io.Fonts->AddFontFromFileTTF("Data/fonts/PetMe128.ttf", 48.f);
+	ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
+	ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
 
 	ImGui::GetIO().FontDefault = font1;
 	window.rebuildFontImGUI();

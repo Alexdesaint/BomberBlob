@@ -26,7 +26,7 @@ void Explosion::hit(int objectType, Object &object) {
 		active = false;
 }
 
-bool Explosion::moove() {
+bool Explosion::keepMoving() {
     if ((positionInitial - getPosition()).length2() > distanceMax * distanceMax) {
 		active = false;
 		return false;

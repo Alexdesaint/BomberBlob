@@ -72,14 +72,14 @@ BomberBlob::BomberBlob(GL::Graphic &window) {
 
 	for (int i = 2; i < width - 2; i += 2) {
 		for (int j = 2; j < height - 2; j += 2) {
-			indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j);
+			indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j, 0.8);
 		}
 	}
 
 	//pannel init
-	speedTex.loadBMP("Data/ExtraSpeed.bmp", true);
-	explosionRangeTex.loadBMP("Data/ExtraPower.bmp", true);
-	maxBombTex.loadBMP("Data/ExtraBomb.bmp", true);
+	speedTex.loadBMP("data/ExtraSpeed.bmp", true);
+	explosionRangeTex.loadBMP("data/ExtraPower.bmp", true);
+	maxBombTex.loadBMP("data/ExtraBomb.bmp", true);
 
 	//Camera position
 	float cameraAngle = PI / 4;

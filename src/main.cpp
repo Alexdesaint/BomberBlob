@@ -13,7 +13,7 @@ int main() {
 		(GameMenu(graphic));
 
 	} catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
+		std::cout << "Game Error :" << std::endl << e.what() << std::endl;
 	}
 	return 0;
 }

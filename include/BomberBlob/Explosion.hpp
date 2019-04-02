@@ -16,7 +16,7 @@ private:
 public:
 	Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax);
 
-	bool moove() final;
+	bool keepMoving() final;
 
 	void postCollisionUpdate() final;
 

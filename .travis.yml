@@ -1,20 +1,49 @@
 language: cpp
-compiler:
-  - clang
-sudo: false
-dist: trusty
+script:
+- cmake --build build --config Release
 addons:
   apt:
     sources:
-      - ubuntu-toolchain-r-test
+    - ubuntu-toolchain-r-test
     packages:
-      - libglm-dev
-      - libxrandr-dev
-      - libxinerama-dev
-      - libxcursor-dev
-      - libxi-dev
-      - libstdc++-7-dev
-before_script:
-  - cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
-script:
-  - cmake --build build
+    - libxrandr-dev
+    - libxinerama-dev
+    - libxcursor-dev
+    - libxi-dev
+    - libstdc++-7-dev
+matrix:
+  include:
+  - os: linux
+    compiler: clang
+    before_script:
+    - cmake -H. -Bbuild
+  - os: linux
+    compiler: gcc
+    before_install:
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo apt-get update -qq
+    install:
+    - sudo apt-get install -qq g++-6
+    - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-6 90
+    before_script:
+    - cmake -H. -Bbuild
+  - os: windows
+    compiler: clang
+    before_script:
+    - choco install make
+    - export CC=clang-cl
+    - cmake -H. -Bbuild -G"Unix Makefiles"
+  - os: windows
+    before_script:
+    - cmake -H. -Bbuild -G"Visual Studio 15 2017 Win64"
+  allow_failures:
+  - os: windows
+    compiler: clang
+deploy:
+  provider: releases
+  api_key:
+    secure: RqW7T+DNzlCNu+mlmkabNJ7iDcKoc2gbmDmtlfw9CpbsPup5gEckrFVtTb9wk2W0qHkxILAmAjJ1whL62NYo2Kg+9vdTGKCikymv6kUHPYzAxphtUNd6NsP0teYA6tQ+ycF9GuOu+7/t3YK+jpF4vFPhU4IrHS3reXqqnFEb2NWJilxrJF+sQ5loFgwNv2N4GXJcSEFlEr87J90duqQU+ExmxABeHJ4sS0Y2zACaeDUmPMedO3HMEs0Eyw/kA66m+Onuz01cWCPmoMsFIY/oVNGifbzOpp9+km1osXD+XEAHQwFVkRF5ltH+wbf/cYJ6QOxw2UNWnhmKZt0JVl0UmR9NYjOhsIG8JTvs8EGepSzNYkPlvETb4DFAPRcyvP3RJ6lmN7IgsFJh8a5GBOJOUJpbxpXfntJeykkg3E1kcxW8RzSQnv4JuT3Z/L1yroJyA3QqnjvNHp+Em37SZVNmla8kbsydwechmFvqhzafrM2CAE7/uT6iXHsuCwI4Ru0YL6Ws0d+zH2R6NfqfUOMv9NHW+veSxZiCUESI/I2FsiE3eIbv9+gBz/SXY6z7DeV9dcZ7GKrZ/VlawW6/0bWXgPuI8UR0DVDN52/0InWXVSGsTS+KQGQXB120Re4V0n5Y1UJ0zH9hqGB45iN2V0K9j40MmD4oNMyXikinE/C0JSQ=
+  file_glob: true
+  file: bin/*
+  on:
+    tags: true

@@ -11,7 +11,7 @@ private:
 	bool destroyed = false;
 
 public:
-	IndestructibleBox(float x, float y);
+	IndestructibleBox(float x, float y, float scale = 1.f);
 };
 
 #endif //BOMBERMAN_INDESTRUCTIBLEBOX_HPP

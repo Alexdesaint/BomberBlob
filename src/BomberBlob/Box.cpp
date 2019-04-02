@@ -4,7 +4,7 @@ Box::Box(float x, float y) : RectStatic({x, y}, {0.8f, 0.8f}, BOX) {
     Cube::setPosition(x, y, 0.4f);
 	setScale(0.8f, 0.8f, 0.8f);
 
-	loadBMP("data/box.bmp");
+	loadBMP("data/Box.bmp");
 	setTextureScale({4.f, 4.f});
 }
 

@@ -32,10 +32,22 @@ void Player::preCollisionUpdate() {
 		speed.reset();
 
 	if (*keys[Actions::putBomb] && !onBomb && bombPosed < maxBomb) {
-        bombs.emplace_front(getPosition(), *this);
-		lastBomb = &bombs.front();
-		onBomb = true;
-		bombPosed++;
+	    auto here = getImtemsHere(getPosition());
+
+	    bool noBomb = true;
+	    for(const auto &i : here) {
+	        if(i->getObjectType() == BOMB) {
+	            noBomb = false;
+                break;
+	        }
+	    }
+
+	    if(noBomb) {
+            bombs.emplace_front(getPosition().cast<int>().cast<float>() + 0.5f, *this);
+            lastBomb = &bombs.front();
+            onBomb = true;
+            bombPosed++;
+        }
 	}
 }
 
