@@ -49,3 +49,5 @@ deploy:
   file: bin/*
   on:
     tags: true
+    repo: alexdesaint/BomberBlob
+    all_branches: true
