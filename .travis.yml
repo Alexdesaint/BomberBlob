@@ -44,6 +44,8 @@ matrix:
   allow_failures:
     - os: windows
       compiler: clang
+    - os: linux
+      compiler: gcc
 before_deploy:
   - if [ -e "bin/Release" ]; then 7z a $EXPORTNAME.zip data/ ./bin/Release/*; else 7z a $EXPORTNAME.zip data/ ./bin/*; fi
 deploy:
