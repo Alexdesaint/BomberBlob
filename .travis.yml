@@ -15,10 +15,12 @@ addons:
 matrix:
   include:
     - os: linux
+      env: EXPORTNAME=linux_clang
       compiler: clang
       before_script:
         - cmake -H. -Bbuild
     - os: linux
+      env: EXPORTNAME=linux_gcc
       compiler: gcc
       before_install:
         - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
@@ -29,19 +31,21 @@ matrix:
       before_script:
         - cmake -H. -Bbuild
     - os: windows
+      env: EXPORTNAME=windows_clang
       compiler: clang
       before_script:
         - choco install make
         - export CC=clang-cl
         - cmake -H. -Bbuild -G"Unix Makefiles"
     - os: windows
+      env: EXPORTNAME=windows_VisualStudio
       before_script:
         - cmake -H. -Bbuild -G"Visual Studio 15 2017 Win64"
   allow_failures:
     - os: windows
       compiler: clang
 before_deploy:
-  - if [ -e "bin/Release" ]; then 7z a $TRAVIS_OS_NAME.zip data/ ./bin/Release*; else 7z a $TRAVIS_OS_NAME.zip data/ ./bin/*; fi
+  - if [ -e "bin/Release" ]; then 7z a $EXPORTNAME.zip data/ ./bin/Release/*; else 7z a $EXPORTNAME.zip data/ ./bin/*; fi
 deploy:
   provider: releases
   api_key:
