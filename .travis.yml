@@ -41,9 +41,7 @@ matrix:
     - os: windows
       compiler: clang
 before_deploy:
-  - mv bin/Release/* bin/
-  - rm bin/Release
-  - 7z a $TRAVIS_OS_NAME.zip data/ ./bin/*
+  - if [ -e "bin/Release" ]; then 7z a $TRAVIS_OS_NAME.zip data/ ./bin/Release*; else 7z a $TRAVIS_OS_NAME.zip data/ ./bin/*; fi
 deploy:
   provider: releases
   api_key:
