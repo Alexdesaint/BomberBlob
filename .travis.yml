@@ -50,7 +50,7 @@ deploy:
   provider: releases
   api_key:
     secure: RqW7T+DNzlCNu+mlmkabNJ7iDcKoc2gbmDmtlfw9CpbsPup5gEckrFVtTb9wk2W0qHkxILAmAjJ1whL62NYo2Kg+9vdTGKCikymv6kUHPYzAxphtUNd6NsP0teYA6tQ+ycF9GuOu+7/t3YK+jpF4vFPhU4IrHS3reXqqnFEb2NWJilxrJF+sQ5loFgwNv2N4GXJcSEFlEr87J90duqQU+ExmxABeHJ4sS0Y2zACaeDUmPMedO3HMEs0Eyw/kA66m+Onuz01cWCPmoMsFIY/oVNGifbzOpp9+km1osXD+XEAHQwFVkRF5ltH+wbf/cYJ6QOxw2UNWnhmKZt0JVl0UmR9NYjOhsIG8JTvs8EGepSzNYkPlvETb4DFAPRcyvP3RJ6lmN7IgsFJh8a5GBOJOUJpbxpXfntJeykkg3E1kcxW8RzSQnv4JuT3Z/L1yroJyA3QqnjvNHp+Em37SZVNmla8kbsydwechmFvqhzafrM2CAE7/uT6iXHsuCwI4Ru0YL6Ws0d+zH2R6NfqfUOMv9NHW+veSxZiCUESI/I2FsiE3eIbv9+gBz/SXY6z7DeV9dcZ7GKrZ/VlawW6/0bWXgPuI8UR0DVDN52/0InWXVSGsTS+KQGQXB120Re4V0n5Y1UJ0zH9hqGB45iN2V0K9j40MmD4oNMyXikinE/C0JSQ=
-  file: $TRAVIS_OS_NAME.zip
+  file: $EXPORTNAME.zip
   skip_cleanup: true
   on:
     tags: true
