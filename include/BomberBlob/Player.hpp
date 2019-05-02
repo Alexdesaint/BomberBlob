@@ -24,18 +24,22 @@ public:
 	};
 private:
 	float maxSpeed = 2.5f, bombPower = 2.f;
-	bool alive = true, onBomb = false;
+	bool alive = true, onBomb = false, connected = false;
+
+	std::string name;
 
 	unsigned int maxBomb = 1, bombPosed = 0;
 
-	std::array<const bool*, Actions::numOfActions> keys;
+	const bool* keys[Actions::numOfActions];
 
 	std::list<BombManager> &bombs;
 
 	BombManager *lastBomb;
+
+	Blob::GL::Texture texture;
 public:
 
-	Player(float x, float y, std::list<BombManager> &bombs);
+	Player(float x, float y, std::list<BombManager> &bombs, std::string name);
 
 	void preCollisionUpdate() final;
 
@@ -56,6 +60,16 @@ public:
 	float getBombPower() const;
 
 	unsigned int getMaxBomb() const;
+
+    bool isConnected() const;
+
+    void setConnected(bool connected);
+
+    const std::string &getName() const;
+
+    void setName(const std::string &name);
+
+    void drawInfo() const;
 };
 
 

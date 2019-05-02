@@ -14,7 +14,7 @@ private:
 	bool active = true;
 
 public:
-	Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax);
+	Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax, Blob::GL::Texture &texture);
 
 	bool keepMoving() final;
 

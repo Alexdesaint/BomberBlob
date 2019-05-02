@@ -11,7 +11,7 @@ private:
 	bool destroyed = false;
 
 public:
-	IndestructibleBox(float x, float y, float scale = 1.f);
+	IndestructibleBox(float x, float y, Blob::GL::Texture &texture, float scale = 1.f);
 };
 
 #endif //BOMBERMAN_INDESTRUCTIBLEBOX_HPP

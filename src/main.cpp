@@ -1,37 +1,18 @@
 #include <iostream>
 
-#include <BomberBlob/GameMenu.hpp>
-
-using namespace Blob;
-using namespace Blob::GL;
+#include <BomberBlob/BomberBlob.hpp>
 
 int main() {
 
-	try {
-		Graphic graphic(false);
+    try {
+        Blob::GL::Graphic graphic(false);
 
-		(GameMenu(graphic));
+        (BomberBlob(graphic));
 
-	} catch (std::exception &e) {
-		std::cout << "Game Error :" << std::endl << e.what() << std::endl;
-	}
-	return 0;
+    } catch (Blob::Exception &e) {
+        std::cout << "Game Error :" << std::endl << e.what() << std::endl;
+    } catch (std::exception &e) {
+        std::cout << "Game Error :" << std::endl << e.what() << std::endl;
+    }
+    return 0;
 }
-
-/*
-int main() {
-	sf::ContextSettings settings;
-	settings.antialiasingLevel = 0;
-
-	unsigned int width = 1920, height = 1080;
-
-	sf::RenderWindow window(sf::VideoMode(width, height), "BomberMan", sf::Style::Default, settings);
-
-	window.setFramerateLimit(60);
-	window.setKeyRepeatEnabled(false);
-
-	GameMenu gameMenu(window);
-
-	return 0;
-}
- */

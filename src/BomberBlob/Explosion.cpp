@@ -1,6 +1,6 @@
 #include <BomberBlob/Explosion.hpp>
 
-Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax) :
+Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax, Blob::GL::Texture &texture) :
         RectDynamic(positionInitial, {0.4f, 0.4f}, EXPLOSION),
         distanceMax(distanceMax),
         positionInitial(positionInitial),
@@ -12,7 +12,7 @@ Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float 
     Cube::setPosition(positionInitial.x, positionInitial.y, 0.2f);
 	setScale(0.4f, 0.4f, 0.4f);
 
-	loadBMP("data/Explosion.bmp");
+	setTexture(texture);
 
     setReaction(IGNORE);
 }

@@ -14,7 +14,7 @@ private:
 	bool destroyed = false;
 
 public:
-	explicit Bomb(Blob::Vec2f pos);
+	explicit Bomb(Blob::Vec2f pos, Blob::GL::Texture &texture);
 
     void hit(int objectType, Object &object) final;
 

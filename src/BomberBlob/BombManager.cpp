@@ -5,8 +5,16 @@
 using namespace Blob;
 using namespace Blob::Time;
 
+
+Blob::GL::Texture BombManager::bombTexture, BombManager::explostionTexture;
+
+void BombManager::initTexture() {
+    bombTexture.loadBMP("data/Bomb.bmp");
+    explostionTexture.loadBMP("data/Explosion.bmp");
+}
+
 BombManager::BombManager(Blob::Vec2f pos, Player &player) : player(player) {
-	bomb = new Bomb(pos);
+	bomb = new Bomb(pos, bombTexture);
 
 	addRenderable(bomb);
 
@@ -44,10 +52,10 @@ bool BombManager::update() {
 	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
 		player.bombPosed--;
 
-        exRI = new Explosion(bomb->getPosition(), Vec2f(0, 1), player.bombPower);
-        exLE = new Explosion(bomb->getPosition(), Vec2f(0, -1), player.bombPower);
-        exDO = new Explosion(bomb->getPosition(), Vec2f(1, 0), player.bombPower);
-        exUP = new Explosion(bomb->getPosition(), Vec2f(-1, 0), player.bombPower);
+        exRI = new Explosion(bomb->getPosition(), Vec2f(0, 1), player.bombPower, explostionTexture);
+        exLE = new Explosion(bomb->getPosition(), Vec2f(0, -1), player.bombPower, explostionTexture);
+        exDO = new Explosion(bomb->getPosition(), Vec2f(1, 0), player.bombPower, explostionTexture);
+        exUP = new Explosion(bomb->getPosition(), Vec2f(-1, 0), player.bombPower, explostionTexture);
 
 		addRenderable(exRI);
 		addRenderable(exLE);

@@ -2,12 +2,12 @@
 
 #include <BomberBlob/Player.hpp>
 
-Bomb::Bomb(Blob::Vec2f pos) : RectStatic(pos, {0.4f, 0.4f}, BOMB) {
+Bomb::Bomb(Blob::Vec2f pos, Blob::GL::Texture &texture) : RectStatic(pos, {0.4f, 0.4f}, BOMB) {
 
     Cube::setPosition(pos.x, pos.y, 0.2f);
 	setScale(0.4f, 0.4f, 0.4f);
 
-	loadBMP("data/Bomb.bmp");
+	setTexture(texture);
 }
 
 bool Bomb::isDestroyed() {

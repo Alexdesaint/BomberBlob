@@ -11,7 +11,7 @@ private:
 	bool destroyed = false;
 
 public:
-	explicit Box(float x, float y);
+	explicit Box(float x, float y, Blob::GL::Texture &texture);
 
     void hit(int objectType, Object &object) final;
 

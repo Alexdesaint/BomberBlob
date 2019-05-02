@@ -8,7 +8,6 @@
 #include <BomberBlob/Player.hpp>
 #include <BomberBlob/IndestructibleBox.hpp>
 #include <BomberBlob/Box.hpp>
-#include <BomberBlob/InfoBar.hpp>
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bonus.hpp>
 
@@ -16,187 +15,266 @@
 
 using namespace Blob;
 
-BomberBlob::BomberBlob(GL::Graphic &window) {
+BomberBlob::BomberBlob(Blob::GL::Graphic &window) :
+        window(window),
+        width(21),
+        height(15) {
+    ImGuiIO &io = ImGui::GetIO();
+    ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
+    ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
 
-	//player init
-	Player player(1.5f, 1.5f, bombs);
-	player.setAction(Player::right, &keys[GL::Key::RIGHT]);
-	player.setAction(Player::left, &keys[GL::Key::LEFT]);
-	player.setAction(Player::up, &keys[GL::Key::UP]);
-	player.setAction(Player::down, &keys[GL::Key::DOWN]);
-	player.setAction(Player::putBomb, &keys[GL::Key::SPACE]);
+    ImGui::GetIO().FontDefault = font1;
+    window.rebuildFontImGUI();
 
-	//map init
-	ground.loadBMP("data/Grass.bmp");
-	ground.setPosition(width / 2.f, height / 2.f, 0);
-	ground.setScale(width - 2, height - 2, 1);
-	ground.setTextureScale({height - 2.f, width - 2.f});
 
-	for (int i = 4; i < width - 4; i += 2) {
-		boxs.emplace_back(0.5f + i, 0.5f + 1);
-		boxs.emplace_back(0.5f + i, height - 0.5f - 1);
-	}
+    while (window.isOpen()) {
+        window.clear();
 
-	for (int i = 4; i < height - 4; i += 2) {
-		boxs.emplace_back(0.5f + 1, 0.5f + i);
-		boxs.emplace_back(width - 0.5f - 1, 0.5f + i);
-	}
+        ImGui::NewFrame();
 
-	for (int i = 3; i < width - 3; i += 2) {
-		for (int j = 2; j < height - 2; j += 2) {
-			boxs.emplace_back(0.5 + i, 0.5 + j);
-		}
-	}
+        //ImGui::ShowDemoWindow();
 
-	for (int i = 2; i < width - 2; i += 2) {
-		for (int j = 3; j < height - 3; j += 2) {
-			boxs.emplace_back(0.5f + i, 0.5 + j);
-		}
-	}
+        ImGui::PushFont(font2);
 
-	for (int i = 0; i < width; i += 1) {
-		indestructibleBoxs.emplace_back(0.5f + i, 0.5f);
-	}
+        ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
 
-	for (int i = 0; i < width; i += 1) {
-		indestructibleBoxs.emplace_back(0.5f + i, height - 0.5f);
-	}
+        ImGui::Begin("main", nullptr,
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
-	for (int i = 1; i < height - 1; i += 1) {
-		indestructibleBoxs.emplace_back(0.5f, 0.5f + i);
-	}
+        ImGui::Text("BOMBERBLOB");
 
-	for (int i = 1; i < height - 1; i += 1) {
-		indestructibleBoxs.emplace_back(width - 0.5f, 0.5f + i);
-	}
+        ImGui::PopFont();
+        ImGui::PushFont(font1);
 
-	for (int i = 2; i < width - 2; i += 2) {
-		for (int j = 2; j < height - 2; j += 2) {
-			indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j, 0.8);
-		}
-	}
+        ImGui::Text("Controllers connected : %zu", Blob::Controls::controllers.size());
 
-	//pannel init
-	speedTex.loadBMP("data/ExtraSpeed.bmp", true);
-	explosionRangeTex.loadBMP("data/ExtraPower.bmp", true);
-	maxBombTex.loadBMP("data/ExtraBomb.bmp", true);
+        std::vector<const char *> commands = {"None", "Keyboard"};
 
-	//Camera position
-	float cameraAngle = PI / 4;
+        for (auto c : Blob::Controls::controllers) {
+            commands.push_back(c->name.c_str());
+        }
 
-	window.setCameraAngle(cameraAngle);
+        std::string names[4] = {"Player 1", "Player 2", "Player 3", "Player 4"};
+        float xpos[4] = {1.5f, width - 1.5f, width - 1.5f, 1.5f};
+        float ypos[4] = {1.5f, height - 1.5f, 1.5f, height - 1.5f};
+        static int selected[4] = {0, 0, 0, 0};
 
-	window.setCameraPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
+        for (int i = 0; i < 4; i++) {
+            if (ImGui::Combo(names[i].c_str(), &selected[i], commands.data(), commands.size())) {
+                auto it = players.find(i);
 
-	window.setCameraLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
+                switch (selected[i]) {
+                    case 0:
+                        if (it != players.end())
+                            players.erase(it);
+                        break;
+                    case 1:
+                        if (it == players.end())
+                            it = players.emplace(std::piecewise_construct,
+                                                 std::forward_as_tuple(i),
+                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i])).first;
+                        it->second.setAction(Player::right, &Controls::Keys::RIGHT);
+                        it->second.setAction(Player::left, &Controls::Keys::LEFT);
+                        it->second.setAction(Player::up, &Controls::Keys::UP);
+                        it->second.setAction(Player::down, &Controls::Keys::DOWN);
+                        it->second.setAction(Player::putBomb, &Controls::Keys::SPACE);
+                        break;
+                    default:
+                        if (it == players.end())
+                            it = players.emplace(std::piecewise_construct,
+                                                 std::forward_as_tuple(i),
+                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i])).first;
 
-	bool endGmae = false, escape = false, pauseMenu = false;
+                        int contrl = selected[i] - 2;
 
-	//mainLoop
-	while(window.isOpen() && !endGmae) {
+                        if (contrl >= Blob::Controls::controllers.size())
+                            players.erase(it);
+                        else {
 
-		window.clear();
+                        }
+                        break;
+                }
+            }
+        }
 
-		window.draw(ground);
+        bool start = ImGui::Button("Start", {ImGui::GetContentRegionAvailWidth(), 0});
+        //ImGui::PushItemWidth(ImGui::GetWindowWidth());
+        if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0}))
+            window.close();
+        //ImGui::PopItemWidth();
+        ImGui::End();
 
-		//static objects
-		for (auto &ib : indestructibleBoxs)
-			window.draw(ib);
+        ImGui::PopFont();
+        window.drawImGUI();
+        window.display();
 
-		for (auto i = bombs.begin(); i != bombs.end();) {
-			if (i->update()) {
-				i = bombs.erase(i);
-			} else {
-				window.draw(*i);
-				i++;
-			}
-		}
+        if (start && !players.empty()) {
+            gameLoop();
+        }
+    }
+}
 
-		collisionDetector.update();
+void BomberBlob::gameLoop() {
 
-		//evolutive objects :
-		for (auto i = boxs.begin(); i != boxs.end();) {
-			if (i->isDestroy()) {
+    Bonus::initTexture();
+    BombManager::initTexture();
+
+    //map init
+    Blob::GL::Texture groundTexture("data/Grass.bmp"),
+            boxTexture("data/Box.bmp"),
+            indestructibleBoxTexture("data/IndestructibleBox.bmp");
+
+    ground.setTexture(groundTexture);
+    ground.setPosition(width / 2.f, height / 2.f, 0);
+    ground.setScale(width - 2, height - 2, 1);
+    ground.setTextureScale({height - 2.f, width - 2.f});
+
+    for (int i = 4; i < width - 4; i += 2) {
+        boxs.emplace_back(0.5f + i, 0.5f + 1, boxTexture);
+        boxs.emplace_back(0.5f + i, height - 0.5f - 1, boxTexture);
+    }
+
+    for (int i = 4; i < height - 4; i += 2) {
+        boxs.emplace_back(0.5f + 1, 0.5f + i, boxTexture);
+        boxs.emplace_back(width - 0.5f - 1, 0.5f + i, boxTexture);
+    }
+
+    for (int i = 3; i < width - 3; i += 2) {
+        for (int j = 2; j < height - 2; j += 2) {
+            boxs.emplace_back(0.5 + i, 0.5 + j, boxTexture);
+        }
+    }
+
+    for (int i = 2; i < width - 2; i += 2) {
+        for (int j = 3; j < height - 3; j += 2) {
+            boxs.emplace_back(0.5f + i, 0.5 + j, boxTexture);
+        }
+    }
+
+    for (int i = 0; i < width; i++) {
+        indestructibleBoxs.emplace_back(0.5f + i, 0.5f, indestructibleBoxTexture);
+        indestructibleBoxs.emplace_back(0.5f + i, height - 0.5f, indestructibleBoxTexture);
+    }
+
+    for (int i = 1; i < height - 1; i++) {
+        indestructibleBoxs.emplace_back(0.5f, 0.5f + i, indestructibleBoxTexture);
+        indestructibleBoxs.emplace_back(width - 0.5f, 0.5f + i, indestructibleBoxTexture);
+    }
+
+    for (int i = 2; i < width - 2; i += 2) {
+        for (int j = 2; j < height - 2; j += 2) {
+            indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j, indestructibleBoxTexture, 0.8);
+        }
+    }
+
+    //Camera position
+    float cameraAngle = PI / 4;
+
+    window.setCameraAngle(cameraAngle);
+
+    window.setCameraPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
+
+    window.setCameraLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
+
+    bool endGmae = false, escape = false, pauseMenu = false;
+
+    //mainLoop
+    while (window.isOpen() && !endGmae) {
+
+        window.clear();
+
+        window.draw(ground);
+
+        //static objects
+        for (auto &ib : indestructibleBoxs)
+            window.draw(ib);
+
+        for (auto i = bombs.begin(); i != bombs.end();) {
+            if (i->update()) {
+                i = bombs.erase(i);
+            } else {
+                window.draw(*i);
+                i++;
+            }
+        }
+
+        collisionDetector.update();
+
+        //evolutive objects :
+        for (auto i = boxs.begin(); i != boxs.end();) {
+            if (i->isDestroy()) {
                 bonus.emplace_back(i->getPosition());
 
-				i = boxs.erase(i);
-			}
-			else {
-				window.draw(*i);
-				i++;
-			}
-		}
+                i = boxs.erase(i);
+            } else {
+                window.draw(*i);
+                i++;
+            }
+        }
 
-		for (auto i = bonus.begin(); i != bonus.end();) {
-			if (i->update()) {
-				i = bonus.erase(i);
-			}
-			else {
-				window.draw(*i);
-				i++;
-			}
-		}
+        for (auto i = bonus.begin(); i != bonus.end();) {
+            if (i->update()) {
+                i = bonus.erase(i);
+            } else {
+                window.draw(*i);
+                i++;
+            }
+        }
 
-		window.draw(player);
+        for (const auto &p : players)
+            window.draw(p.second);
 
-		//side panel
-		ImGui::NewFrame();
+        ImGui::NewFrame();
+        ImGui::SetNextWindowPos({0, 0});
+        ImGui::Begin("InfoP1", nullptr,
+                     ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
+                     ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-		ImGui::SetNextWindowPos({0, 0});
-		ImGui::Begin("InfoP1", nullptr,
-					 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
-					 ImGuiWindowFlags_NoBringToFrontOnFocus);
+        for (const auto &p : players)
+            p.second.drawInfo();
 
-		ImGui::Text("Player 1");
-		ImGui::Image(&maxBombTex, maxBombTex.getTextureSize()); ImGui::SameLine();
-		ImGui::Text("%u", player.getMaxBomb());
-		ImGui::Image(&explosionRangeTex, explosionRangeTex.getTextureSize()); ImGui::SameLine();
-		ImGui::Text("%.1f", player.getBombPower());
-		ImGui::Image(&speedTex, speedTex.getTextureSize()); ImGui::SameLine();
-		ImGui::Text("%.1f", player.getMaxSpeed());
+        ImGui::End();
 
-		ImGui::End();
+        //pause menu
+        if (pauseMenu) {
+            ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
 
-		//pause menu
-		if (pauseMenu) {
-			ImGui::SetNextWindowPos(window.getSize()/2, 0, {0.5, 0.5});
+            ImGui::Begin("Pause", nullptr,
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
-			ImGui::Begin("Pause", nullptr,
-						 ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+            ImGui::Text("   Pause   ");
 
-			ImGui::Text("   Pause   ");
+            if (ImGui::Button("Resume", {ImGui::GetContentRegionAvailWidth(), 0})) {
+                collisionDetector.unpause();
+                pauseMenu = false;
+            }
 
-			if (ImGui::Button("Resume", {ImGui::GetContentRegionAvailWidth(), 0})) {
-				collisionDetector.unpause();
-				pauseMenu = false;
-			}
+            if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0}))
+                endGmae = true;
 
-			if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0}))
-				endGmae = true;
+            ImGui::End();
+        }
 
-			ImGui::End();
-		}
+        //draw
+        window.drawImGUI();
+        window.display();
 
-		//draw
-		window.drawImGUI();
-		window.display();
+        //if(!player.isAlive())
+        //	endGmae = true;
 
-		//if(!player.isAlive())
-		//	endGmae = true;
-
-		//check imput
-		if (keys[GL::ESCAPE] && !escape) {
-			escape = true;
-		} else if (!keys[GL::ESCAPE] && escape) {
-			//endGmae = true;
-			escape = false;
-			if (pauseMenu) {
-				pauseMenu = false;
-				collisionDetector.unpause();
-			} else {
-				pauseMenu = true;
-				collisionDetector.pause();
-			}
-		}
-	}
+        //check imput
+        if (Controls::Keys::ESCAPE && !escape) {
+            escape = true;
+        } else if (!Controls::Keys::ESCAPE && escape) {
+            //endGmae = true;
+            escape = false;
+            if (pauseMenu) {
+                pauseMenu = false;
+                collisionDetector.unpause();
+            } else {
+                pauseMenu = true;
+                collisionDetector.pause();
+            }
+        }
+    }
 }

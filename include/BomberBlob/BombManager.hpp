@@ -21,12 +21,16 @@ private:
 
 	Player &player;
 
+    static Blob::GL::Texture bombTexture, explostionTexture;
+
 public:
 	explicit BombManager(Blob::Vec2f pos, Player &player);
 
 	Bomb *getBomb() const;
 
 	bool update();
+
+	static void initTexture();
 
 	~BombManager();
 };

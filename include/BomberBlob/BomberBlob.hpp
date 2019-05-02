@@ -7,14 +7,16 @@
 #include "IndestructibleBox.hpp"
 #include "Box.hpp"
 #include "Bonus.hpp"
+#include "Player.hpp"
 
 class BomberBlob {
 private:
+    Blob::GL::Graphic &window;
+
 	std::list<BombManager> bombs;
+    std::unordered_map<int, Player> players;
 
-	const std::array<bool, Blob::GL::Key::KeyCount> &keys = Blob::GL::Graphic::getKeys();
-
-	int width = 21, height = 15;
+	int width, height;
 
 	Blob::GL::Shapes::Plane ground;
 
@@ -22,12 +24,12 @@ private:
 	std::list<Box> boxs;
 	std::list<Bonus> bonus;
 
-	Blob::GL::Texture speedTex,	explosionRangeTex, maxBombTex;
-
 	Blob::Collision::CollisionDetector collisionDetector{};
 
 public:
-	explicit BomberBlob(Blob::GL::Graphic &window);
+    explicit BomberBlob(Blob::GL::Graphic &window);
+
+	void gameLoop();
 };
 
 #endif //BOMBERMAN_BOMBERMAN_HPP
