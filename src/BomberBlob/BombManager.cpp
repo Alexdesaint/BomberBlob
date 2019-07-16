@@ -5,16 +5,8 @@
 using namespace Blob;
 using namespace Blob::Time;
 
-
-Blob::GL::Texture BombManager::bombTexture, BombManager::explostionTexture;
-
-void BombManager::initTexture() {
-    bombTexture.loadBMP("data/Bomb.bmp");
-    explostionTexture.loadBMP("data/Explosion.bmp");
-}
-
-BombManager::BombManager(Blob::Vec2f pos, Player &player) : player(player) {
-	bomb = new Bomb(pos, bombTexture);
+BombManager::BombManager(Blob::Vec2f pos, Player &player, Textures &textures) : player(player), textures(textures) {
+	bomb = new Bomb(pos, textures.bomb);
 
 	addRenderable(bomb);
 
@@ -52,10 +44,10 @@ bool BombManager::update() {
 	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
 		player.bombPosed--;
 
-        exRI = new Explosion(bomb->getPosition(), Vec2f(0, 1), player.bombPower, explostionTexture);
-        exLE = new Explosion(bomb->getPosition(), Vec2f(0, -1), player.bombPower, explostionTexture);
-        exDO = new Explosion(bomb->getPosition(), Vec2f(1, 0), player.bombPower, explostionTexture);
-        exUP = new Explosion(bomb->getPosition(), Vec2f(-1, 0), player.bombPower, explostionTexture);
+        exRI = new Explosion(bomb->position, Vec2f(0, 1), player.bombPower, textures.explostion);
+        exLE = new Explosion(bomb->position, Vec2f(0, -1), player.bombPower, textures.explostion);
+        exDO = new Explosion(bomb->position, Vec2f(1, 0), player.bombPower, textures.explostion);
+        exUP = new Explosion(bomb->position, Vec2f(-1, 0), player.bombPower, textures.explostion);
 
 		addRenderable(exRI);
 		addRenderable(exLE);

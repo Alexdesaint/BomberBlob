@@ -7,9 +7,7 @@ std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dist(0, 5);
 
-Blob::GL::Texture Bonus::textureExtraPower, Bonus::textureExtraSpeed, Bonus::textureExtraBomb;
-
-Bonus::Bonus(Blob::Vec2f pos) : RectStatic(pos, {0.4f, 0.4f}, EXTRABOMB) {
+Bonus::Bonus(Blob::Vec2f pos, Textures &textures) : RectStatic(pos, {0.4f, 0.4f}, EXTRABOMB) {
     Cube::setPosition(pos.x, pos.y, 0.2f);
 	setScale(0.4f, 0.4f, 0.4f);
 
@@ -18,14 +16,14 @@ Bonus::Bonus(Blob::Vec2f pos) : RectStatic(pos, {0.4f, 0.4f}, EXTRABOMB) {
 	switch (val) {
         case 0:
             setObjectType(EXTRAPOWER);
-            setTexture(textureExtraPower);
+            setTexture(textures.extraPower);
             break;
         case 1:
             setObjectType(EXTRASPEED);
-            setTexture(textureExtraSpeed);
+            setTexture(textures.extraSpeed);
             break;
         case 2:
-            setTexture(textureExtraBomb);
+            setTexture(textures.extraBomb);
             break;
         default:
             destroyed = true;
@@ -43,11 +41,5 @@ void Bonus::hit(int objectType, Object &object) {
 	if (objectType == PLAYER) {
 		destroyed = true;
 	}
-}
-
-void Bonus::initTexture() {
-    textureExtraBomb.loadBMP("data/ExtraBomb.bmp");
-    textureExtraPower.loadBMP("data/ExtraPower.bmp");
-    textureExtraSpeed.loadBMP("data/ExtraSpeed.bmp");
 }
 

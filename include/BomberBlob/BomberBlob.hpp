@@ -3,33 +3,35 @@
 
 #include <Blob/GL/Graphic.hpp>
 
-#include "BombManager.hpp"
-#include "IndestructibleBox.hpp"
-#include "Box.hpp"
-#include "Bonus.hpp"
-#include "Player.hpp"
+#include <BomberBlob/Explosion.hpp>
+#include <BomberBlob/Player.hpp>
+#include <BomberBlob/IndestructibleBox.hpp>
+#include <BomberBlob/Box.hpp>
+#include <BomberBlob/BombManager.hpp>
+#include <BomberBlob/Bonus.hpp>
 
 class BomberBlob {
 private:
+    Textures textures;
     Blob::GL::Graphic &window;
 
-	std::list<BombManager> bombs;
+    std::list<BombManager> bombs;
     std::unordered_map<int, Player> players;
 
-	int width, height;
+    int width, height;
 
-	Blob::GL::Shapes::Plane ground;
+    Blob::GL::Shapes::Plane ground;
 
-	std::list<IndestructibleBox> indestructibleBoxs;
-	std::list<Box> boxs;
-	std::list<Bonus> bonus;
+    std::list<IndestructibleBox> indestructibleBoxs;
+    std::list<Box> boxs;
+    std::list<Bonus> bonus;
 
-	Blob::Collision::CollisionDetector collisionDetector{};
+    Blob::Collision::CollisionDetector collisionDetector{};
 
 public:
     explicit BomberBlob(Blob::GL::Graphic &window);
 
-	void gameLoop();
+    void gameLoop();
 };
 
 #endif //BOMBERMAN_BOMBERMAN_HPP

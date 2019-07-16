@@ -8,8 +8,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
-link_directories(../BlobEngine/lib)
-include_directories(../BlobEngine/include)
+#link_directories(../BlobEngine/lib)
+#include_directories(../BlobEngine/include)
 include_directories(include)
 
 subdirs(src)

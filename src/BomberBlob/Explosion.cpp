@@ -18,7 +18,7 @@ Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float 
 }
 
 void Explosion::postCollisionUpdate() {
-    Cube::setPosition(getPosition(), 0.4f);
+    Cube::setPosition(position, 0.4f);
 }
 
 void Explosion::hit(int objectType, Object &object) {
@@ -27,7 +27,7 @@ void Explosion::hit(int objectType, Object &object) {
 }
 
 bool Explosion::keepMoving() {
-    if ((positionInitial - getPosition()).length2() > distanceMax * distanceMax) {
+    if ((positionInitial - position).length2() > distanceMax * distanceMax) {
 		active = false;
 		return false;
 	}

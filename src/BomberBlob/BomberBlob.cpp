@@ -3,17 +3,12 @@
 #include <iostream>
 
 #include <BomberBlob/BomberBlob.hpp>
-
-#include <BomberBlob/Explosion.hpp>
-#include <BomberBlob/Player.hpp>
-#include <BomberBlob/IndestructibleBox.hpp>
-#include <BomberBlob/Box.hpp>
-#include <BomberBlob/BombManager.hpp>
-#include <BomberBlob/Bonus.hpp>
+#include <BomberBlob/Textures.hpp>
 
 #include <imgui.h>
 
 using namespace Blob;
+using namespace std;
 
 BomberBlob::BomberBlob(Blob::GL::Graphic &window) :
         window(window),
@@ -31,8 +26,6 @@ BomberBlob::BomberBlob(Blob::GL::Graphic &window) :
         window.clear();
 
         ImGui::NewFrame();
-
-        //ImGui::ShowDemoWindow();
 
         ImGui::PushFont(font2);
 
@@ -72,25 +65,44 @@ BomberBlob::BomberBlob(Blob::GL::Graphic &window) :
                         if (it == players.end())
                             it = players.emplace(std::piecewise_construct,
                                                  std::forward_as_tuple(i),
-                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i])).first;
-                        it->second.setAction(Player::right, &Controls::Keys::RIGHT);
-                        it->second.setAction(Player::left, &Controls::Keys::LEFT);
-                        it->second.setAction(Player::up, &Controls::Keys::UP);
-                        it->second.setAction(Player::down, &Controls::Keys::DOWN);
-                        it->second.setAction(Player::putBomb, &Controls::Keys::SPACE);
+                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i],
+                                                                       textures)).first;
+
+                        it->second.controller(false);
+                        it->second.setKey(Player::right, &Controls::Keys::RIGHT);
+                        it->second.setKey(Player::left, &Controls::Keys::LEFT);
+                        it->second.setKey(Player::up, &Controls::Keys::UP);
+                        it->second.setKey(Player::down, &Controls::Keys::DOWN);
+                        it->second.setKey(Player::putBomb, &Controls::Keys::SPACE);
                         break;
                     default:
                         if (it == players.end())
                             it = players.emplace(std::piecewise_construct,
                                                  std::forward_as_tuple(i),
-                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i])).first;
+                                                 std::forward_as_tuple(xpos[i], ypos[i], bombs, names[i],
+                                                                       textures)).first;
 
                         int contrl = selected[i] - 2;
 
-                        if (contrl >= Blob::Controls::controllers.size())
+                        if (contrl >= Blob::Controls::controllers.size()) {
                             players.erase(it);
-                        else {
+                            throw Blob::Exception("Selected controller don't exist");
+                        } else {
+                            it->second.controller(true);
+                            const Controls::Controller *c = *std::next(Controls::controllers.begin(), contrl);
 
+                            if (c->joystickAxesCount < 2)
+                                throw Blob::Exception("Controller don't have any joystick");
+
+                            it->second.setJoystickAxe(Player::x, &c->joystickAxes[0]);
+                            it->second.setJoystickAxe(Player::y, &c->joystickAxes[1]);
+                            it->second.setButton(Player::putBomb, &c->buttons[0]);
+                            if(c->buttonsCount >= 14) {
+                                it->second.setButton(Player::up, &c->buttons[11]);
+                                it->second.setButton(Player::right, &c->buttons[12]);
+                                it->second.setButton(Player::down, &c->buttons[13]);
+                                it->second.setButton(Player::left, &c->buttons[14]);
+                            }
                         }
                         break;
                 }
@@ -104,66 +116,68 @@ BomberBlob::BomberBlob(Blob::GL::Graphic &window) :
         //ImGui::PopItemWidth();
         ImGui::End();
 
+        for (const auto &c : Blob::Controls::controllers)
+            c->controllerOut();
+
         ImGui::PopFont();
         window.drawImGUI();
         window.display();
 
-        if (start && !players.empty()) {
+        if (start && players.size() > 1) {
             gameLoop();
+
+            for(auto &p : players) {
+                p.second.reset(xpos[p.first], ypos[p.first]);
+            }
+
+            bombs.clear();
         }
     }
 }
 
 void BomberBlob::gameLoop() {
 
-    Bonus::initTexture();
-    BombManager::initTexture();
-
     //map init
-    Blob::GL::Texture groundTexture("data/Grass.bmp"),
-            boxTexture("data/Box.bmp"),
-            indestructibleBoxTexture("data/IndestructibleBox.bmp");
-
-    ground.setTexture(groundTexture);
+    ground.setTexture(textures.ground);
     ground.setPosition(width / 2.f, height / 2.f, 0);
     ground.setScale(width - 2, height - 2, 1);
     ground.setTextureScale({height - 2.f, width - 2.f});
 
     for (int i = 4; i < width - 4; i += 2) {
-        boxs.emplace_back(0.5f + i, 0.5f + 1, boxTexture);
-        boxs.emplace_back(0.5f + i, height - 0.5f - 1, boxTexture);
+        boxs.emplace_back(0.5f + i, 0.5f + 1, textures.box);
+        boxs.emplace_back(0.5f + i, height - 0.5f - 1, textures.box);
     }
 
     for (int i = 4; i < height - 4; i += 2) {
-        boxs.emplace_back(0.5f + 1, 0.5f + i, boxTexture);
-        boxs.emplace_back(width - 0.5f - 1, 0.5f + i, boxTexture);
+        boxs.emplace_back(0.5f + 1, 0.5f + i, textures.box);
+        boxs.emplace_back(width - 0.5f - 1, 0.5f + i, textures.box);
     }
 
     for (int i = 3; i < width - 3; i += 2) {
         for (int j = 2; j < height - 2; j += 2) {
-            boxs.emplace_back(0.5 + i, 0.5 + j, boxTexture);
+            boxs.emplace_back(0.5 + i, 0.5 + j, textures.box);
         }
     }
 
     for (int i = 2; i < width - 2; i += 2) {
         for (int j = 3; j < height - 3; j += 2) {
-            boxs.emplace_back(0.5f + i, 0.5 + j, boxTexture);
+            boxs.emplace_back(0.5f + i, 0.5 + j, textures.box);
         }
     }
 
     for (int i = 0; i < width; i++) {
-        indestructibleBoxs.emplace_back(0.5f + i, 0.5f, indestructibleBoxTexture);
-        indestructibleBoxs.emplace_back(0.5f + i, height - 0.5f, indestructibleBoxTexture);
+        indestructibleBoxs.emplace_back(0.5f + i, 0.5f, textures.indestructibleBox);
+        indestructibleBoxs.emplace_back(0.5f + i, height - 0.5f, textures.indestructibleBox);
     }
 
     for (int i = 1; i < height - 1; i++) {
-        indestructibleBoxs.emplace_back(0.5f, 0.5f + i, indestructibleBoxTexture);
-        indestructibleBoxs.emplace_back(width - 0.5f, 0.5f + i, indestructibleBoxTexture);
+        indestructibleBoxs.emplace_back(0.5f, 0.5f + i, textures.indestructibleBox);
+        indestructibleBoxs.emplace_back(width - 0.5f, 0.5f + i, textures.indestructibleBox);
     }
 
     for (int i = 2; i < width - 2; i += 2) {
         for (int j = 2; j < height - 2; j += 2) {
-            indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j, indestructibleBoxTexture, 0.8);
+            indestructibleBoxs.emplace_back(0.5f + i, 0.5f + j, textures.indestructibleBox, 0.8);
         }
     }
 
@@ -203,7 +217,7 @@ void BomberBlob::gameLoop() {
         //evolutive objects :
         for (auto i = boxs.begin(); i != boxs.end();) {
             if (i->isDestroy()) {
-                bonus.emplace_back(i->getPosition());
+                bonus.emplace_back(i->position, textures);
 
                 i = boxs.erase(i);
             } else {
@@ -221,17 +235,20 @@ void BomberBlob::gameLoop() {
             }
         }
 
-        for (const auto &p : players)
-            window.draw(p.second);
-
         ImGui::NewFrame();
         ImGui::SetNextWindowPos({0, 0});
         ImGui::Begin("InfoP1", nullptr,
                      ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-        for (const auto &p : players)
+        int playerAlive = 0;
+        for (const auto &p : players) {
+            if (p.second.isAlive()) {
+                window.draw(p.second);
+                playerAlive++;
+            }
             p.second.drawInfo();
+        }
 
         ImGui::End();
 
@@ -251,6 +268,37 @@ void BomberBlob::gameLoop() {
 
             if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0}))
                 endGmae = true;
+            if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0})) {
+                endGmae = true;
+                window.close();
+            }
+
+            ImGui::End();
+        }
+
+
+        //Score
+        if (playerAlive <= 1) {
+            collisionDetector.pause();
+            ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
+
+            ImGui::Begin("Score", nullptr,
+                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+
+            for (const auto &p : players)
+                if (p.second.isAlive())
+                    ImGui::Text("Winner : %s", p.second.getName().c_str());
+
+            if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0})) {
+                endGmae = true;
+                collisionDetector.unpause();
+            }
+
+            if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0})) {
+                collisionDetector.unpause();
+                endGmae = true;
+                window.close();
+            }
 
             ImGui::End();
         }
@@ -258,9 +306,6 @@ void BomberBlob::gameLoop() {
         //draw
         window.drawImGUI();
         window.display();
-
-        //if(!player.isAlive())
-        //	endGmae = true;
 
         //check imput
         if (Controls::Keys::ESCAPE && !escape) {

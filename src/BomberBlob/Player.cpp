@@ -5,39 +5,72 @@
 
 using namespace Blob;
 
-Player::Player(float x, float y, std::list<BombManager> &bombs, std::string name) :
-        RectDynamic({x, y}, {0.8f, 0.8f}, PLAYER), bombs(bombs),
+Player::Player(float x, float y, std::list<BombManager> &bombs, std::string name, Textures &textures) :
+        textures(textures),
+        RectDynamic({x, y}, {0.8f, 0.8f}, PLAYER),
+        bombs(bombs),
         name(std::move(name)) {
     Cube::setPosition(x, y, 0.4f);
     setScale(0.8f, 0.8f, 0.8f);
 
-    texture.setColor(255, 255, 255);
-    setTexture(texture);
+    setTexture(textures.player);
+
+    //init imput
+    for(int i = 0; i < numOfActions; i++) {
+        keys[i] = &defbool;
+        buttons[i] = &defchar;
+    }
+
+    for(int i = 0; i < numOfAxes; i++)
+        joystickAxes[i] = &deffloat;
 }
 
 void Player::preCollisionUpdate() {
     Vec2f Acceleration;
+    bool pauseBomb;
 
-    if (*keys[Actions::left]) {
-        Acceleration.x -= 1;
+    if (control) {
+        if (*joystickAxes[x] * *joystickAxes[x] > 0.1)
+            Acceleration.x = *joystickAxes[x];
+        if (*joystickAxes[y] * *joystickAxes[y] > 0.1)
+            Acceleration.y = -*joystickAxes[y];
+
+        pauseBomb = *buttons[Actions::putBomb];
+
+        if (*buttons[Actions::left])
+            Acceleration.x -= 1;
+        if (*buttons[Actions::right])
+            Acceleration.x += 1;
+        if (*buttons[Actions::down])
+            Acceleration.y -= 1;
+        if (*buttons[Actions::up])
+            Acceleration.y += 1;
+    } else {
+        if (*keys[Actions::left])
+            Acceleration.x -= 1;
+        if (*keys[Actions::right])
+            Acceleration.x += 1;
+        if (*keys[Actions::down])
+            Acceleration.y -= 1;
+        if (*keys[Actions::up])
+            Acceleration.y += 1;
+
+        pauseBomb = *keys[Actions::putBomb];
     }
-    if (*keys[Actions::right]) {
-        Acceleration.x += 1;
-    }
-    if (*keys[Actions::down]) {
-        Acceleration.y -= 1;
-    }
-    if (*keys[Actions::up]) {
-        Acceleration.y += 1;
-    }
+
+    if (speed.length2() < deceleration * deceleration)
+        speed.reset();
+    else
+        speed.setLength(speed.length() - deceleration);
 
     if (!Acceleration.isNull()) {
-        speed = Acceleration.setLength(maxSpeed);
-    } else
-        speed.reset();
+        speed += Acceleration.setLength(acceleration);
+        if (speed.length2() > maxSpeed * maxSpeed)
+            speed.setLength(maxSpeed);
+    }
 
-    if (*keys[Actions::putBomb] && !onBomb && bombPosed < maxBomb) {
-        auto here = getImtemsHere(getPosition());
+    if (pauseBomb && !onBomb && bombPosed < maxBomb) {
+        auto here = getImtemsHere(position);
 
         bool noBomb = true;
         for (const auto &i : here) {
@@ -48,7 +81,7 @@ void Player::preCollisionUpdate() {
         }
 
         if (noBomb) {
-            bombs.emplace_front(getPosition().cast<int>().cast<float>() + 0.5f, *this);
+            bombs.emplace_front(position.cast<int>().cast<float>() + 0.5f, *this, textures);
             lastBomb = &bombs.front();
             onBomb = true;
             bombPosed++;
@@ -57,7 +90,7 @@ void Player::preCollisionUpdate() {
 }
 
 void Player::postCollisionUpdate() {
-    Cube::setPosition(getPosition(), 0.4f);
+    Cube::setPosition(position, 0.4f);
 
     if (onBomb) {
         Bomb *bomb = lastBomb->getBomb();
@@ -81,6 +114,7 @@ void Player::hit(const int objectType, Object &object) {
     } else if (objectType == EXPLOSION) {
         alive = false;
         setReaction(IGNORE);
+        disableCollision();
         return;
     }
 
@@ -99,14 +133,6 @@ unsigned int Player::getMaxBomb() const {
     return maxBomb;
 }
 
-bool Player::isConnected() const {
-    return connected;
-}
-
-void Player::setConnected(bool c) {
-    Player::connected = c;
-}
-
 const std::string &Player::getName() const {
     return name;
 }
@@ -116,18 +142,27 @@ void Player::setName(const std::string &n) {
 }
 
 void Player::drawInfo() const {
-    static Blob::GL::Texture speedTex("data/ExtraSpeed.bmp", true),
-            explosionRangeTex("data/ExtraPower.bmp", true),
-            maxBombTex("data/ExtraBomb.bmp", true);
-
     ImGui::Text("%s", name.c_str());
-    ImGui::Image(&maxBombTex, maxBombTex.getTextureSize());
+    ImGui::Image(&textures.extraBomb, textures.extraBomb.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%u", maxBomb);
-    ImGui::Image(&explosionRangeTex, explosionRangeTex.getTextureSize());
+    ImGui::Image(&textures.extraPower, textures.extraPower.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%.1f", bombPower);
-    ImGui::Image(&speedTex, speedTex.getTextureSize());
+    ImGui::Image(&textures.extraSpeed, textures.extraSpeed.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%.1f", maxSpeed);
+}
+
+void Player::reset(float x, float y) {
+    disableCollision();
+    position = {x, y};
+    alive = false;
+    acceleration = 2.5f;
+    deceleration = 1.5f;
+    maxSpeed = 2.5f;
+    bombPower = 2.f;
+    alive = true;
+    onBomb = false;
+    enableCollision();
 }

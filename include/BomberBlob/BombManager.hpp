@@ -3,6 +3,7 @@
 
 #include <BomberBlob/Bomb.hpp>
 #include <BomberBlob/Explosion.hpp>
+#include <BomberBlob/Textures.hpp>
 
 #include <Blob/GL/Shape.hpp>
 
@@ -21,18 +22,16 @@ private:
 
 	Player &player;
 
-    static Blob::GL::Texture bombTexture, explostionTexture;
+    Textures &textures;
 
 public:
-	explicit BombManager(Blob::Vec2f pos, Player &player);
+	explicit BombManager(Blob::Vec2f pos, Player &player, Textures &textures);
+
+    ~BombManager();
 
 	Bomb *getBomb() const;
 
 	bool update();
-
-	static void initTexture();
-
-	~BombManager();
 };
 
 #endif //BOMBERMAN_BOMBMANAGER_HPP
