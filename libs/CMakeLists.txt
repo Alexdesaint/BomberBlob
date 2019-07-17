@@ -1,2 +1,2 @@
-#set(BLOBTEST ON CACHE BOOL "" FORCE)
+set(BLOBTEST OFF CACHE BOOL "" FORCE)
 subdirs(BlobEngine)
