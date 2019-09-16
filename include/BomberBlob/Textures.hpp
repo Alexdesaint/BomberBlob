@@ -4,15 +4,15 @@
 
 class Textures {
 public:
-    Blob::GL::Texture ground,
-            box,
-            indestructibleBox,
-            extraBomb,
-            extraPower,
-            extraSpeed,
-            bomb,
-            explostion,
-            player;
+	Blob::GL::Texture ground,
+			box,
+			indestructibleBox,
+			extraBomb,
+			extraPower,
+			extraSpeed,
+			bomb,
+			explosion,
+			player[4];
 
-    Textures();
+	Textures();
 };

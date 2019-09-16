@@ -1,13 +1,15 @@
 #include <iostream>
 
-#include <BomberBlob/BomberBlob.hpp>
+#include <Blob/Exception.hpp>
+
+#include <Menu.hpp>
 
 int main() {
 
     try {
         Blob::GL::Graphic graphic(false);
 
-        (BomberBlob(graphic));
+        (Menu(graphic));
 
     } catch (Blob::Exception &e) {
         std::cout << "Game Error :" << std::endl << e.what() << std::endl;

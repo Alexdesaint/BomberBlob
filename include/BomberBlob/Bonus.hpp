@@ -1,5 +1,4 @@
-#ifndef PROJECT_EXTRABOMB_HPP
-#define PROJECT_EXTRABOMB_HPP
+#pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
 #include <Blob/GL/Shapes.hpp>
@@ -19,6 +18,3 @@ public:
 
 	bool update();
 };
-
-
-#endif //PROJECT_EXTRABOMB_HPP

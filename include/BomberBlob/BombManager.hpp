@@ -1,5 +1,4 @@
-#ifndef BOMBERMAN_BOMBMANAGER_HPP
-#define BOMBERMAN_BOMBMANAGER_HPP
+#pragma once
 
 #include <BomberBlob/Bomb.hpp>
 #include <BomberBlob/Explosion.hpp>
@@ -9,7 +8,7 @@
 
 #include <Blob/Time.hpp>
 
-class Player;
+class Bomber;
 
 class BombManager : public Blob::GL::Shape {
 private:
@@ -20,12 +19,12 @@ private:
 
 	Blob::Time::TimePoint start;
 
-	Player &player;
+	Bomber &bomber;
 
     Textures &textures;
 
 public:
-	explicit BombManager(Blob::Vec2f pos, Player &player, Textures &textures);
+	explicit BombManager(Blob::Vec2f pos, Bomber &bomber, Textures &textures);
 
     ~BombManager();
 
@@ -33,5 +32,3 @@ public:
 
 	bool update();
 };
-
-#endif //BOMBERMAN_BOMBMANAGER_HPP

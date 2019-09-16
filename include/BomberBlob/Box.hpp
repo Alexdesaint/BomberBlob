@@ -1,5 +1,4 @@
-#ifndef BOMBERMAN_BOX_HPP
-#define BOMBERMAN_BOX_HPP
+#pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
 #include <Blob/GL/Shapes.hpp>
@@ -19,6 +18,3 @@ public:
 		return destroyed;
 	}
 };
-
-
-#endif //BOMBERMAN_BOX_HPP

@@ -1,11 +1,11 @@
 #include <BomberBlob/BombManager.hpp>
 
-#include <BomberBlob/Player.hpp>
+#include <BomberBlob/Bomber.hpp>
 
 using namespace Blob;
 using namespace Blob::Time;
 
-BombManager::BombManager(Blob::Vec2f pos, Player &player, Textures &textures) : player(player), textures(textures) {
+BombManager::BombManager(Blob::Vec2f pos, Bomber &bomber, Textures &textures) : bomber(bomber), textures(textures) {
 	bomb = new Bomb(pos, textures.bomb);
 
 	addRenderable(bomb);
@@ -42,12 +42,12 @@ bool BombManager::update() {
 
 		return exUP == nullptr && exDO == nullptr && exRI == nullptr && exLE == nullptr;
 	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
-		player.bombPosed--;
+		bomber.bombPosed--;
 
-        exRI = new Explosion(bomb->position, Vec2f(0, 1), player.bombPower, textures.explostion);
-        exLE = new Explosion(bomb->position, Vec2f(0, -1), player.bombPower, textures.explostion);
-        exDO = new Explosion(bomb->position, Vec2f(1, 0), player.bombPower, textures.explostion);
-        exUP = new Explosion(bomb->position, Vec2f(-1, 0), player.bombPower, textures.explostion);
+        exRI = new Explosion(bomb->position, Vec2f(0, 1), bomber.bombPower, textures.explosion);
+        exLE = new Explosion(bomb->position, Vec2f(0, -1), bomber.bombPower, textures.explosion);
+        exDO = new Explosion(bomb->position, Vec2f(1, 0), bomber.bombPower, textures.explosion);
+        exUP = new Explosion(bomb->position, Vec2f(-1, 0), bomber.bombPower, textures.explosion);
 
 		addRenderable(exRI);
 		addRenderable(exLE);

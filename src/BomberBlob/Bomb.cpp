@@ -1,6 +1,6 @@
 #include <BomberBlob/Bomb.hpp>
 
-#include <BomberBlob/Player.hpp>
+#include <BomberBlob/Bomber.hpp>
 
 Bomb::Bomb(Blob::Vec2f pos, Blob::GL::Texture &texture) : RectStatic(pos, {0.4f, 0.4f}, BOMB) {
 

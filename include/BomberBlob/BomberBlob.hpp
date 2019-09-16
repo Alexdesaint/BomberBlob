@@ -1,37 +1,39 @@
-#ifndef BOMBERMAN_BOMBERMAN_HPP
-#define BOMBERMAN_BOMBERMAN_HPP
+#pragma once
 
 #include <Blob/GL/Graphic.hpp>
 
+#include <Game.hpp>
+
 #include <BomberBlob/Explosion.hpp>
-#include <BomberBlob/Player.hpp>
+#include <BomberBlob/Bomber.hpp>
 #include <BomberBlob/IndestructibleBox.hpp>
 #include <BomberBlob/Box.hpp>
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bonus.hpp>
 
-class BomberBlob {
+class BomberBlob : public Game {
 private:
-    Textures textures;
-    Blob::GL::Graphic &window;
-
     std::list<BombManager> bombs;
-    std::unordered_map<int, Player> players;
 
-    int width, height;
+    int width = 21, height = 15;
+	Textures &textures;
 
     Blob::GL::Shapes::Plane ground;
 
-    std::list<IndestructibleBox> indestructibleBoxs;
-    std::list<Box> boxs;
+    std::list<IndestructibleBox> indestructibleBoxes;
+    std::list<Box> boxes;
     std::list<Bonus> bonus;
 
     Blob::Collision::CollisionDetector collisionDetector{};
 
+	std::list<Bomber> bombers;
+
+	void gameLoop();
+
 public:
-    explicit BomberBlob(Blob::GL::Graphic &window);
+    BomberBlob(Blob::GL::Graphic &window, std::map<int, Player> &players, Textures &textures);
 
-    void gameLoop();
+    void settings();
+
+    void start();
 };
-
-#endif //BOMBERMAN_BOMBERMAN_HPP

@@ -1,5 +1,4 @@
-#ifndef BOMBERMAN_EXPLOSION_HPP
-#define BOMBERMAN_EXPLOSION_HPP
+#pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
 #include <Blob/GL/Shapes.hpp>
@@ -27,6 +26,3 @@ public:
 	}
 
 };
-
-
-#endif //BOMBERMAN_EXPLOSION_HPP

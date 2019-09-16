@@ -7,5 +7,9 @@ Textures::Textures() : ground("data/Grass.bmp"),
                        extraPower("data/ExtraPower.bmp"),
                        extraSpeed("data/ExtraSpeed.bmp"),
                        bomb("data/Bomb.bmp"),
-                       explostion("data/Explosion.bmp"),
-                       player(255, 255, 255) {}
+                       explosion("data/Explosion.bmp") {
+	player[0].setColor(255, 0, 0);
+	player[1].setColor(127, 0, 127);
+	player[2].setColor(0, 0, 255);
+	player[3].setColor(255, 255, 0);
+}

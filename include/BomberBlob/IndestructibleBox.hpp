@@ -1,5 +1,4 @@
-#ifndef BOMBERMAN_INDESTRUCTIBLEBOX_HPP
-#define BOMBERMAN_INDESTRUCTIBLEBOX_HPP
+#pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
 #include <Blob/GL/Shapes.hpp>
@@ -13,5 +12,3 @@ private:
 public:
 	IndestructibleBox(float x, float y, Blob::GL::Texture &texture, float scale = 1.f);
 };
-
-#endif //BOMBERMAN_INDESTRUCTIBLEBOX_HPP
