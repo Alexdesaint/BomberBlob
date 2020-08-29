@@ -4,13 +4,13 @@
 #include <BomberBlob/Explosion.hpp>
 #include <BomberBlob/Textures.hpp>
 
-#include <Blob/GL/Shape.hpp>
+#include <Blob/Shape.hpp>
 
 #include <Blob/Time.hpp>
 
 class Bomber;
 
-class BombManager : public Blob::GL::Shape {
+class BombManager : public Blob::Shape {
 private:
 	Bomb *bomb;
 	float bombDelay = 3;

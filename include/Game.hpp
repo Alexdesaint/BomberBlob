@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/Window.hpp>
 
 #include <Player.hpp>
 
@@ -8,8 +8,8 @@
 
 class Game {
 protected:
-	Blob::GL::Graphic &window;
+	Blob::Window &window;
 	std::map<int, Player> &players;
 
-	explicit Game(Blob::GL::Graphic &window, std::map<int, Player> &players) : window(window), players(players) {}
+	explicit Game(Blob::Window &window, std::map<int, Player> &players) : window(window), players(players) {}
 };

@@ -1,14 +1,14 @@
 #pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/GL/Shapes.hpp>
+#include <Blob/Shape.hpp>
 
 #include <BomberBlob/UserData.hpp>
 
-class IndestructibleBox : public Blob::Collision::RectStatic, public Blob::GL::Shapes::Cube {
+class IndestructibleBox : public Blob::Collision::RectStatic, public Blob::Shape {
 private:
 	bool destroyed = false;
 
 public:
-	IndestructibleBox(float x, float y, Blob::GL::Texture &texture, float scale = 1.f);
+	IndestructibleBox(float x, float y, Blob::Mesh &mesh, float scale = 1.f);
 };

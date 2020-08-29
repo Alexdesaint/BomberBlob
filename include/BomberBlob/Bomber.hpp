@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/GL/Shapes.hpp>
+#include <Blob/Shape.hpp>
 
 #include <BomberBlob/UserData.hpp>
 #include <BomberBlob/Textures.hpp>
@@ -11,7 +11,7 @@
 #include <list>
 #include <Player.hpp>
 
-class Bomber : public Blob::Collision::RectDynamic, public Blob::GL::Shapes::Cube {
+class Bomber : public Blob::Collision::RectDynamic, public Blob::Shape {
 	friend BombManager;
 private:
 	Player &player;
@@ -28,7 +28,7 @@ private:
 	Textures &textures;
 public:
 
-	Bomber(Blob::Vec2f pos, std::list<BombManager> &bombs, Player &player, Textures &textures);
+	Bomber(Blob::Vec2f pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale = 0.8f);
 
 	void preCollisionUpdate() final;
 

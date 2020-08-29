@@ -7,9 +7,11 @@
 int main() {
 
     try {
-        Blob::GL::Graphic graphic(false);
+        Blob::Camera camera;
 
-        (Menu(graphic));
+        Blob::Window window(camera, false);
+
+        (Menu(window));
 
     } catch (Blob::Exception &e) {
         std::cout << "Game Error :" << std::endl << e.what() << std::endl;

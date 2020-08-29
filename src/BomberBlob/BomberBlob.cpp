@@ -4,15 +4,17 @@
 #include <BomberBlob/Textures.hpp>
 
 #include <imgui.h>
+#include <Blob/Controls.hpp>
 
 using namespace Blob;
 using namespace std;
 
-BomberBlob::BomberBlob(GL::Graphic &window, map<int, Player> &players, Textures &textures) :
-		Game(window, players), textures(textures) {}
+BomberBlob::BomberBlob(Window &window, map<int, Player> &players, Textures &textures) :
+		Game(window, players), textures(textures) {start();}
 
 void BomberBlob::start() {
-//bombers init
+    std::cout << "bombers init" << std::endl;
+
 	static const Vec2f pos[4] = {
 			{1.5f,         1.5f},
 			{width - 1.5f, height - 1.5f},
@@ -24,10 +26,11 @@ void BomberBlob::start() {
 		bombers.emplace_back(pos[p.first], bombs, p.second, textures);
 
 	//map init
-	ground.setTexture(textures.ground);
-	ground.setPosition(width / 2.f, height / 2.f, 0);
-	ground.setScale(width - 2, height - 2, 1);
-	ground.setTextureScale({height - 2.f, width - 2.f});
+    ground.setMesh(textures.ground);
+    ground.setPosition(width / 2.f, height / 2.f, 0);
+	ground.setScale((width - 2)/2.f, (height - 2)/2.f, 1);
+	textures.groundMat.texScale[0] = width  - 2.f;
+	textures.groundMat.texScale[1] = height - 2.f;
 
 	for (int i = 4; i < width - 4; i += 2) {
 		boxes.emplace_back(0.5f + i, 0.5f + 1, textures.box);
@@ -70,11 +73,17 @@ void BomberBlob::start() {
 	//Camera init
 	float cameraAngle = PI / 4;
 
-	window.setCameraAngle(cameraAngle);
+	window.setAngle(cameraAngle);
 
-	window.setCameraPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
+    camera.setPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
 
-	window.setCameraLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
+    camera.setLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
+
+    SingleColorMaterial::light.position.x = width / 2.f;
+    SingleColorMaterial::light.position.y = height / 2.f;
+    SingleColorMaterial::light.position.z = 10.f;
+
+    window.setCamera(camera);
 
 	// Start !!!
 	gameLoop();
@@ -86,9 +95,6 @@ void BomberBlob::gameLoop() {
 
 	//mainLoop
 	while (window.isOpen() && !endGame) {
-
-		window.clear();
-
 		window.draw(ground);
 
 		//static objects
@@ -128,7 +134,6 @@ void BomberBlob::gameLoop() {
 		}
 
 		// Info bar
-		ImGui::NewFrame();
 		ImGui::SetNextWindowPos({0, 0});
 		ImGui::Begin("InfoP1", nullptr,
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
@@ -200,7 +205,6 @@ void BomberBlob::gameLoop() {
 		}
 
 		//draw
-		window.drawImGUI();
 		window.display();
 
 		//check imput

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/Window.hpp>
+#include <Blob/Shapes.hpp>
 
 #include <Game.hpp>
 
@@ -18,7 +19,9 @@ private:
     int width = 21, height = 15;
 	Textures &textures;
 
-    Blob::GL::Shapes::Plane ground;
+    Blob::Shape ground;
+
+    Blob::Camera camera;
 
     std::list<IndestructibleBox> indestructibleBoxes;
     std::list<Box> boxes;
@@ -31,7 +34,7 @@ private:
 	void gameLoop();
 
 public:
-    BomberBlob(Blob::GL::Graphic &window, std::map<int, Player> &players, Textures &textures);
+    BomberBlob(Blob::Window &window, std::map<int, Player> &players, Textures &textures);
 
     void settings();
 

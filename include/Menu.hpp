@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Blob/GL/Graphic.hpp>
+#include <Blob/Window.hpp>
 
 #include <Player.hpp>
 
@@ -12,11 +12,11 @@ class Menu {
 private:
 	Textures textures;
 
-	Blob::GL::Graphic &window;
+	Blob::Window &window;
 	std::map<int, Player> players;
 
 	void playerSelection();
 
 public:
-	explicit Menu(Blob::GL::Graphic &window);
+	explicit Menu(Blob::Window &window);
 };

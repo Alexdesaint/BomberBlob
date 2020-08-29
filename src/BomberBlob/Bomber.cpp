@@ -4,14 +4,12 @@
 
 using namespace Blob;
 
-Bomber::Bomber(Vec2f pos, std::list<BombManager> &bombs, Player &player, Textures &textures) :
+Bomber::Bomber(Vec2f pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale) :
         textures(textures),
         player(player),
-        RectDynamic(pos, {0.8f, 0.8f}, PLAYER),
-        bombs(bombs) {
-    Cube::setPosition(pos, 0.4f);
-    setScale(0.8f, 0.8f, 0.8f);
-	setTexture(textures.player[player.number]);
+        RectDynamic(pos, {scale, scale}, PLAYER),
+        bombs(bombs),
+        Blob::Shape(textures.player[player.number], pos.x, pos.y, scale/2.f, scale/2.f, scale/2.f, scale/2.f){
 }
 
 void Bomber::preCollisionUpdate() {
@@ -79,7 +77,7 @@ void Bomber::preCollisionUpdate() {
 }
 
 void Bomber::postCollisionUpdate() {
-    Cube::setPosition(position, 0.4f);
+    setPosition(position, 0.4f);
 
     if (onBomb) {
         Bomb *bomb = lastBomb->getBomb();
@@ -123,16 +121,16 @@ unsigned int Bomber::getMaxBomb() const {
 }
 
 void Bomber::drawInfo() const {
-	ImGui::Image(&textures.player[player.number], textures.player[player.number].getTextureSize());
+	//ImGui::Image(&textures.player[player.number], textures.player[player.number].getTextureSize());
 	ImGui::SameLine();
     ImGui::Text("%s", player.name.c_str());
-    ImGui::Image(&textures.extraBomb, textures.extraBomb.getTextureSize());
+    //ImGui::Image(&textures.extraBomb, textures.extraBomb.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%u", maxBomb);
-    ImGui::Image(&textures.extraPower, textures.extraPower.getTextureSize());
+    //ImGui::Image(&textures.extraPower, textures.extraPower.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%.1f", bombPower);
-    ImGui::Image(&textures.extraSpeed, textures.extraSpeed.getTextureSize());
+    //ImGui::Image(&textures.extraSpeed, textures.extraSpeed.getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%.2f", maxSpeed);
 }

@@ -2,20 +2,17 @@
 
 #include <BomberBlob/Bomber.hpp>
 
-Bomb::Bomb(Blob::Vec2f pos, Blob::GL::Texture &texture) : RectStatic(pos, {0.4f, 0.4f}, BOMB) {
-
-    Cube::setPosition(pos.x, pos.y, 0.2f);
-	setScale(0.4f, 0.4f, 0.4f);
-
-	setTexture(texture);
-}
+Bomb::Bomb(Blob::Vec2f pos, Blob::Mesh &mesh, float scale) : RectStatic(pos, {scale, scale}, BOMB),
+                                                             Blob::Shape(mesh, pos.x, pos.y, scale / 2.f, scale / 2.f,
+                                                                         scale / 2.f,
+                                                                         scale / 2.f) {}
 
 bool Bomb::isDestroyed() {
-	return destroyed;
+    return destroyed;
 }
 
 void Bomb::hit(int objectType, Object &object) {
-	if(objectType == EXPLOSION) {
-		destroyed = true;
-	}
+    if (objectType == EXPLOSION) {
+        destroyed = true;
+    }
 }

@@ -8,7 +8,7 @@ using namespace Blob::Time;
 BombManager::BombManager(Blob::Vec2f pos, Bomber &bomber, Textures &textures) : bomber(bomber), textures(textures) {
 	bomb = new Bomb(pos, textures.bomb);
 
-	addRenderable(bomb);
+	setChild(bomb);
 
 	start = now();
 }
@@ -17,25 +17,25 @@ bool BombManager::update() {
 	Duration flow = now() - start;
 	if(bomb == nullptr) {
 		if(exUP != nullptr && !exUP->isActive()) {
-			removeRenderable(exUP);
+			removeChild(exUP);
 			delete exUP;
 			exUP = nullptr;
 		}
 
 		if(exDO != nullptr && !exDO->isActive()) {
-			removeRenderable(exDO);
+			removeChild(exDO);
 			delete exDO;
 			exDO = nullptr;
 		}
 
 		if(exLE != nullptr && !exLE->isActive()) {
-			removeRenderable(exLE);
+			removeChild(exLE);
 			delete exLE;
 			exLE = nullptr;
 		}
 
 		if(exRI != nullptr && !exRI->isActive()) {
-			removeRenderable(exRI);
+			removeChild(exRI);
 			delete exRI;
 			exRI = nullptr;
 		}
@@ -49,12 +49,12 @@ bool BombManager::update() {
         exDO = new Explosion(bomb->position, Vec2f(1, 0), bomber.bombPower, textures.explosion);
         exUP = new Explosion(bomb->position, Vec2f(-1, 0), bomber.bombPower, textures.explosion);
 
-		addRenderable(exRI);
-		addRenderable(exLE);
-		addRenderable(exDO);
-		addRenderable(exUP);
+		setChild(exRI);
+		setChild(exLE);
+		setChild(exDO);
+		setChild(exUP);
 
-		removeRenderable(bomb);
+		removeChild(bomb);
 		delete bomb;
 		bomb = nullptr;
 	}
@@ -68,27 +68,27 @@ Bomb *BombManager::getBomb() const {
 
 BombManager::~BombManager() {
 	if(exUP != nullptr) {
-		removeRenderable(exUP);
+		removeChild(exUP);
 		delete exUP;
 	}
 
 	if(exDO != nullptr) {
-		removeRenderable(exDO);
+		removeChild(exDO);
 		delete exDO;
 	}
 
 	if(exLE != nullptr) {
-		removeRenderable(exLE);
+		removeChild(exLE);
 		delete exLE;
 	}
 
 	if(exRI != nullptr) {
-		removeRenderable(exRI);
+		removeChild(exRI);
 		delete exRI;
 	}
 
 	if(bomb != nullptr) {
-		removeRenderable(bomb);
+		removeChild(bomb);
 		delete bomb;
 	}
 }

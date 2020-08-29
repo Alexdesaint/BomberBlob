@@ -1,10 +1,5 @@
 #include <BomberBlob/IndestructibleBox.hpp>
 
-IndestructibleBox::IndestructibleBox(float x, float y, Blob::GL::Texture &texture, float scale) : RectStatic({x, y}, {scale, scale}, INDESTRUCTIBLE_BOX) {
-    Cube::setPosition(x, y, scale/2.f);
-    Cube::setScale(scale);
-
-    setTexture(texture);
-
-	setTextureScale({4.f, 4.f});
-}
+IndestructibleBox::IndestructibleBox(float x, float y, Blob::Mesh &mesh, float scale) :
+        Blob::Shape(mesh, x, y, scale / 2.f, scale/2.f, scale/2.f, scale/2.f),
+        RectStatic({x, y}, {scale, scale}, INDESTRUCTIBLE_BOX) {}

@@ -2,30 +2,26 @@
 
 #include <imgui.h>
 #include <Blob/Exception.hpp>
+#include <Blob/Controls.hpp>
 #include <BomberBlob/BomberBlob.hpp>
 
 using namespace Blob;
 using namespace std;
 
-Menu::Menu(Blob::GL::Graphic &window) : window(window) {
+Menu::Menu(Blob::Window &window) : window(window) {
 	ImGuiIO &io = ImGui::GetIO();
-	ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
-	ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
+	//ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
+	//ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
 
-	ImGui::GetIO().FontDefault = font1;
-	window.rebuildFontImGUI();
+	//ImGui::GetIO().FontDefault = font1;
+	//window.rebuildFontImGUI();
 
 	while (window.isOpen()) {
-		window.clear();
-
-		ImGui::NewFrame();
-
-
 		ImGui::ShowDemoWindow();
 
 		ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
 
-		ImGui::PushFont(font2);
+		//ImGui::PushFont(font2);
 
 		ImGui::Begin("main", nullptr,
 					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
@@ -33,8 +29,8 @@ Menu::Menu(Blob::GL::Graphic &window) : window(window) {
 
 		ImGui::Text("BOMBERBLOB");
 
-		ImGui::PopFont();
-		ImGui::PushFont(font1);
+		//ImGui::PopFont();
+		//ImGui::PushFont(font1);
 
 		if (ImGui::BeginTabBar("bar", ImGuiTabBarFlags_None)) {
 			if (ImGui::BeginTabItem("Players")) {
@@ -51,6 +47,12 @@ Menu::Menu(Blob::GL::Graphic &window) : window(window) {
 		ImGui::Separator();
 
 		bool start = ImGui::Button("Start", {ImGui::GetContentRegionAvailWidth(), 0});
+
+		if(start && players.size() <= 1) {
+		    std::cout << "not enough players" << std::endl;
+		    start = false;
+		}
+
 		if (ImGui::Button("Quit", {ImGui::GetWindowContentRegionWidth(), 0}))
 			window.close();
 		ImGui::End();
@@ -58,11 +60,10 @@ Menu::Menu(Blob::GL::Graphic &window) : window(window) {
 		for (const auto &c : Blob::Controls::controllers)
 			c->controllerOut();
 
-		ImGui::PopFont();
-		window.drawImGUI();
+		//ImGui::PopFont();
 		window.display();
 
-		if (start && players.size() > 1)
+		if (start)
 			(BomberBlob(window, players, textures));
 	}
 }

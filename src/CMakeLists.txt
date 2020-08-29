@@ -13,4 +13,4 @@ add_executable(BomberMan
 		BomberBlob/Bomber.cpp
         BomberBlob/Textures.cpp)
 
-target_link_libraries(BomberMan Blob::GL Blob::Collision Blob::Geometrie) # -static -static-libgcc -static-libstdc++-lpthread)
+target_link_libraries(BomberMan Blob Blob::Collision Blob) # -static -static-libgcc -static-libstdc++-lpthread)
