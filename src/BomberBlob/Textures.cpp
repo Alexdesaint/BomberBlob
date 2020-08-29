@@ -10,6 +10,14 @@ Textures::Textures() :
         bombTex("data/Bomb.bmp", true),
         explosionTex("data/Explosion.bmp", true),
 
+        brown(Blob::Color::Brown),
+        gray(Blob::Color::Gray),
+        red(Blob::Color::Red),
+        orange(Blob::Color::Orange),
+        yellow(Blob::Color::Yellow),
+        green(Blob::Color::Green),
+        black(Blob::Color::Black),
+
         groundMat(groundTex),
         boxMat(boxTex),
         indestructibleBoxMat(indestructibleBoxTex),
@@ -49,14 +57,5 @@ Textures::Textures() :
 
     explosionMat.texScale[0] = 4.f;
     explosionMat.texScale[1] = 4.f;
-
-    brown.albedo = Blob::Color::Brown;
-    gray.albedo = Blob::Color::Gray;
-    red.albedo = Blob::Color::Red;
-    orange.albedo = Blob::Color::Orange;
-    yellow.albedo = Blob::Color::Yellow;
-    //green.albedo = Blob::Color::Green;
-    black.albedo = Blob::Color::Black;
-    fire.albedo = Blob::Color::Fuchsia;
 }
 

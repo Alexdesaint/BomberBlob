@@ -5,7 +5,7 @@
 
 class Textures {
 public:
-    Blob::SingleColorMaterial brown, gray, red, orange, yellow, green, black, fire;
+    Blob::SingleColorMaterial brown, gray, red, orange, yellow, green, black;
 
     Blob::GL::Texture groundTex,
             boxTex,
