@@ -58,4 +58,3 @@ Textures::Textures() :
     explosionMat.texScale[0] = 4.f;
     explosionMat.texScale[1] = 4.f;
 }
-
