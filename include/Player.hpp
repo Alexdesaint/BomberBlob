@@ -27,11 +27,13 @@ public:
 
 	std::string name;
 
-	int score = 0, number;
+	int score = 0;
 
 	bool control = false;
 
-	Player(std::string name, int number) : name(std::move(name)), number(number) {}
+        Blob::Color::RGB color;
+
+	Player(std::string name, Blob::Color::RGB color) : name(std::move(name)), color(color) {}
 
 	void controller(bool c) {
 		control = c;

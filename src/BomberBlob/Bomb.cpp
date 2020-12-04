@@ -1,17 +1,15 @@
 #include <BomberBlob/Bomb.hpp>
 
-#include <BomberBlob/Bomber.hpp>
+#include <BomberBlob/UserData.hpp>
 
-Bomb::Bomb(Blob::Vec2f pos, Blob::Mesh &mesh, float scale) : RectStatic(pos, {scale, scale}, BOMB),
-                                                             Blob::Shape(mesh, pos.x, pos.y, scale / 2.f, scale / 2.f,
-                                                                         scale / 2.f,
-                                                                         scale / 2.f) {}
+Bomb::Bomb(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width)
+    : DynamicCube(world, pos, width, material, UserData::BOMB) {}
 
-bool Bomb::isDestroyed() {
+bool Bomb::isDestroyed() const {
     return destroyed;
 }
 
-void Bomb::hit(int objectType, Object &object) {
+void Bomb::hit(int objectType, void *object) {
     if (objectType == EXPLOSION) {
         destroyed = true;
     }

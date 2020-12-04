@@ -1,39 +1,15 @@
 #pragma once
 
-#include <Blob/GL/Texture.hpp>
-#include <Blob/Shapes.hpp>
+#include <Blob/AssetManager.hpp>
+#include <Blob/Color.hpp>
 
-class Textures {
+class Textures : Blob::AssetManager {
 public:
-    Blob::SingleColorMaterial brown, gray, red, orange, yellow, green, black;
+    Blob::Materials::SingleColor defaultMat;
 
-    Blob::GL::Texture groundTex,
-            boxTex,
-            indestructibleBoxTex,
-            extraBombTex,
-            extraPowerTex,
-            extraSpeedTex,
-            bombTex,
-            explosionTex;
+    Blob::Core::Texture groundTex, boxTex, indestructibleBoxTex, extraBombTex, extraPowerTex, extraSpeedTex, bombTex, explosionTex;
 
-    Blob::SingleTextureMaterial groundMat,
-            boxMat,
-            indestructibleBoxMat,
-            extraBombMat,
-            extraPowerMat,
-            extraSpeedMat,
-            bombMat,
-            explosionMat;
-
-    Blob::Shapes::Plane ground;
-    Blob::Shapes::Cube box,
-            indestructibleBox,
-            extraBomb,
-            extraPower,
-            extraSpeed,
-            bomb,
-            explosion,
-            player[4];
+    Blob::Materials::SingleTexture groundMat, boxMat, indestructibleBoxMat, extraBombMat, extraPowerMat, extraSpeedMat, bombMat, explosionMat;
 
     Textures();
 };

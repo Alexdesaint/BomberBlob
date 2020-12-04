@@ -1,20 +1,17 @@
 #pragma once
 
-#include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/Shape.hpp>
-#include <Blob/Time.hpp>
-
-#include <BomberBlob/UserData.hpp>
-
 #include <BomberBlob/Textures.hpp>
+#include <Core/StaticCube.hpp>
+#include <box2d/box2d.h>
 
-class Bonus : public Blob::Collision::RectStatic, public Blob::Shape {
+class Bonus : public StaticCube {
 private:
-	bool destroyed = false;
+    bool destroyed = false;
+
 public:
-	explicit Bonus(Blob::Vec2f pos, Textures &textures, float scale = 0.4f);
+    Bonus(const Blob::Maths::Vec2<float> &pos, Textures &textures, b2World &world, float width = 0.4f);
 
-    void hit(int objectType, Object &object) final;
+    void hit(Collider *c) final;
 
-	bool update();
+    [[nodiscard]] bool update() const;
 };

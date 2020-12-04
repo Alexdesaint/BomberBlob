@@ -1,32 +1,27 @@
 #include <BomberBlob/Explosion.hpp>
+#include <BomberBlob/UserData.hpp>
 
-Explosion::Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax, Blob::Mesh &mesh, float scale) :
-        Blob::Shape(mesh, positionInitial.x, positionInitial.y, scale/2.f, scale/2.f, scale/2.f, scale/2.f),
-        RectDynamic(positionInitial, {scale, scale}, EXPLOSION),
-        distanceMax(distanceMax),
-        positionInitial(positionInitial),
-        dirrection(dirrection) {
+Explosion::Explosion(b2World &world, const Blob::Core::Material &material, const Blob::Maths::Vec2<float> &initialPosition,
+                     const Blob::Maths::Vec2<float> &d, float distanceMax)
+    : DynamicCube(world, initialPosition, 0.4f, material, UserData::EXPLOSION), distanceMax(distanceMax), initialPosition(initialPosition), direction(d) {
 
-	dirrection = dirrection.getNormal();
-	speed = dirrection * maxSpeed;
+    speed = direction.normalize() * maxSpeed;
 
-    setReaction(IGNORE);
+//    body->SetLinearVelocity({direction.x, direction.y});
 }
 
-void Explosion::postCollisionUpdate() {
-    Shape::setPosition(position, 0.4f);
-}
-
-void Explosion::hit(int objectType, Object &object) {
-    if (objectType == INDESTRUCTIBLE_BOX || objectType == BOX || objectType == BOMB)
-		active = false;
+void Explosion::hit(Collider *c) {
+    if (c->id == INDESTRUCTIBLE_BOX || c->id == BOX || c->id == BOMB)
+        active = false;
 }
 
 bool Explosion::keepMoving() {
-    if ((positionInitial - position).length2() > distanceMax * distanceMax) {
-		active = false;
-		return false;
-	}
+    b2Vec2 p = body->GetPosition();
+    Blob::Maths::Vec2<float> position = {p.x, p.y};
+    if ((initialPosition - position).length2() > distanceMax * distanceMax) {
+        active = false;
+        return false;
+    }
 
-	return true;
+    return true;
 }

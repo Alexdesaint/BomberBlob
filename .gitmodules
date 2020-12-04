@@ -1,3 +1,6 @@
  [submodule "libs/BlobEngine"]
 	path = libs/BlobEngine
 	url = https://github.com/Alexdesaint/BlobEngine.git
+[submodule "libs/box2d"]
+	path = libs/box2d
+	url = https://github.com/erincatto/box2d.git

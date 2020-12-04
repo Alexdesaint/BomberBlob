@@ -1,12 +1,11 @@
 #include <BomberBlob/Box.hpp>
 
-Box::Box(float x, float y, Blob::Mesh &mesh, float scale) : RectStatic({x, y}, {scale, scale}, BOX),
-                                               Blob::Shape(mesh, x, y, scale/2.f, scale/2.f, scale/2.f, scale/2.f) {
-    //setTexture(texture);
-    //setTextureScale({4.f, 4.f});
-}
+#include <BomberBlob/UserData.hpp>
 
-void Box::hit(int objectType, Object &object) {
-    if (objectType == EXPLOSION)
+Box::Box(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width)
+    : DynamicCube(world, pos, width, material, UserData::BOX) {}
+
+void Box::hit(Collider *c) {
+    if (c->id == EXPLOSION)
         destroyed = true;
 }

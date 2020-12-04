@@ -1,52 +1,56 @@
 #pragma once
 
-#include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/Shape.hpp>
+#include <Core/DynamicCube.hpp>
+#include <box2d/box2d.h>
 
-#include <BomberBlob/UserData.hpp>
-#include <BomberBlob/Textures.hpp>
+#include <Blob/Core/Shape.hpp>
+
 #include <BomberBlob/BombManager.hpp>
+#include <BomberBlob/Textures.hpp>
+#include <BomberBlob/UserData.hpp>
 
+#include <Player.hpp>
 #include <array>
 #include <list>
-#include <Player.hpp>
 
-class Bomber : public Blob::Collision::RectDynamic, public Blob::Shape {
-	friend BombManager;
+class Bomber : public DynamicCube {
+    friend BombManager;
+
 private:
-	Player &player;
+    // Box2d
+    b2World &world;
 
-	float acceleration = 2.5f, deceleration = 1.5f, maxSpeed = 2.f, bombPower = 2.f;
-	bool alive = true, onBomb = false;
+    /*b2BodyDef bodyDef;
+    b2PolygonShape polygonShape;
+    b2FixtureDef fixtureDef;
+    b2Body *body = nullptr;*/
 
-	unsigned int maxBomb = 1, bombPosed = 0;
+    // Game
+    Player &player;
 
-	std::list<BombManager> &bombs;
+    float acceleration = 2.5f, deceleration = 1.5f, maxSpeed = 2.f, bombPower = 2.f;
+    bool alive = true, onBomb = false;
 
-	BombManager *lastBomb = nullptr;
+    unsigned int maxBomb = 1, bombPosed = 0;
 
-	Textures &textures;
+    std::list<BombManager> &bombs;
+
+    BombManager *lastBomb = nullptr;
+
+    Blob::Materials::SingleColor material;
+    Textures &textures;
+
 public:
+    Bomber(b2World &world, const Blob::Maths::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures,
+           float scale = 0.8f);
 
-	Bomber(Blob::Vec2f pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale = 0.8f);
+    void updateInputs();
 
-	void preCollisionUpdate() final;
+    void hit(Collider *c) final;
 
-	void postCollisionUpdate() final;
+    [[nodiscard]] bool isAlive() const { return alive; }
 
-    void hit(int objectType, Object &object) final;
+    [[nodiscard]] Player &getPlayer() const;
 
-	bool isAlive() const {
-		return alive;
-	}
-
-	float getMaxSpeed() const;
-
-	float getBombPower() const;
-
-	unsigned int getMaxBomb() const;
-
-	Player &getPlayer() const;
-
-	void drawInfo() const;
+    void drawInfo() const;
 };

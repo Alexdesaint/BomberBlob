@@ -1,20 +1,22 @@
 #include <iostream>
 
-#include <Blob/Exception.hpp>
+#include <Blob/Core/Exception.hpp>
 
 #include <Menu.hpp>
+
+using namespace Blob;
 
 int main() {
 
     try {
-        Blob::Camera camera;
+        Core::Camera camera;
 
-        Blob::Window window(camera, false);
+        Core::Window window(camera, false);
 
         (Menu(window));
 
-    } catch (Blob::Exception &e) {
-        std::cout << "Game Error :" << std::endl << e.what() << std::endl;
+    } catch (Core::Exception &e) {
+        std::cout << "Blob Error :" << std::endl << e.what() << std::endl;
     } catch (std::exception &e) {
         std::cout << "Game Error :" << std::endl << e.what() << std::endl;
     }

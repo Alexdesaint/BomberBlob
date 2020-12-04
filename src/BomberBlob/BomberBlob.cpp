@@ -3,88 +3,84 @@
 #include <BomberBlob/BomberBlob.hpp>
 #include <BomberBlob/Textures.hpp>
 
+#include <Blob/Core/Controls.hpp>
 #include <imgui.h>
-#include <Blob/Controls.hpp>
 
 using namespace Blob;
+using namespace Blob::Core;
+using namespace Blob::Maths;
 using namespace std;
 
-BomberBlob::BomberBlob(Window &window, map<int, Player> &players, Textures &textures) :
-        Game(window, players), textures(textures) { start(); }
+BomberBlob::BomberBlob(Window &window, map<int, Player> &players)
+    : Game(window, players, {{0, -20, 40}, {0, 0, 0}, {0, 0, 1}}), world(b2Vec2(0.0f, 0.0f)) {}
 
-void BomberBlob::start() {
+void BomberBlob::run() {
     std::cout << "bombers init" << std::endl;
 
-    static const Vec2f pos[4] = {
-            {1.5f,         1.5f},
-            {width - 1.5f, height - 1.5f},
-            {width - 1.5f, 1.5f},
-            {1.5f,         height - 1.5f}
-    };
+    static const Vec2<float> pos[4] = {{width - 3, height - 3}, {-width + 3, -height + 3}, {width - 3, -height + 3}, {-width + 3, height - 3}};
 
     for (auto &p : players)
-        bombers.emplace_back(pos[p.first], bombs, p.second, textures);
+        bombers.emplace_back(world, pos[p.first], bombs, p.second, textures);
 
-    //map init
-    ground.setMesh(textures.ground);
-    ground.setPosition(width / 2.f, height / 2.f, 0);
-    ground.setScale((width - 2) / 2.f, (height - 2) / 2.f, 1);
-    textures.groundMat.texScale[0] = width - 2.f;
-    textures.groundMat.texScale[1] = height - 2.f;
+    // map init
+    ground.primitive0.setMaterial(&textures.groundMat);
+    // ground.setPosition({width / 2.f, height / 2.f, -1.f});
+    ground.setPosition({0, 0, 0});
+    ground.setScale({width, height, 1});
+    textures.groundMat.texScale = {width, height};
 
-    for (int i = 4; i < width - 4; i += 2) {
-        boxes.emplace_back(0.5f + i, 0.5f + 1, textures.box);
-        boxes.emplace_back(0.5f + i, height - 0.5f - 1, textures.box);
+    for (float i = -width + 5; i <= width - 4.5; i += 4.f) {
+        for (float j = -height + 7; j <= height - 6.5; j += 4.f) {
+            boxes.emplace_back(Vec2{i, j}, textures.boxMat, world);
+        }
+    }
+    for (float i = -width + 7; i <= width - 6.5; i += 4.f) {
+        for (float j = -height + 5; j <= height - 4.5; j += 4.f) {
+            boxes.emplace_back(Vec2{i, j}, textures.boxMat, world);
+        }
+    }
+    for (float i = -width + 9; i <= width - 8.5; i += 4.f) {
+        boxes.emplace_back(Vec2{i, height - 3}, textures.boxMat, world);
+        boxes.emplace_back(Vec2{i, -height + 3}, textures.boxMat, world);
+    }
+    for (float i = -height + 9; i <= height - 8.5; i += 4.f) {
+        boxes.emplace_back(Vec2{width - 3, i}, textures.boxMat, world);
+        boxes.emplace_back(Vec2{-width + 3, i}, textures.boxMat, world);
     }
 
-    for (int i = 4; i < height - 4; i += 2) {
-        boxes.emplace_back(0.5f + 1, 0.5f + i, textures.box);
-        boxes.emplace_back(width - 0.5f - 1, 0.5f + i, textures.box);
+    for (float i = -width + 1; i <= width - 0.5; i += 2.f) {
+        indestructibleBoxes.emplace_back(Vec2{i, height - 1}, textures.indestructibleBoxMat, world);
+        indestructibleBoxes.emplace_back(Vec2{i, -height + 1}, textures.indestructibleBoxMat, world);
     }
 
-    for (int i = 3; i < width - 3; i += 2) {
-        for (int j = 2; j < height - 2; j += 2) {
-            boxes.emplace_back(0.5 + i, 0.5 + j, textures.box);
+    for (float i = -height + 3; i <= height - 2.5; i += 2.f) {
+        indestructibleBoxes.emplace_back(Vec2{width - 1, i}, textures.indestructibleBoxMat, world);
+        indestructibleBoxes.emplace_back(Vec2{-width + 1, i}, textures.indestructibleBoxMat, world);
+    }
+
+    for (float i = -width + 5; i < width - 4.5f; i += 4) {
+        for (float j = -height + 5; j < height - 4.5f; j += 4) {
+            indestructibleBoxes.emplace_back(Vec2{i, j}, textures.indestructibleBoxMat, world);
         }
     }
 
-    for (int i = 2; i < width - 2; i += 2) {
-        for (int j = 3; j < height - 3; j += 2) {
-            boxes.emplace_back(0.5f + i, 0.5 + j, textures.box);
-        }
-    }
-
-    for (int i = 0; i < width; i++) {
-        indestructibleBoxes.emplace_back(0.5f + i, 0.5f, textures.indestructibleBox);
-        indestructibleBoxes.emplace_back(0.5f + i, height - 0.5f, textures.indestructibleBox);
-    }
-
-    for (int i = 1; i < height - 1; i++) {
-        indestructibleBoxes.emplace_back(0.5f, 0.5f + i, textures.indestructibleBox);
-        indestructibleBoxes.emplace_back(width - 0.5f, 0.5f + i, textures.indestructibleBox);
-    }
-
-    for (int i = 2; i < width - 2; i += 2) {
-        for (int j = 2; j < height - 2; j += 2) {
-            indestructibleBoxes.emplace_back(0.5f + i, 0.5f + j, textures.indestructibleBox, 0.8);
-        }
-    }
-
-    //Camera init
+    // Camera init
     float cameraAngle = PI / 4;
-
     window.setAngle(cameraAngle);
+    // window.setOrthoProjection(std::sqrt(height*height + width*width));
+    window.setRange(10, 100);
 
-    camera.setPosition(width / 2.f, 0, 1 + height / std::tan(cameraAngle));
-
-    camera.setLookAt(width / 2.f, height * std::tan(cameraAngle / 2.f), 1);
-
-    SingleColorMaterial::light.position.x = width / 2.f;
-    SingleColorMaterial::light.position.y = height / 2.f;
-    SingleColorMaterial::light.position.z = 10.f;
+    // camera.setPosition({width / 2.f, 0, 1 + height / std::tan(cameraAngle)});
+    // camera.setLookAt({width / 2.f, height * std::tan(cameraAngle / 2.f), 1});
 
     window.setCamera(camera);
 
+    /*    Materials::PBR::light.position.x = 50;
+        Materials::PBR::light.position.y = 50;
+        Materials::PBR::light.position.z = 50.f;
+        Materials::PBR::light.power = 500000.f;*/
+
+    world.SetContactListener(&contactListener);
     // Start !!!
     gameLoop();
 }
@@ -92,12 +88,15 @@ void BomberBlob::start() {
 void BomberBlob::gameLoop() {
 
     bool endGame = false, escape = false, pauseMenu = false;
+    float timeStep = 0;
+    int32 velocityIterations = 6;
+    int32 positionIterations = 2;
 
-    //mainLoop
+    // mainLoop
     while (window.isOpen() && !endGame) {
         window.draw(ground);
 
-        //static objects
+        // static objects
         for (auto &ib : indestructibleBoxes)
             window.draw(ib);
 
@@ -110,12 +109,18 @@ void BomberBlob::gameLoop() {
             }
         }
 
-        collisionDetector.update();
+        for (auto &b : bombers)
+            b.updateInputs();
 
-        //evolutive objects :
+        DynamicCube::updateAll();
+
+        world.Step(timeStep, velocityIterations, positionIterations);
+
+        // evolutive objects :
         for (auto i = boxes.begin(); i != boxes.end();) {
             if (i->isDestroy()) {
-                bonus.emplace_back(i->position, textures);
+                b2Vec2 position = i->body->GetPosition();
+                bonus.emplace_back(Vec2{position.x, position.y}, textures, world);
 
                 i = boxes.erase(i);
             } else {
@@ -136,9 +141,8 @@ void BomberBlob::gameLoop() {
         // Info bar
         ImGui::SetNextWindowPos({0, 0});
         ImGui::Begin("InfoP1", nullptr,
-                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                     ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize |
-                     ImGuiWindowFlags_NoBringToFrontOnFocus);
+                     ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+                         ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
         int playerAlive = 0;
         for (const auto &b : bombers) {
@@ -151,25 +155,24 @@ void BomberBlob::gameLoop() {
 
         ImGui::End();
 
-        //pause menu
+        // pause menu
         if (pauseMenu) {
-            ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
+            ImGui::SetNextWindowPos(window.windowSize.cast<float>() / 2.f, 0, {0.5, 0.5});
 
             ImGui::Begin("Pause", nullptr,
-                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize |
-                         ImGuiWindowFlags_NoBringToFrontOnFocus);
+                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar |
+                             ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
             ImGui::Text("   Pause   ");
 
-            if (ImGui::Button("Resume", {ImGui::GetContentRegionAvailWidth(), 0})) {
-                collisionDetector.unpause();
+            if (ImGui::Button("Resume", {ImGui::GetWindowContentRegionWidth(), 0})) {
+                // collisionDetector.unpause();
                 pauseMenu = false;
             }
 
-            if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0}))
+            if (ImGui::Button("Main menu", {ImGui::GetWindowContentRegionWidth(), 0}))
                 endGame = true;
-            if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0})) {
+            if (ImGui::Button("Quit", {ImGui::GetWindowContentRegionWidth(), 0})) {
                 endGame = true;
                 window.close();
             }
@@ -177,13 +180,12 @@ void BomberBlob::gameLoop() {
             ImGui::End();
         }
 
-        //Score
+        // Score
         if (playerAlive <= 1) {
-            collisionDetector.pause();
-            ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
+            // collisionDetector.pause();
+            ImGui::SetNextWindowPos(window.windowSize.cast<float>() / 2, 0, {0.5, 0.5});
 
-            ImGui::Begin("Score", nullptr,
-                         ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
+            ImGui::Begin("Score", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove);
 
             for (const auto &b : bombers)
                 if (b.isAlive()) {
@@ -191,12 +193,12 @@ void BomberBlob::gameLoop() {
                     ImGui::Text("Winner : %s", b.getPlayer().getName().c_str());
                 }
 
-            if (ImGui::Button("Main menu", {ImGui::GetContentRegionAvailWidth(), 0})) {
+            if (ImGui::Button("Main menu", {ImGui::GetWindowContentRegionWidth(), 0})) {
                 endGame = true;
-                collisionDetector.unpause();
+                // collisionDetector.unpause();
             }
 
-            if (ImGui::Button("Quit", {ImGui::GetContentRegionAvailWidth(), 0})) {
+            if (ImGui::Button("Quit", {ImGui::GetWindowContentRegionWidth(), 0})) {
                 endGame = true;
                 window.close();
             }
@@ -204,20 +206,20 @@ void BomberBlob::gameLoop() {
             ImGui::End();
         }
 
-        //draw
-        window.display();
+        // draw
+        timeStep = window.display();
 
-        //check imput
-        if (Controls::Keys::ESCAPE && !escape)
+        // check imput
+        if (window.keyboard.ESCAPE && !escape)
             escape = true;
-        else if (!Controls::Keys::ESCAPE && escape) {
+        else if (!window.keyboard.ESCAPE && escape) {
             escape = false;
             if (pauseMenu) {
                 pauseMenu = false;
-                collisionDetector.unpause();
+                // collisionDetector.unpause();
             } else {
                 pauseMenu = true;
-                collisionDetector.pause();
+                // collisionDetector.pause();
             }
         }
     }

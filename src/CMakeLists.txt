@@ -1,16 +1,11 @@
-add_executable(BomberMan
+add_executable(Game
 		main.cpp
 		Game.cpp
-		Menu.cpp
+		Menu.cpp)
 
-        BomberBlob/BomberBlob.cpp
-		BomberBlob/Bomb.cpp
-		BomberBlob/Bonus.cpp
-		BomberBlob/BombManager.cpp
-		BomberBlob/Box.cpp
-		BomberBlob/Explosion.cpp
-		BomberBlob/IndestructibleBox.cpp
-		BomberBlob/Bomber.cpp
-        BomberBlob/Textures.cpp)
+target_link_libraries(Game Blob BlobJump BomberBlob BlobSurvive)
 
-target_link_libraries(BomberMan Blob Blob::Collision Blob) # -static -static-libgcc -static-libstdc++-lpthread)
+add_subdirectory(Core)
+add_subdirectory(BlobJump)
+add_subdirectory(BomberBlob)
+add_subdirectory(BlobSurvive)

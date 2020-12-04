@@ -1,5 +1,5 @@
 #include <BomberBlob/IndestructibleBox.hpp>
+#include <BomberBlob/UserData.hpp>
 
-IndestructibleBox::IndestructibleBox(float x, float y, Blob::Mesh &mesh, float scale) :
-        Blob::Shape(mesh, x, y, scale / 2.f, scale/2.f, scale/2.f, scale/2.f),
-        RectStatic({x, y}, {scale, scale}, INDESTRUCTIBLE_BOX) {}
+IndestructibleBox::IndestructibleBox(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width)
+    : StaticCube(world, pos, width, material, UserData::INDESTRUCTIBLE_BOX) {}

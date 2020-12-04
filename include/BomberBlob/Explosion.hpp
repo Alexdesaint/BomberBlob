@@ -1,28 +1,20 @@
 #pragma once
 
-#include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/Shape.hpp>
-#include <Blob/Time.hpp>
+#include <box2d/box2d.h>
+#include <Core/DynamicCube.hpp>
 
-#include <BomberBlob/UserData.hpp>
-
-class Explosion : public Blob::Collision::RectDynamic, public Blob::Shape {
+class Explosion : public DynamicCube {
 private:
-	Blob::Vec2f positionInitial, dirrection;
-	float maxSpeed = 8, distanceMax = 2;
-	bool active = true;
+    Blob::Maths::Vec2<float> initialPosition, direction;
+    float maxSpeed = 8, distanceMax = 2;
+    bool active = true;
 
 public:
-	Explosion(Blob::Vec2f positionInitial, Blob::Vec2f dirrection, float distanceMax, Blob::Mesh &mesh, float scale = 0.4f);
+    Explosion(b2World &world, const Blob::Core::Material &material, const Blob::Maths::Vec2<float> &initialPosition, const Blob::Maths::Vec2<float> &direction, float distanceMax);
 
-	bool keepMoving() final;
+    bool keepMoving();
 
-	void postCollisionUpdate() final;
+    void hit(Collider *c) final;
 
-    void hit(int objectType, Object &object) final;
-
-	bool isActive() const {
-		return active;
-	}
-
+    [[nodiscard]] bool isActive() const { return active; }
 };

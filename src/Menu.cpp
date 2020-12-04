@@ -1,148 +1,191 @@
 #include <Menu.hpp>
 
-#include <imgui.h>
-#include <Blob/Exception.hpp>
-#include <Blob/Controls.hpp>
+#include <Blob/Core/Controls.hpp>
+#include <Blob/Core/Exception.hpp>
+#include <BlobJump/BlobJump.hpp>
+#include <BlobSurvive/BlobSurvive.hpp>
 #include <BomberBlob/BomberBlob.hpp>
+#include <imgui.h>
 
 using namespace Blob;
 using namespace std;
 
-Menu::Menu(Blob::Window &window) : window(window) {
-	ImGuiIO &io = ImGui::GetIO();
-	//ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
-	//ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
+struct ComboMenu {
+    size_t selected = 0; /// item selected
+    // std::map<size_t, std::string> &options;
+    bool updated = false;
+    std::string name;
 
-	//ImGui::GetIO().FontDefault = font1;
-	//window.rebuildFontImGUI();
+    void show(std::vector<std::string> options) {
+        if (options.empty()) {
+            if (ImGui::BeginCombo(name.c_str(), "")) {
+                // ImGui::Selectable("", false);
+                ImGui::EndCombo();
+            }
 
-	while (window.isOpen()) {
-		ImGui::ShowDemoWindow();
+            return;
+        }
 
-		ImGui::SetNextWindowPos(window.getSize() / 2, 0, {0.5, 0.5});
+        if (selected >= options.size())
+            selected = options.size() - 1;
 
-		//ImGui::PushFont(font2);
+        updated = false;
+        if (ImGui::BeginCombo(name.c_str(), options[selected].c_str())) {
+            int oldSelected = selected;
+            for (size_t j = 0; j < options.size(); j++) {
+                if (ImGui::Selectable(options[j].c_str(), oldSelected == j)) {
+                    if (oldSelected != j) {
+                        selected = j;
+                        updated = true;
+                    }
+                }
+            }
+            ImGui::EndCombo();
+        }
+    }
+};
 
-		ImGui::Begin("main", nullptr,
-					 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-					 ImGuiWindowFlags_AlwaysAutoResize);
+Menu::Menu(Core::Window &window) : window(window) {
+    ImGui::ShowDemoWindow();
+    ImGuiIO &io = ImGui::GetIO();
+    // ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
+    // ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
 
-		ImGui::Text("BOMBERBLOB");
+    // ImGui::GetIO().FontDefault = font1;
+    // window.rebuildFontImGUI();
+    ComboMenu comboGame{0, false, "Demo"};
+    std::vector<std::string> games{"BlobJump", "BomberBlob", "BlobSurvive"};
 
-		//ImGui::PopFont();
-		//ImGui::PushFont(font1);
+    Game *game = new BlobJump(window, players);
+    window.setCamera(game->camera);
 
-		if (ImGui::BeginTabBar("bar", ImGuiTabBarFlags_None)) {
-			if (ImGui::BeginTabItem("Players")) {
-				playerSelection();
-				ImGui::EndTabItem();
-			}
-			if (ImGui::BeginTabItem("Game settings")) {
-				ImGui::Text("Game settings");
-				ImGui::EndTabItem();
-			}
-			ImGui::EndTabBar();
-		}
+    while (window.isOpen()) {
 
-		ImGui::Separator();
+        //ImGui::SetNextWindowPos((window.windowSize / 2).cast<float>(), 0, {0.5, 0.5});
 
-		bool start = ImGui::Button("Start", {ImGui::GetContentRegionAvailWidth(), 0});
+        // ImGui::PushFont(font2);
 
-		if(start && players.size() <= 1) {
-		    std::cout << "not enough players" << std::endl;
-		    start = false;
-		}
+        ImGui::Begin("BlobEngine Demo", nullptr,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
 
-		if (ImGui::Button("Quit", {ImGui::GetWindowContentRegionWidth(), 0}))
-			window.close();
-		ImGui::End();
+        comboGame.show(games);
+        if (comboGame.updated) {
+            delete game;
+            switch (comboGame.selected) {
+            case 1:
+                game = new BomberBlob(window, players);
+                break;
+            case 2:
+                game = new BlobSurvive(window, players);
+                break;
+            default:
+                game = new BlobJump(window, players);
+                break;
+            }
+            window.setCamera(game->camera);
+        }
 
-		for (const auto &c : Blob::Controls::controllers)
-			c->controllerOut();
+        // ImGui::PopFont();
+        // ImGui::PushFont(font1);
 
-		//ImGui::PopFont();
-		window.display();
+        if (ImGui::CollapsingHeader("Players"))
+            playerSelection();
+        if (ImGui::CollapsingHeader("Settings"))
+            game->settings();
 
-		if (start)
-			(BomberBlob(window, players, textures));
-	}
+        ImGui::Separator();
+
+        if(game->loadReady())
+            if(ImGui::Button("Load", {ImGui::GetWindowContentRegionWidth(), 0}))
+                game->load();
+        bool start = false;
+        if(game->gameReady())
+            start = ImGui::Button("Start", {ImGui::GetWindowContentRegionWidth(), 0});
+
+        /*        if (start && players.size() <= 1) {
+                    std::cout << "not enough players" << std::endl;
+                    start = false;
+                }*/
+
+        if (ImGui::Button("Quit", {ImGui::GetWindowContentRegionWidth(), 0}))
+            window.close();
+        ImGui::End();
+
+        // ImGui::PopFont();
+        window.display();
+
+        if (start)
+            game->run();
+    }
+
+    delete game;
 }
 
 void Menu::playerSelection() {
-	ImGui::Text("Controllers connected : %zu", Blob::Controls::controllers.size());
+    static Color::RGB colors[]{
+        Blob::Color::Yellow, Blob::Color::Brown, Blob::Color::Gray, Blob::Color::Red, Blob::Color::Orange, Blob::Color::Green, Blob::Color::Black,
+    };
 
-	std::vector<const char *> commands = {"None", "Keyboard"};
+    static map<size_t, ComboMenu> comboMenus;
+    std::vector<std::string> commands = {"None", "Keyboard"};
+    if (comboMenus.find(0) == comboMenus.end())
+        comboMenus.emplace(0, ComboMenu{1, true, "Player 0"});
 
-	for (auto c : Blob::Controls::controllers)
-		commands.push_back(c->name.c_str());
+    for (size_t i = 0; i < GLFW::Window::joystickCount; i++) {
+        if (GLFW::Window::joystickConnected[i]) {
+            if (comboMenus.find(i + 1) == comboMenus.end())
+                comboMenus.emplace(i + 1, ComboMenu{i + 2, true, "Player " + std::to_string(i + 1)});
+            commands.emplace_back(GLFW::Window::joystickName[i]);
+        }
+    }
 
-	static const std::string names[4] = {"Player 1", "Player 2", "Player 3", "Player 4"};
-	static int selected[4] = {0, 0, 0, 0};
+    for (auto &[key, comboMenu] : comboMenus) {
+        ImGui::SetNextItemWidth(300);
+        comboMenu.show(commands);
+    }
 
-	for (int i = 0; i < 4; i++) {
-		ImGui::SetNextItemWidth(300);
-		if (ImGui::BeginCombo(names[i].c_str(), commands[selected[i]])) {
-			int oldSelected = selected[i];
-			for (size_t j = 0; j < commands.size(); j++) {
-				if (ImGui::Selectable(commands[j], oldSelected == j))
-					selected[i] = j;
-				if (oldSelected == j)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
+    for (auto &[key, comboMenu] : comboMenus) {
+        if (comboMenu.updated) {
+            comboMenu.updated = false;
+            auto it = players.find(key);
 
-			if (oldSelected != selected[i]) {
-				auto it = players.find(i);
+            switch (comboMenu.selected) {
+            case 0:
+                if (it != players.end())
+                    players.erase(it);
+                break;
+            case 1:
+                if (it == players.end())
+                    it = players.emplace(key, Player(comboMenu.name, colors[key])).first;
 
-				switch (selected[i]) {
-					case 0:
-						if (it != players.end())
-							players.erase(it);
-						break;
-					case 1:
-						if (it == players.end())
-							it = players.emplace(std::piecewise_construct,
-												 std::forward_as_tuple(i),
-												 std::forward_as_tuple(names[i], i)).first;
+                it->second.controller(false);
+                it->second.setKey(Player::right, &window.keyboard.RIGHT.pressed);
+                it->second.setKey(Player::left, &window.keyboard.LEFT.pressed);
+                it->second.setKey(Player::up, &window.keyboard.UP.pressed);
+                it->second.setKey(Player::down, &window.keyboard.DOWN.pressed);
+                it->second.setKey(Player::action, &window.keyboard.SPACE.pressed);
+                break;
+            default:
+                if (it == players.end())
+                    it = players.emplace(key, Player(comboMenu.name, colors[key])).first;
 
-						it->second.controller(false);
-						it->second.setKey(Player::right, &Controls::Keys::RIGHT);
-						it->second.setKey(Player::left, &Controls::Keys::LEFT);
-						it->second.setKey(Player::up, &Controls::Keys::UP);
-						it->second.setKey(Player::down, &Controls::Keys::DOWN);
-						it->second.setKey(Player::action, &Controls::Keys::SPACE);
-						break;
-					default:
-						if (it == players.end())
-							it = players.emplace(std::piecewise_construct,
-												 std::forward_as_tuple(i),
-												 std::forward_as_tuple(names[i], i)).first;
+                it->second.controller(true);
+                unsigned int controllerNumber = key - 1;
 
-						int contrl = selected[i] - 2;
+                if (GLFW::Window::joystickAxesCount[controllerNumber] < 2)
+                    throw Blob::Core::Exception("Controller don't have any joystick");
 
-						if (contrl >= Blob::Controls::controllers.size()) {
-							players.erase(it);
-							throw Blob::Exception("Selected controller don't exist");
-						} else {
-							it->second.controller(true);
-							const Controls::Controller *c = *std::next(Controls::controllers.begin(), contrl);
-
-							if (c->joystickAxesCount < 2)
-								throw Blob::Exception("Controller don't have any joystick");
-
-							it->second.setJoystickAxe(Player::x, &c->joystickAxes[0]);
-							it->second.setJoystickAxe(Player::y, &c->joystickAxes[1]);
-							it->second.setButton(Player::action, &c->buttons[0]);
-							if (c->buttonsCount >= 14) {
-								it->second.setButton(Player::up, &c->buttons[11]);
-								it->second.setButton(Player::right, &c->buttons[12]);
-								it->second.setButton(Player::down, &c->buttons[13]);
-								it->second.setButton(Player::left, &c->buttons[14]);
-							}
-						}
-						break;
-				}
-			}
-		}
-	}
+                it->second.setJoystickAxe(Player::x, &GLFW::Window::joystickAxes[controllerNumber][0]);
+                it->second.setJoystickAxe(Player::y, &GLFW::Window::joystickAxes[controllerNumber][1]);
+                it->second.setButton(Player::action, &GLFW::Window::joystickButtons[controllerNumber][0]);
+                if (GLFW::Window::joystickButtonsCount[controllerNumber] >= 14) {
+                    it->second.setButton(Player::up, &GLFW::Window::joystickButtons[controllerNumber][11]);
+                    it->second.setButton(Player::right, &GLFW::Window::joystickButtons[controllerNumber][12]);
+                    it->second.setButton(Player::down, &GLFW::Window::joystickButtons[controllerNumber][13]);
+                    it->second.setButton(Player::left, &GLFW::Window::joystickButtons[controllerNumber][14]);
+                }
+                break;
+            }
+        }
+    }
 }

@@ -1,20 +1,17 @@
 #pragma once
 
-#include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/Shape.hpp>
-
-#include <BomberBlob/UserData.hpp>
+#include <box2d/box2d.h>
+#include <Core/DynamicCube.hpp>
 
 class Player;
 
-class Bomb : public Blob::Collision::RectStatic, public Blob::Shape {
+class Bomb : public DynamicCube {
 private:
-	bool destroyed = false;
-
+    bool destroyed = false;
 public:
-	explicit Bomb(Blob::Vec2f pos, Blob::Mesh &mesh, float scale = 0.4f);
+    explicit Bomb(const Blob::Maths::Vec2<float>& pos, Blob::Core::Material &material, b2World &world, float width = 0.4f);
 
-    void hit(int objectType, Object &object) final;
+    void hit(int objectType, void *object);
 
-	bool isDestroyed();
+    [[nodiscard]] bool isDestroyed() const;
 };

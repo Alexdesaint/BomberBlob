@@ -1,22 +1,19 @@
 #pragma once
 
-#include <Blob/Window.hpp>
-
+#include <Blob/Core/Window.hpp>
 #include <Player.hpp>
-
-#include <BomberBlob/Textures.hpp>
-
+//#include <BomberBlob/Textures.hpp>
 #include <map>
 
 class Menu {
 private:
-	Textures textures;
+    //Textures textures;
 
-	Blob::Window &window;
-	std::map<int, Player> players;
+    Blob::Core::Window &window;
+    std::map<int, Player> players;
 
-	void playerSelection();
+    void playerSelection();
 
 public:
-	explicit Menu(Blob::Window &window);
+    explicit Menu(Blob::Core::Window &window);
 };

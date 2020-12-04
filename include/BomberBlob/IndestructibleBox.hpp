@@ -1,14 +1,12 @@
 #pragma once
 
-#include <Blob/Collision/CollisionDetector.hpp>
-#include <Blob/Shape.hpp>
+#include <box2d/box2d.h>
+#include <Core/StaticCube.hpp>
 
-#include <BomberBlob/UserData.hpp>
-
-class IndestructibleBox : public Blob::Collision::RectStatic, public Blob::Shape {
+class IndestructibleBox : public StaticCube {
 private:
-	bool destroyed = false;
+    bool destroyed = false;
 
 public:
-	IndestructibleBox(float x, float y, Blob::Mesh &mesh, float scale = 1.f);
+    IndestructibleBox(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width = 1.0f);
 };

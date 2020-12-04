@@ -4,91 +4,96 @@
 
 using namespace Blob;
 using namespace Blob::Time;
+using namespace Blob::Maths;
 
-BombManager::BombManager(Blob::Vec2f pos, Bomber &bomber, Textures &textures) : bomber(bomber), textures(textures) {
-	bomb = new Bomb(pos, textures.bomb);
+BombManager::BombManager(b2World &world, const Vec2<float> &pos, Bomber &bomber, Textures &textures)
+    : bomber(bomber), textures(textures), world(world) {
+    bomb = new Bomb(pos, textures.bombMat, world);
 
-	setChild(bomb);
+    addChild(bomb);
 
-	start = now();
+    start = now();
 }
 
 bool BombManager::update() {
-	Duration flow = now() - start;
-	if(bomb == nullptr) {
-		if(exUP != nullptr && !exUP->isActive()) {
-			removeChild(exUP);
-			delete exUP;
-			exUP = nullptr;
-		}
+    Duration flow = now() - start;
 
-		if(exDO != nullptr && !exDO->isActive()) {
-			removeChild(exDO);
-			delete exDO;
-			exDO = nullptr;
-		}
+    if (bomb == nullptr) {
+        if (exUP != nullptr && !exUP->isActive()) {
+            removeChild(exUP);
+            delete exUP;
+            exUP = nullptr;
+        }
 
-		if(exLE != nullptr && !exLE->isActive()) {
-			removeChild(exLE);
-			delete exLE;
-			exLE = nullptr;
-		}
+        if (exDO != nullptr && !exDO->isActive()) {
+            removeChild(exDO);
+            delete exDO;
+            exDO = nullptr;
+        }
 
-		if(exRI != nullptr && !exRI->isActive()) {
-			removeChild(exRI);
-			delete exRI;
-			exRI = nullptr;
-		}
+        if (exLE != nullptr && !exLE->isActive()) {
+            removeChild(exLE);
+            delete exLE;
+            exLE = nullptr;
+        }
 
-		return exUP == nullptr && exDO == nullptr && exRI == nullptr && exLE == nullptr;
-	} else if(flow.count() > bombDelay || bomb->isDestroyed()) {
-		bomber.bombPosed--;
+        if (exRI != nullptr && !exRI->isActive()) {
+            removeChild(exRI);
+            delete exRI;
+            exRI = nullptr;
+        }
 
-        exRI = new Explosion(bomb->position, Vec2f(0, 1), bomber.bombPower, textures.explosion);
-        exLE = new Explosion(bomb->position, Vec2f(0, -1), bomber.bombPower, textures.explosion);
-        exDO = new Explosion(bomb->position, Vec2f(1, 0), bomber.bombPower, textures.explosion);
-        exUP = new Explosion(bomb->position, Vec2f(-1, 0), bomber.bombPower, textures.explosion);
+        return exUP == nullptr && exDO == nullptr && exRI == nullptr && exLE == nullptr;
+    } else if (flow.count() > bombDelay || bomb->isDestroyed()) {
+        bomber.bombPosed--;
 
-		setChild(exRI);
-		setChild(exLE);
-		setChild(exDO);
-		setChild(exUP);
+        b2Vec2 p = bomb->body->GetPosition();
+        Blob::Maths::Vec2<float> position = {p.x, p.y};
+        exRI = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, 1), bomber.bombPower);
+        exLE = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, -1), bomber.bombPower);
+        exDO = new Explosion(world, textures.explosionMat, position, Vec2<float>(1, 0), bomber.bombPower);
+        exUP = new Explosion(world, textures.explosionMat, position, Vec2<float>(-1, 0), bomber.bombPower);
 
-		removeChild(bomb);
-		delete bomb;
-		bomb = nullptr;
-	}
+        addChild(exRI);
+        addChild(exLE);
+        addChild(exDO);
+        addChild(exUP);
 
-	return false;
+        removeChild(bomb);
+        delete bomb;
+        bomb = nullptr;
+    }
+
+    return false;
 }
 
 Bomb *BombManager::getBomb() const {
-	return bomb;
+    return bomb;
 }
 
 BombManager::~BombManager() {
-	if(exUP != nullptr) {
-		removeChild(exUP);
-		delete exUP;
-	}
+    if (exUP != nullptr) {
+        removeChild(exUP);
+        delete exUP;
+    }
 
-	if(exDO != nullptr) {
-		removeChild(exDO);
-		delete exDO;
-	}
+    if (exDO != nullptr) {
+        removeChild(exDO);
+        delete exDO;
+    }
 
-	if(exLE != nullptr) {
-		removeChild(exLE);
-		delete exLE;
-	}
+    if (exLE != nullptr) {
+        removeChild(exLE);
+        delete exLE;
+    }
 
-	if(exRI != nullptr) {
-		removeChild(exRI);
-		delete exRI;
-	}
+    if (exRI != nullptr) {
+        removeChild(exRI);
+        delete exRI;
+    }
 
-	if(bomb != nullptr) {
-		removeChild(bomb);
-		delete bomb;
-	}
+    if (bomb != nullptr) {
+        removeChild(bomb);
+        delete bomb;
+    }
 }

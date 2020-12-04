@@ -4,31 +4,31 @@
 #include <BomberBlob/Explosion.hpp>
 #include <BomberBlob/Textures.hpp>
 
-#include <Blob/Shape.hpp>
+#include <Blob/Core/Shape.hpp>
 
 #include <Blob/Time.hpp>
 
 class Bomber;
 
-class BombManager : public Blob::Shape {
+class BombManager : public Blob::Core::Shape {
 private:
-	Bomb *bomb;
-	float bombDelay = 3;
+    Bomb *bomb;
+    float bombDelay = 3;
 
-	Explosion *exUP, *exDO, *exRI, *exLE;
+    Explosion *exUP = nullptr, *exDO = nullptr, *exRI = nullptr, *exLE = nullptr;
 
-	Blob::Time::TimePoint start;
+    Blob::Time::TimePoint start;
 
-	Bomber &bomber;
+    Bomber &bomber;
 
     Textures &textures;
-
+    b2World &world;
 public:
-	explicit BombManager(Blob::Vec2f pos, Bomber &bomber, Textures &textures);
+    explicit BombManager(b2World &world, const Blob::Maths::Vec2<float> &pos, Bomber &bomber, Textures &textures);
 
     ~BombManager();
 
-	Bomb *getBomb() const;
+    Bomb *getBomb() const;
 
-	bool update();
+    bool update();
 };
