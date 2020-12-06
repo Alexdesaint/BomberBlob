@@ -56,10 +56,10 @@ jobs:
       - name: Build
         run: cmake --build build --config Release
       - name: zip
-        shell: powershell
+        shell: pwsh
         run: Compress-Archive -Path data -DestinationPath VisualStudio.zip
       - name: zip2
-        shell: powershell
+        shell: pwsh
         run: Compress-Archive -Path bin/*.* -Update -DestinationPath VisualStudio.zip
       - name: debug
         run: dir
