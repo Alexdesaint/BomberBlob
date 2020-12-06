@@ -1,5 +1,6 @@
 # BomberBlob
-![CMake](https://github.com/alexdesaint/BomberBlob/workflows/CMake/badge.svg)
+
+![Build](https://github.com/alexdesaint/BomberBlob/workflows/Build/badge.svg)
 
 A simple game to test the BlobEngine
 
