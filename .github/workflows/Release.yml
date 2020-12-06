@@ -11,16 +11,18 @@ jobs:
       - name: Submodules
         run: git submodule update --init --recursive
       - name: Install libs
-        run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+        run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev zip
       - name: Create Build Environment
         run: cmake -E make_directory ${{runner.workspace}}/build
       - name: Configure CMake
         run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10
       - name: Build
         run: cmake --build build --config Release
+      - name: zip
+        run: zip -r linux-gcc-10.zip data/ && zip -r linux-gcc-10.zip -j bin/Game
       - uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'bin/*;data/'
+          files: 'linux-gcc-10.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
   clang:
     runs-on: ubuntu-latest
@@ -29,14 +31,16 @@ jobs:
       - name: Submodules
         run: git submodule update --init --recursive
       - name: Install libs
-        run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libglm-dev
+        run: sudo apt-get install freeglut3-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libglm-dev zip
       - name: Configure
         run: cmake -H. -Bbuild -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
       - name: Build
         run: cmake --build build --config Release
+      - name: zip
+        run: zip -r linux-clang.zip data/ && zip -r linux-clang.zip -j bin/Game
       - uses: AButler/upload-release-assets@v2.0
         with:
-          files: 'bin/*;data/'
+          files: 'linux-clang.zip'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
   VisualStudio:
     runs-on: windows-latest
@@ -48,7 +52,3 @@ jobs:
         run: cmake -Bbuild -G"Visual Studio 16 2019"
       - name: Build
         run: cmake --build build --config Release
-      - uses: AButler/upload-release-assets@v2.0
-        with:
-          files: 'bin/*;data/'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
