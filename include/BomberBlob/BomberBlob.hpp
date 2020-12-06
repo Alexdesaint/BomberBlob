@@ -35,7 +35,7 @@ private:
 public:
     BomberBlob(Blob::Core::Window &window, std::map<int, Player> &players);
 
-    void settings();
+    void settings() final;
 
     void run() final;
 };

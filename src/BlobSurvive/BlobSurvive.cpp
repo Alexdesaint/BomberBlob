@@ -20,7 +20,7 @@ BlobSurvive::BlobSurvive(Blob::Core::Window &window, std::map<int, Player> &play
 
 Terrain::Terrain()
     : underWaterMat(Color::LightYellow), sandMat(Color::SandyBrown), grassMat(Color::Green), mountainsMat(Color::DimGray),
-      waterMat(Color::RGBA(0.09, 0.37, 0.6, 0.8f)), rockMat(Color::DimGray), unknown(underWaterMat) {}
+      waterMat(Color::RGBA(0.09, 0.37, 0.6, 0.8f)), rockMat(Color::DimGray) {}
 
 Terrain::Tile::Tile(const Terrain &terrain, const GroundFunction &groundFunction, const WaterFunction &waterFunction,
                     const Maths::Vec2<float> &tileCenter)
@@ -89,14 +89,6 @@ void Terrain::generate(b2World &world, const GroundFunction &groundFunction, con
         if (z > 1 && z < 10)
             addShape(trees.emplace_back(world, Maths::Vec3{x, y, z}));
     }
-
-/*    UnknownFunction unknownFunction;
-    unknown.load(unknownFunction, {10, 10, 10});
-    unknown.set();
-    unknownShape.setMesh(unknown);
-    unknownShape.setPosition({0, 0, 50});
-    unknownShape.setScale(100);
-    addShape(unknownShape);*/
 }
 
 bool Terrain::finished() {
@@ -175,12 +167,14 @@ void BlobSurvive::settings() {
 }
 
 double GroundFunction::get(double x, double y) const {
-    double d = x * x + y * y; // Utiliser la distance au centre avec atan, ln, log sin (poure faire une vague a une certaine distance
+    double d = x * x + y * y;
     double a = atan2(y, x);
     double an1 = (1 - sin(a / 2) * sin(a / 2)) * perlinNoise.noise(perlinZ, a, perlinZ);
     a = atan2(-y, -x);
     double an2 = (1 - sin(a / 2) * sin(a / 2)) * perlinNoise.noise(a, perlinZ, perlinZ);
     double an = (an1 + an2) * (beachBorder - 50);
+    double bb = beachBorder + an;
+    double bb2 = bb * bb;
 
     double hills = perlinNoise.noise(x / 20, y / 20, perlinZ);
     double largeHills = perlinNoise.noise(x / 20, y / 20, perlinZ);
@@ -190,10 +184,11 @@ double GroundFunction::get(double x, double y) const {
     double f1 = (-atan((d - pow(beachBorder - 20 + an, 2)) / 500) / numbers::pi + 0.5) * abs(hills);                          // 1st ground
     double f2 = -atan(d / 500 - 1) / numbers::pi + atan(d / 500) / numbers::pi;                                               // Volcano
     double f3 = (-atan((d - pow(beachBorder + 80 + an, 2)) / 500) + atan((d - pow(beachBorder + 30 + an, 2)) / 500)) * hills; // Exterior border
-    double f4 = (-d + pow(beachBorder + an, 2)) / (pow(beachBorder + an, 2));
-    double f5 = largeHills * abs(f0);
-    double f6 = perlinNoise.noise(x / 100, y / 100, perlinZ);
-    double f7 = pow(perlinNoise.noise(x / 50, y / 50, perlinZ) * 2, 2);
+    double f4 = (-d + bb2) / bb2;
+    double f50 = (d < (bb2 - 800)) ? hills : -1;
+    double f5 = ceil(f4 + f50)+0.5;
+    double f6 = 0;
+    double f7 = 0;
 
     return offset + f0 * fGain[0] + f1 * fGain[1] + f2 * fGain[2] + f3 * fGain[3] + f4 * fGain[4] + f5 * fGain[5] + f6 * fGain[6] + f7 * fGain[7];
 }
@@ -204,8 +199,4 @@ void GroundFunction::window() {
     ImGui::SliderFloat("beachBorder", &beachBorder, 100, 1000);
     for (int i = 0; i < fGain.size(); i++)
         ImGui::SliderInt((to_string(i) + " Gain").c_str(), &fGain[i], -50, 50);
-}
-
-double UnknownFunction::get(double x, double y, double z) const {
-    return 0;//x + y + z;
 }

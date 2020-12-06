@@ -1,5 +1,4 @@
 #include <BlobJump/BlobJump.hpp>
-#include <box2d/box2d.h>
 
 #include <Core/DynamicCube.hpp>
 #include <Core/StaticCube.hpp>
@@ -28,13 +27,10 @@ struct Body : public DynamicCube, private Core::KeyboardEvents {
     }
 };
 
-BlobJump::BlobJump(Core::Window &window, std::map<int, Player> &players) : Game(window, players, {{0, 0, 50}, {0, 0, 0}, {0, 1, 0}}) {}
+BlobJump::BlobJump(Core::Window &window, std::map<int, Player> &players)
+    : Game(window, players, {{0, 0, 50}, {0, 0, 0}, {0, 1, 0}}), world({0, -10.f}) {}
 
-void BlobJump::run() {
-    // World
-    b2Vec2 gravity(0.0f, -10.0f);
-    b2World world(gravity);
-    Core::Scene scene;
+void BlobJump::load() {
     window.setCamera(camera);
     float cameraAngle = PI / 4;
     window.setAngle(cameraAngle);
@@ -42,14 +38,17 @@ void BlobJump::run() {
 
     Materials::PBR::light.position = {0, 10, 4};
 
-    StaticCube staticCubes[]{
-        StaticCube{world, Maths::Vec2<float>{4, 4}, 1, assetManager.shapes.materials.defaultM, 1},
-        StaticCube{world, Maths::Vec2<float>{-4, 4}, 1, assetManager.shapes.materials.defaultM, 1},
-        StaticCube{world, Maths::Vec2<float>{0, -10}, 5, assetManager.shapes.materials.defaultM, 1},
-    };
+    staticCubes.emplace_back(world, Maths::Vec2<float>{4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
+    staticCubes.emplace_back(world, Maths::Vec2<float>{-4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
+    staticCubes.emplace_back(world, Maths::Vec2<float>{0, -10}, 5, assetManager.shapes.materials.defaultM, 1);
 
     for (auto &sc : staticCubes)
         scene.addShape(sc);
+
+    loaded = true;
+}
+
+void BlobJump::run() {
 
     // Body
     Body body(world);

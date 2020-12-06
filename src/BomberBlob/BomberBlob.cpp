@@ -226,5 +226,5 @@ void BomberBlob::gameLoop() {
 }
 
 void BomberBlob::settings() {
-    ImGui::Button("No");
+    //ImGui::Button("No");
 }

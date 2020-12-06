@@ -4,7 +4,7 @@ std::unordered_set<DynamicCollider *> DynamicCollider::cubes;
 
 DynamicCollider::DynamicCollider(b2World &world, const Blob::Maths::Vec2<float> &position, float width, unsigned int id)
     : Collider(id), world(world) {
-    std::lock_guard<std::mutex> guard(mutex);
+    //std::lock_guard<std::mutex> guard(mutex);
     bodyDef.type = b2_dynamicBody;
     bodyDef.position.Set(position.x, position.y);
     bodyDef.userData = this;
@@ -22,7 +22,7 @@ DynamicCollider::DynamicCollider(b2World &world, const Blob::Maths::Vec2<float> 
 }
 
 DynamicCollider::~DynamicCollider() {
-    std::lock_guard<std::mutex> guard(mutex);
+    //std::lock_guard<std::mutex> guard(mutex);
     world.DestroyBody(body);
     cubes.erase(this);
 }

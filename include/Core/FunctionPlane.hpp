@@ -74,7 +74,7 @@ public:
     explicit FunctionPlane(const Blob::Core::Material &material);
     void load(const Function2D &function2D, const Blob::Maths::Vec2<unsigned int> &numOfPlanes, const Blob::Maths::Vec2<float> &offset = {0, 0},
               const Blob::Maths::Vec2<float> &planeSize = {1, 1});
-    void load(const Function3D &function3D, const Blob::Maths::Vec3<unsigned int> &numOfPlanes, const Blob::Maths::Vec3<float> &offset = {0, 0, 0},
+    [[deprecated]] void load(const Function3D &function3D, const Blob::Maths::Vec3<unsigned int> &numOfPlanes, const Blob::Maths::Vec3<float> &offset = {0, 0, 0},
               const Blob::Maths::Vec3<float> &planeSize = {1, 1, 1});
     void set();
 };

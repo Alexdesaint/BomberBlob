@@ -34,6 +34,11 @@ public:
             beachBorder = 600;
             fGain = {0, 0, 0, 1, 1, 1, 1, 15};
             break;
+        case 3: // tiles islands
+            offset = 0;
+            beachBorder = 600;
+            fGain = {0, 0, 0, 0, 0, 2, 1, 1};
+            break;
         default:
             offset = 0;
             beachBorder = 600;
@@ -58,12 +63,6 @@ public:
     double get(double x, double y) const final { return perlinNoise.noise(x, y, 0.5); }
 
     bool exist(double x, double y) const final { return ground.get(x, y) < 0; }
-};
-
-class UnknownFunction : public Function3D {
-private:
-public:
-    double get(double x, double y, double z) const final;
 };
 
 class Terrain : public Blob::Core::Scene {
@@ -102,9 +101,6 @@ private:
     std::deque<StaticCube> staticCubes;
     std::deque<Tree> trees;
 
-    FunctionPlane unknown;
-    Blob::Core::Shape unknownShape;
-
     const Blob::Maths::Vec2<unsigned int> numOfTiles{6, 4};
     inline static const Blob::Maths::Vec2<unsigned int> tilesSize{500, 500}; /// Must be a multiple of 10
 
@@ -129,7 +125,7 @@ private:
     GroundFunction groundFunction;
     WaterFunction waterFunction;
 
-    bool mouseEnabled = false, worldCamera = true;
+    bool mouseEnabled = false, worldCamera = false;
 
     void keyboardUpdate(const Blob::Core::Keyboard &keyboard) final;
 

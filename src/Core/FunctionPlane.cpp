@@ -157,6 +157,7 @@ void FunctionPlane::load(const Function2D &function2D, const Maths::Vec2<unsigne
     if (cursor != 0)
         data.resize(cursor);
 }
+
 void FunctionPlane::load(const Function3D &function3D, const Maths::Vec3<unsigned int> &numOfPlanes, const Blob::Maths::Vec3<float> &offset,
                          const Blob::Maths::Vec3<float> &planeSize) {
     data.resize(numOfPlanes.x * numOfPlanes.y * numOfPlanes.z * 6);
