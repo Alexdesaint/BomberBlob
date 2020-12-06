@@ -58,6 +58,8 @@ jobs:
       - name: zip2
         shell: powershell
         run: Compress-Archive -Path bin/*.* -Update -DestinationPath VisualStudio.zip
+      - name: debug
+        run: dir
       - uses: AButler/upload-release-assets@v2.0
         with:
           files: 'VisualStudio.zip'
