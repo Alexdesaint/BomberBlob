@@ -52,3 +52,13 @@ jobs:
         run: cmake -Bbuild -G"Visual Studio 16 2019"
       - name: Build
         run: cmake --build build --config Release
+      - name: zip
+        shell: powershell
+        run: Compress-Archive -Path data -DestinationPath VisualStudio.zip
+      - name: zip2
+        shell: powershell
+        run: Compress-Archive -Path bin/*.* -Update -DestinationPath VisualStudio.zip
+      - uses: AButler/upload-release-assets@v2.0
+        with:
+          files: 'VisualStudio.zip'
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
