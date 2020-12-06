@@ -1,5 +1,5 @@
 # BomberBlob
-[![Build Status](https://travis-ci.org/alexdesaint/BomberBlob.svg?branch=master)](https://travis-ci.org/alexdesaint/BomberBlob)
+![CMake](https://github.com/alexdesaint/BomberBlob/workflows/CMake/badge.svg)
 
 A simple game to test the BlobEngine
 
