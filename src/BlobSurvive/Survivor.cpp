@@ -1,22 +1,23 @@
 #include <BlobSurvive/Survivor.hpp>
-
+#include <Blob/GLFW.hpp>
 #include <numbers>
 
 using namespace std;
 using namespace Blob;
 
-void Survivor::keyboardUpdate(const Blob::Core::Keyboard &keyboard) {
+void Survivor::keyboardUpdate(const Blob::Core::Key &key) {
     speed = 0;
 
-    if (keyboard.D)
+    if (key.id == Blob::GLFW::Keys::D)
         speed.y--;
-    if (keyboard.A)
+    if (key.id == Blob::GLFW::Keys::A)
         speed.y++;
-    if (keyboard.W)
+    if (key.id == Blob::GLFW::Keys::W)
         speed.x--;
-    if (keyboard.S)
+    if (key.id == Blob::GLFW::Keys::S)
         speed.x++;
 }
+
 void Survivor::cursorPosUpdate(double xpos, double ypos) {
     xpos /= 400;
     ypos /= 400;

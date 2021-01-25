@@ -21,6 +21,7 @@ public:
         window.draw(scene);
         return !loaded;
     };
+
     bool gameReady() final { return loaded; };
 
     void load() final;

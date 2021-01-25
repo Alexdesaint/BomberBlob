@@ -13,16 +13,16 @@ struct Body : public DynamicCube, private Core::KeyboardEvents {
 
     explicit Body(b2World &world) : DynamicCube(world, {0.0f, 4.0f}, 1, material, 0) {}
 
-    void keyboardUpdate(const Core::Keyboard &keyboard) final {
+    void keyboardUpdate(const Blob::Core::Key &key) final {
         speed = 0;
 
-        if (keyboard.RIGHT)
+        if (key.id == Blob::GLFW::Keys::RIGHT)
             speed.x++;
-        if (keyboard.LEFT)
+        if (key.id == Blob::GLFW::Keys::LEFT)
             speed.x--;
-        if (keyboard.UP)
+        if (key.id == Blob::GLFW::Keys::UP)
             speed.y++;
-        if (keyboard.DOWN)
+        if (key.id == Blob::GLFW::Keys::DOWN)
             speed.y--;
     }
 };

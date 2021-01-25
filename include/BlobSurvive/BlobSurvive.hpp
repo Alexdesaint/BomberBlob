@@ -127,7 +127,7 @@ private:
 
     bool mouseEnabled = false, worldCamera = false;
 
-    void keyboardUpdate(const Blob::Core::Keyboard &keyboard) final;
+    void keyboardUpdate(const Blob::Core::Key &key) final;
 
 public:
     BlobSurvive(Blob::Core::Window &window, std::map<int, Player> &players);

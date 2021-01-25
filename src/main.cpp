@@ -11,7 +11,7 @@ int main() {
     try {
         Core::Camera camera;
 
-        Core::Window window(camera, false);
+        Core::Window window(camera);
 
         (Menu(window));
 

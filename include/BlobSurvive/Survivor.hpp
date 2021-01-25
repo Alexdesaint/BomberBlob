@@ -13,7 +13,7 @@ private:
     Blob::Maths::Vec2<float> direction, cameraAngle, speed;
     Blob::Maths::Vec3<float> position;
 
-    void keyboardUpdate(const Blob::Core::Keyboard &keyboard) final;
+    void keyboardUpdate(const Blob::Core::Key &key) final;
 
     void cursorPosUpdate(double xpos, double ypos) final;
 

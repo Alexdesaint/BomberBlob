@@ -103,14 +103,14 @@ bool Terrain::finished() {
     return true;
 }
 
-void BlobSurvive::keyboardUpdate(const Core::Keyboard &keyboard) {
-    if (keyboard.M)
+void BlobSurvive::keyboardUpdate(const Blob::Core::Key &key) {
+    if (key.id == Blob::GLFW::Keys::M)
         mouseEnabled = !mouseEnabled;
     if (mouseEnabled)
         window.enableMouseCursor();
     else
         window.disableMouseCursor();
-    if (keyboard.C)
+    if (key.id == Blob::GLFW::Keys::C)
         worldCamera = !worldCamera;
     if (worldCamera)
         window.setCamera(camera);
@@ -146,7 +146,7 @@ void BlobSurvive::run() {
 void BlobSurvive::load() {
     float cameraAngle = PI / 4;
     window.setAngle(cameraAngle);
-    window.setInfinitRange(1);
+    window.setRange(1, 10000);
 
     Materials::PBR::light.position = {4000, 4000, 4000};
     Materials::PBR::light.power = 100000000.f;
