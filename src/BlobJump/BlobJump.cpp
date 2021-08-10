@@ -8,12 +8,12 @@
 
 using namespace Blob;
 
-struct Body : public DynamicCube, private Core::KeyboardEvents {
+struct Body : public DynamicCube, private KeyboardEvents {
     Materials::PBRSingleColor material;
 
     explicit Body(b2World &world) : DynamicCube(world, {0.0f, 4.0f}, 1, material, 0) {}
 
-    void keyboardUpdate(const Blob::Core::Key &key) final {
+    void keyboardUpdate(const Blob::Key &key) final {
         speed = 0;
 
         if (key.id == Blob::GLFW::Keys::RIGHT)
@@ -27,7 +27,7 @@ struct Body : public DynamicCube, private Core::KeyboardEvents {
     }
 };
 
-BlobJump::BlobJump(Core::Window &window, std::map<int, Player> &players)
+BlobJump::BlobJump(Window &window, std::map<int, Player> &players)
     : Game(window, players, {{0, 0, 50}, {0, 0, 0}, {0, 1, 0}}), world({0, -10.f}) {}
 
 void BlobJump::load() {
@@ -38,9 +38,9 @@ void BlobJump::load() {
 
     Materials::PBR::light.position = {0, 10, 4};
 
-    staticCubes.emplace_back(world, Maths::Vec2<float>{4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
-    staticCubes.emplace_back(world, Maths::Vec2<float>{-4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
-    staticCubes.emplace_back(world, Maths::Vec2<float>{0, -10}, 5, assetManager.shapes.materials.defaultM, 1);
+    staticCubes.emplace_back(world, Vec2<float>{4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
+    staticCubes.emplace_back(world, Vec2<float>{-4, 4}, 1, assetManager.shapes.materials.defaultM, 1);
+    staticCubes.emplace_back(world, Vec2<float>{0, -10}, 5, assetManager.shapes.materials.defaultM, 1);
 
     for (auto &sc : staticCubes)
         scene.addShape(sc);

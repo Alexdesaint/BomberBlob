@@ -2,7 +2,7 @@
 
 std::unordered_set<DynamicCube *> DynamicCube::cubes;
 
-DynamicCube::DynamicCube(b2World &world, const Blob::Maths::Vec2<float> &position, float width, const Blob::Core::Material &material, unsigned int id)
+DynamicCube::DynamicCube(b2World &world, const Blob::Vec2<float> &position, float width, const Blob::Material &material, unsigned int id)
     : Collider(id), Blob::Shapes::Cube(material), position(position), world(world) {
     //std::lock_guard<std::mutex> guard(mutex);
     bodyDef.type = b2_dynamicBody;

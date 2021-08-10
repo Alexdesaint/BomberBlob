@@ -2,7 +2,7 @@
 
 #include <BomberBlob/UserData.hpp>
 
-Box::Box(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width)
+Box::Box(const Blob::Vec2<float> &pos, Blob::Material &material, b2World &world, float width)
     : DynamicCube(world, pos, width, material, UserData::BOX) {}
 
 void Box::hit(Collider *c) {

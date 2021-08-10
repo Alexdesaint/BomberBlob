@@ -2,7 +2,7 @@
 
 #include <BomberBlob/UserData.hpp>
 
-Bomb::Bomb(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width)
+Bomb::Bomb(const Blob::Vec2<float> &pos, Blob::Material &material, b2World &world, float width)
     : DynamicCube(world, pos, width, material, UserData::BOMB) {}
 
 bool Bomb::isDestroyed() const {

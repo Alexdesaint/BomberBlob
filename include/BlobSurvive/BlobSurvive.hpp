@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Blob/AssetManager.hpp>
 #include <BlobSurvive/Survivor.hpp>
 #include <BlobSurvive/Tree.hpp>
 #include <Core/FunctionPlane.hpp>
@@ -65,24 +64,24 @@ public:
     bool exist(double x, double y) const final { return ground.get(x, y) < 0; }
 };
 
-class Terrain : public Blob::Core::Scene {
+class Terrain : public Blob::Scene {
 private:
-    struct Tile : Blob::Core::Shape {
+    struct Tile : Blob::Shape {
     private:
         const Terrain &terrain;
 
         FunctionPlaneCompact ground;
         FunctionPlane water;
-        Blob::Core::Mesh groundWater;
+        Blob::Mesh groundWater;
 
         std::thread loadingThread;
         std::atomic<bool> loaded = false;
         bool _ready = false;
 
     public:
-        Tile(const Terrain &terrain, const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Maths::Vec2<float> &tileCenter);
+        Tile(const Terrain &terrain, const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Vec2<float> &tileCenter);
         ~Tile();
-        void load(const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Maths::Vec2<float> &tileCenter);
+        void load(const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Vec2<float> &tileCenter);
 
         bool ready();
     };
@@ -101,8 +100,8 @@ private:
     std::deque<StaticCube> staticCubes;
     std::deque<Tree> trees;
 
-    const Blob::Maths::Vec2<unsigned int> numOfTiles{6, 4};
-    inline static const Blob::Maths::Vec2<unsigned int> tilesSize{500, 500}; /// Must be a multiple of 10
+    const Blob::Vec2<unsigned int> numOfTiles{6, 4};
+    inline static const Blob::Vec2<unsigned int> tilesSize{500, 500}; /// Must be a multiple of 10
 
 public:
     bool loaded = false;
@@ -114,7 +113,7 @@ public:
     void generate(b2World &world, const GroundFunction &groundFunction, const WaterFunction &waterFunction);
 };
 
-class BlobSurvive : public Game, private Blob::Core::KeyboardEvents {
+class BlobSurvive : public Game, private Blob::KeyboardEvents {
 private:
     Blob::AssetManager assetManager;
     b2World world{{0, 0}};
@@ -127,10 +126,10 @@ private:
 
     bool mouseEnabled = false, worldCamera = false;
 
-    void keyboardUpdate(const Blob::Core::Key &key) final;
+    void keyboardUpdate(const Blob::Key &key) final;
 
 public:
-    BlobSurvive(Blob::Core::Window &window, std::map<int, Player> &players);
+    BlobSurvive(Blob::Window &window, std::map<int, Player> &players);
 
     void run() final;
 

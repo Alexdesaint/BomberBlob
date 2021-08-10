@@ -12,6 +12,6 @@ public:
     b2PolygonShape polygonShape;
     b2Body *body = nullptr;
 
-    StaticCollider(b2World &world, const Blob::Maths::Vec2<float> &pos, const Blob::Maths::Vec2<float> &size, unsigned int id = 0);
+    StaticCollider(b2World &world, const Blob::Vec2<float> &pos, const Blob::Vec2<float> &size, unsigned int id = 0);
     ~StaticCollider();
 };

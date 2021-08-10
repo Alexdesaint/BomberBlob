@@ -45,7 +45,7 @@ struct ComboMenu {
     }
 };
 
-Menu::Menu(Core::Window &window) : window(window) {
+Menu::Menu(Window &window) : window(window) {
     ImGui::ShowDemoWindow();
     ImGuiIO &io = ImGui::GetIO();
     // ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
@@ -173,7 +173,7 @@ void Menu::playerSelection() {
                 unsigned int controllerNumber = key - 1;
 
                 if (GLFW::Window::joystickAxesCount[controllerNumber] < 2)
-                    throw Blob::Core::Exception("Controller don't have any joystick");
+                    throw Blob::Exception("Controller don't have any joystick");
 
                 it->second.setJoystickAxe(Player::x, &GLFW::Window::joystickAxes[controllerNumber][0]);
                 it->second.setJoystickAxe(Player::y, &GLFW::Window::joystickAxes[controllerNumber][1]);

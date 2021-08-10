@@ -9,11 +9,11 @@ class Menu {
 private:
     //Textures textures;
 
-    Blob::Core::Window &window;
+    Blob::Window &window;
     std::map<int, Player> players;
 
     void playerSelection();
 
 public:
-    explicit Menu(Blob::Core::Window &window);
+    explicit Menu(Blob::Window &window);
 };

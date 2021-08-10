@@ -5,7 +5,7 @@
 using namespace std;
 using namespace Blob;
 
-void Survivor::keyboardUpdate(const Blob::Core::Key &key) {
+void Survivor::keyboardUpdate(const Blob::Key &key) {
     speed = 0;
 
     if (key.id == Blob::GLFW::Keys::D)
@@ -33,7 +33,7 @@ void Survivor::cursorPosUpdate(double xpos, double ypos) {
     cameraAngle.y = sin(ypos);
 }
 
-Survivor::Survivor(b2World &world, const Blob::Maths::Vec2<float> &pos, Function2D &groundFunction)
+Survivor::Survivor(b2World &world, const Blob::Vec2<float> &pos, Function2D &groundFunction)
     : DynamicCollider(world, pos, 0.2, 0), groundFunction(groundFunction), position(pos, 0.2) {
     setScale({0.2, 0.2, 1});
     setPosition(position);
@@ -56,7 +56,7 @@ void Survivor::update() {
     if (position.z < 0)
         position.z = 0;
 
-    Maths::Vec3 cameraPos{direction * cameraAngle.x, cameraAngle.y};
+    Vec3 cameraPos{direction * cameraAngle.x, cameraAngle.y};
     cameraPos = cameraPos * 15 + position;
     if (cameraPos.z < groundFunction.get(cameraPos.x, cameraPos.y) + 1)
         cameraPos.z = groundFunction.get(cameraPos.x, cameraPos.y) + 1;

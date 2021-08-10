@@ -18,7 +18,7 @@ private:
     Textures textures;
     b2World world;
 
-    Blob::Core::Camera camera;
+    Blob::Camera camera;
 
     float width = 15, height = 15;
 
@@ -33,7 +33,7 @@ private:
 
     void gameLoop();
 public:
-    BomberBlob(Blob::Core::Window &window, std::map<int, Player> &players);
+    BomberBlob(Blob::Window &window, std::map<int, Player> &players);
 
     void settings() final;
 

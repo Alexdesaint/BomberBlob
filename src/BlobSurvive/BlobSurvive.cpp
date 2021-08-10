@@ -15,7 +15,7 @@
 using namespace Blob;
 using namespace std;
 
-BlobSurvive::BlobSurvive(Blob::Core::Window &window, std::map<int, Player> &players)
+BlobSurvive::BlobSurvive(Blob::Window &window, std::map<int, Player> &players)
     : Game(window, players, {{0, 1000, 1000}, {0, 200, 0}, {0, 0, 1}}), waterFunction(groundFunction), survivor(world, {0, 0}, groundFunction) {}
 
 Terrain::Terrain()
@@ -23,8 +23,8 @@ Terrain::Terrain()
       waterMat(Color::RGBA(0.09, 0.37, 0.6, 0.8f)), rockMat(Color::DimGray) {}
 
 Terrain::Tile::Tile(const Terrain &terrain, const GroundFunction &groundFunction, const WaterFunction &waterFunction,
-                    const Maths::Vec2<float> &tileCenter)
-    : Core::Shape(groundWater), terrain(terrain), water(terrain.waterMat),
+                    const Vec2<float> &tileCenter)
+    : Shape(groundWater), terrain(terrain), water(terrain.waterMat),
       loadingThread(&Terrain::Tile::load, this, groundFunction, waterFunction, tileCenter) {}
 
 Terrain::Tile::~Tile() {
@@ -32,13 +32,13 @@ Terrain::Tile::~Tile() {
         loadingThread.join();
 }
 
-void Terrain::Tile::load(const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Maths::Vec2<float> &tileCenter) {
+void Terrain::Tile::load(const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Vec2<float> &tileCenter) {
     setPosition(tileCenter);
     water.load(waterFunction, tilesSize / 10, tileCenter, {10, 10});
     groundWater.addTransparentPrimitive(water.primitive);
 
     ground.load(groundFunction, tilesSize, tileCenter);
-    const Blob::Core::Material *material[4]{&terrain.underWaterMat, &terrain.sandMat, &terrain.grassMat, &terrain.mountainsMat};
+    const Blob::Material *material[4]{&terrain.underWaterMat, &terrain.sandMat, &terrain.grassMat, &terrain.mountainsMat};
     float separator[3]{1.f, 1.5f, 20.f};
     auto &p = ground.getPrimitives<4>(material, separator);
     for (auto &q : p)
@@ -63,8 +63,8 @@ void Terrain::generate(b2World &world, const GroundFunction &groundFunction, con
     removeAll();
     tiles.clear();
 
-    Maths::Vec2<float> n = (numOfTiles.cast<float>() - 1) / -2.f;
-    Maths::Vec2<unsigned int> tileNumber{};
+    Vec2<float> n = (numOfTiles.cast<float>() - 1) / -2.f;
+    Vec2<unsigned int> tileNumber{};
     // tiles.reserve(numOfTiles.x * numOfTiles.y);
     for (tileNumber.x = 0; tileNumber.x < numOfTiles.x; tileNumber.x++)
         for (tileNumber.y = 0; tileNumber.y < numOfTiles.y; tileNumber.y++)
@@ -79,7 +79,7 @@ void Terrain::generate(b2World &world, const GroundFunction &groundFunction, con
         float y = positionDist(e1);
         float z = groundFunction.get(x, y);
         if (z > 1 && z < 10)
-            addShape(staticCubes.emplace_back(world, Maths::Vec3{x, y, z}, sizeDist(e1) / 10.f, rockMat, 1));
+            addShape(staticCubes.emplace_back(world, Vec3{x, y, z}, sizeDist(e1) / 10.f, rockMat, 1));
     }
 
     for (int k = 0; k < 5000; k++) {
@@ -87,7 +87,7 @@ void Terrain::generate(b2World &world, const GroundFunction &groundFunction, con
         float y = positionDist(e1);
         float z = groundFunction.get(x, y);
         if (z > 1 && z < 10)
-            addShape(trees.emplace_back(world, Maths::Vec3{x, y, z}));
+            addShape(trees.emplace_back(world, Vec3{x, y, z}));
     }
 }
 
@@ -103,7 +103,7 @@ bool Terrain::finished() {
     return true;
 }
 
-void BlobSurvive::keyboardUpdate(const Blob::Core::Key &key) {
+void BlobSurvive::keyboardUpdate(const Blob::Key &key) {
     if (key.id == Blob::GLFW::Keys::M)
         mouseEnabled = !mouseEnabled;
     if (mouseEnabled)
@@ -119,7 +119,7 @@ void BlobSurvive::keyboardUpdate(const Blob::Core::Key &key) {
 }
 
 void BlobSurvive::run() {
-    Core::Scene scene;
+    Scene scene;
     window.disableMouseCursor();
     window.setCamera(survivor.camera);
 

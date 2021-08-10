@@ -9,7 +9,7 @@ private:
     bool destroyed = false;
 
 public:
-    Bonus(const Blob::Maths::Vec2<float> &pos, Textures &textures, b2World &world, float width = 0.4f);
+    Bonus(const Blob::Vec2<float> &pos, Textures &textures, b2World &world, float width = 0.4f);
 
     void hit(Collider *c) final;
 

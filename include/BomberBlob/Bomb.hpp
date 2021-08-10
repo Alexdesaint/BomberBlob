@@ -9,7 +9,7 @@ class Bomb : public DynamicCube {
 private:
     bool destroyed = false;
 public:
-    explicit Bomb(const Blob::Maths::Vec2<float>& pos, Blob::Core::Material &material, b2World &world, float width = 0.4f);
+    explicit Bomb(const Blob::Vec2<float>& pos, Blob::Material &material, b2World &world, float width = 0.4f);
 
     void hit(int objectType, void *object);
 

@@ -41,7 +41,7 @@ private:
     Textures &textures;
 
 public:
-    Bomber(b2World &world, const Blob::Maths::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures,
+    Bomber(b2World &world, const Blob::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures,
            float scale = 0.8f);
 
     void updateInputs();

@@ -9,13 +9,13 @@ using namespace Blob;
 int main() {
 
     try {
-        Core::Camera camera;
+        //Camera camera;
 
-        Core::Window window(camera);
+        Window window;
 
         (Menu(window));
 
-    } catch (Core::Exception &e) {
+    } catch (Exception &e) {
         std::cout << "Blob Error :" << std::endl << e.what() << std::endl;
     } catch (std::exception &e) {
         std::cout << "Game Error :" << std::endl << e.what() << std::endl;

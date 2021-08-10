@@ -9,14 +9,14 @@
 
 class Game {
 protected:
-    Blob::Core::Window &window;
+    Blob::Window &window;
     std::map<int, Player> &players;
 
-    explicit Game(Blob::Core::Window &window, std::map<int, Player> &players, Blob::Core::Camera camera)
+    explicit Game(Blob::Window &window, std::map<int, Player> &players, Blob::Camera camera)
         : window(window), players(players), camera(std::move(camera)) {}
 
 public:
-    Blob::Core::Camera camera;
+    Blob::Camera camera;
 
     virtual void run() = 0;
 

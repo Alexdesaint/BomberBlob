@@ -18,7 +18,7 @@ public:
     b2FixtureDef fixtureDef;
     b2Body *body = nullptr;
 
-    explicit DynamicCollider(b2World &world, const Blob::Maths::Vec2<float> &position, float width, unsigned int id = 0);
+    explicit DynamicCollider(b2World &world, const Blob::Vec2<float> &position, float width, unsigned int id = 0);
 
     ~DynamicCollider();
 

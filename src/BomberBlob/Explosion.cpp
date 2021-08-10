@@ -1,8 +1,8 @@
 #include <BomberBlob/Explosion.hpp>
 #include <BomberBlob/UserData.hpp>
 
-Explosion::Explosion(b2World &world, const Blob::Core::Material &material, const Blob::Maths::Vec2<float> &initialPosition,
-                     const Blob::Maths::Vec2<float> &d, float distanceMax)
+Explosion::Explosion(b2World &world, const Blob::Material &material, const Blob::Vec2<float> &initialPosition,
+                     const Blob::Vec2<float> &d, float distanceMax)
     : DynamicCube(world, initialPosition, 0.4f, material, UserData::EXPLOSION), distanceMax(distanceMax), initialPosition(initialPosition), direction(d) {
 
     speed = direction.normalize() * maxSpeed;
@@ -17,7 +17,7 @@ void Explosion::hit(Collider *c) {
 
 bool Explosion::keepMoving() {
     b2Vec2 p = body->GetPosition();
-    Blob::Maths::Vec2<float> position = {p.x, p.y};
+    Blob::Vec2<float> position = {p.x, p.y};
     if ((initialPosition - position).length2() > distanceMax * distanceMax) {
         active = false;
         return false;

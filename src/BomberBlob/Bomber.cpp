@@ -4,7 +4,7 @@
 
 using namespace Blob;
 
-Bomber::Bomber(b2World &world, const Blob::Maths::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale)
+Bomber::Bomber(b2World &world, const Blob::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale)
     : textures(textures), player(player), bombs(bombs), world(world), DynamicCube(world, pos, scale, material, UserData::PLAYER),
       material(player.color) {}
 

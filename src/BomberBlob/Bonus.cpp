@@ -9,7 +9,7 @@ std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dist(0, 5);
 
-Bonus::Bonus(const Blob::Maths::Vec2<float> &pos, Textures &textures, b2World &world, float width)
+Bonus::Bonus(const Blob::Vec2<float> &pos, Textures &textures, b2World &world, float width)
     : StaticCube(world, pos, width, textures.defaultMat) {
 
     auto val = (int) dist(mt);

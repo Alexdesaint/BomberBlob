@@ -4,7 +4,7 @@
 
 using namespace Blob;
 
-Tree::Tree(b2World &world, const Blob::Maths::Vec3<float> &pos)
+Tree::Tree(b2World &world, const Blob::Vec3<float> &pos)
     : StaticCollider(world, {pos.x, pos.y}, {0.4f, 0.4f}), trunkMat(Color::Brown), leavesMat(Color::ForestGreen), trunk(trunkMat), leaves(leavesMat) {
     addChild(trunk);
     addChild(leaves);

@@ -19,9 +19,9 @@ public:
     b2Body *body = nullptr;
 
     // Blob
-    Blob::Maths::Vec2<float> speed{}, position{};
+    Blob::Vec2<float> speed{}, position{};
 
-    explicit DynamicCube(b2World &world, const Blob::Maths::Vec2<float> &position, float width, const Blob::Core::Material &material, unsigned int id = 0);
+    explicit DynamicCube(b2World &world, const Blob::Vec2<float> &position, float width, const Blob::Material &material, unsigned int id = 0);
 
     ~DynamicCube();
 

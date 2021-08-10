@@ -8,28 +8,28 @@
 
 class FunctionPlaneCompact : public Blob::GL::VertexArrayObject {
     struct Data {
-        Blob::Maths::Vec3<float> position;
-        Blob::Maths::Vec3<float> nomal;
+        Blob::Vec3<float> position;
+        Blob::Vec3<float> nomal;
     };
 
 private:
     std::vector<Data> data;
 
-    Blob::Core::Buffer buffer;
+    Blob::Buffer buffer;
     std::vector<unsigned int> indices;
 
-    std::list<Blob::Core::RenderOptions> renderOptions;
-    std::list<Blob::Core::Primitive> primitives;
+    std::list<Blob::RenderOptions> renderOptions;
+    std::list<Blob::Primitive> primitives;
     std::map<float, size_t> heightPosition;
 
 public:
     FunctionPlaneCompact();
-    void load(const Function2D &function2D, const Blob::Maths::Vec2<unsigned int> &numOfPlanes, const Blob::Maths::Vec2<float> &offset = {0, 0});
+    void load(const Function2D &function2D, const Blob::Vec2<unsigned int> &numOfPlanes, const Blob::Vec2<float> &offset = {0, 0});
 
-    const Blob::Core::Primitive &getPrimitive(const Blob::Core::Material &material);
+    const Blob::Primitive &getPrimitive(const Blob::Material &material);
 
     template<size_t N>
-    const std::list<Blob::Core::Primitive> &getPrimitives(const Blob::Core::Material *material[N], float separator[N - 1]) {
+    const std::list<Blob::Primitive> &getPrimitives(const Blob::Material *material[N], float separator[N - 1]) {
 
         size_t pos = 0;
         for (size_t i = 0; i < N - 1; i++) {
@@ -55,26 +55,26 @@ public:
     void set();
 };
 
-class FunctionPlane : public Blob::Core::Mesh {
+class FunctionPlane : public Blob::Mesh {
     struct Data {
-        Blob::Maths::Vec3<float> position;
-        Blob::Maths::Vec3<float> nomal;
+        Blob::Vec3<float> position;
+        Blob::Vec3<float> nomal;
     };
 
 private:
     std::vector<Data> data;
 
-    Blob::Core::Buffer buffer;
+    Blob::Buffer buffer;
     Blob::GL::VertexArrayObject vertexArrayObject;
-    Blob::Core::RenderOptions renderOptions;
+    Blob::RenderOptions renderOptions;
 
 public:
-    const Blob::Core::Primitive primitive;
+    const Blob::Primitive primitive;
 
-    explicit FunctionPlane(const Blob::Core::Material &material);
-    void load(const Function2D &function2D, const Blob::Maths::Vec2<unsigned int> &numOfPlanes, const Blob::Maths::Vec2<float> &offset = {0, 0},
-              const Blob::Maths::Vec2<float> &planeSize = {1, 1});
-    [[deprecated]] void load(const Function3D &function3D, const Blob::Maths::Vec3<unsigned int> &numOfPlanes, const Blob::Maths::Vec3<float> &offset = {0, 0, 0},
-              const Blob::Maths::Vec3<float> &planeSize = {1, 1, 1});
+    explicit FunctionPlane(const Blob::Material &material);
+    void load(const Function2D &function2D, const Blob::Vec2<unsigned int> &numOfPlanes, const Blob::Vec2<float> &offset = {0, 0},
+              const Blob::Vec2<float> &planeSize = {1, 1});
+    [[deprecated]] void load(const Function3D &function3D, const Blob::Vec3<unsigned int> &numOfPlanes, const Blob::Vec3<float> &offset = {0, 0, 0},
+              const Blob::Vec3<float> &planeSize = {1, 1, 1});
     void set();
 };

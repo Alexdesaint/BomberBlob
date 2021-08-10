@@ -12,8 +12,8 @@ public:
     b2PolygonShape polygonShape;
     b2Body *body = nullptr;
 
-    StaticCube(b2World &world, const Blob::Maths::Vec2<float> &pos, float width, const Blob::Core::Material &material, unsigned int id = 0);
-    StaticCube(b2World &world, const Blob::Maths::Vec3<float> &pos, float width, const Blob::Core::Material &material, unsigned int id = 0);
-    StaticCube(b2World &world, const Blob::Maths::Vec3<float> &pos, const Blob::Maths::Vec3<float> &size, const Blob::Core::Material &material, unsigned int id = 0);
+    StaticCube(b2World &world, const Blob::Vec2<float> &pos, float width, Blob::Material &material, unsigned int id = 0);
+    StaticCube(b2World &world, const Blob::Vec3<float> &pos, float width, Blob::Material &material, unsigned int id = 0);
+    StaticCube(b2World &world, const Blob::Vec3<float> &pos, const Blob::Vec3<float> &size, Blob::Material &material, unsigned int id = 0);
     ~StaticCube();
 };

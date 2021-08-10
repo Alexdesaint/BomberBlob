@@ -10,7 +10,7 @@
 
 class Bomber;
 
-class BombManager : public Blob::Core::Shape {
+class BombManager : public Blob::Shape {
 private:
     Bomb *bomb;
     float bombDelay = 3;
@@ -24,7 +24,7 @@ private:
     Textures &textures;
     b2World &world;
 public:
-    explicit BombManager(b2World &world, const Blob::Maths::Vec2<float> &pos, Bomber &bomber, Textures &textures);
+    explicit BombManager(b2World &world, const Blob::Vec2<float> &pos, Bomber &bomber, Textures &textures);
 
     ~BombManager();
 

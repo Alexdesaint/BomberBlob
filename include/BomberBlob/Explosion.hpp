@@ -5,12 +5,12 @@
 
 class Explosion : public DynamicCube {
 private:
-    Blob::Maths::Vec2<float> initialPosition, direction;
+    Blob::Vec2<float> initialPosition, direction;
     float maxSpeed = 8, distanceMax = 2;
     bool active = true;
 
 public:
-    Explosion(b2World &world, const Blob::Core::Material &material, const Blob::Maths::Vec2<float> &initialPosition, const Blob::Maths::Vec2<float> &direction, float distanceMax);
+    Explosion(b2World &world, const Blob::Material &material, const Blob::Vec2<float> &initialPosition, const Blob::Vec2<float> &direction, float distanceMax);
 
     bool keepMoving();
 

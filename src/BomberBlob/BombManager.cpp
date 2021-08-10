@@ -48,7 +48,7 @@ bool BombManager::update() {
         bomber.bombPosed--;
 
         b2Vec2 p = bomb->body->GetPosition();
-        Blob::Maths::Vec2<float> position = {p.x, p.y};
+        Blob::Vec2<float> position = {p.x, p.y};
         exRI = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, 1), bomber.bombPower);
         exLE = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, -1), bomber.bombPower);
         exDO = new Explosion(world, textures.explosionMat, position, Vec2<float>(1, 0), bomber.bombPower);

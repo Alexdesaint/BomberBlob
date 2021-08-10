@@ -8,7 +8,7 @@ private:
     bool destroyed = false;
 
 public:
-    explicit Box(const Blob::Maths::Vec2<float>& pos, Blob::Core::Material &material, b2World &world, float width = 0.8f);
+    explicit Box(const Blob::Vec2<float>& pos, Blob::Material &material, b2World &world, float width = 0.8f);
 
     void hit(Collider *c) final;
 

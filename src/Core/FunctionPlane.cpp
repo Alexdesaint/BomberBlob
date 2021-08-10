@@ -1,6 +1,7 @@
 #include <Core/FunctionPlane.hpp>
 
 #include <Blob/Core/Exception.hpp>
+#include <Blob/Core/AttributeLocation.hpp>
 #include <iostream>
 
 using namespace Blob;
@@ -8,11 +9,11 @@ using namespace std;
 
 FunctionPlaneCompact::FunctionPlaneCompact() {
     setBuffer(buffer, sizeof(Data));
-    setArray<float>(3, Core::Shader::AttributeLocation::POSITION, 0);
-    setArray<float>(3, Core::Shader::AttributeLocation::NORMAL, sizeof(Data::position));
+    setArray<float>(3, AttributeLocation::POSITION, 0);
+    setArray<float>(3, AttributeLocation::NORMAL, sizeof(Data::position));
 }
 
-void FunctionPlaneCompact::load(const Function2D &function2D, const Maths::Vec2<unsigned int> &numOfPlanes, const Maths::Vec2<float> &offset) {
+void FunctionPlaneCompact::load(const Function2D &function2D, const Vec2<unsigned int> &numOfPlanes, const Vec2<float> &offset) {
     //    cout << "width : " << numOfPlanes << endl;
     //    cout << "Num of faces : " << numOfPlanes.x * numOfPlanes.y << endl;
     //    cout << "Num of triangles : " << numOfPlanes.x * numOfPlanes.y * 2 << endl;
@@ -25,7 +26,7 @@ void FunctionPlaneCompact::load(const Function2D &function2D, const Maths::Vec2<
     multimap<float, array<unsigned int, 3>> orderedMap;
 
     if (numOfPlanes.x == 0 or numOfPlanes.y == 0)
-        throw Blob::Core::Exception("numOfPlanes is null");
+        throw Blob::Exception("numOfPlanes is null");
 
     //    cout << "Setting positions" << endl;
     for (unsigned int i = 0; i < numOfPlanes.x + 1; i++) {
@@ -72,10 +73,10 @@ void FunctionPlaneCompact::load(const Function2D &function2D, const Maths::Vec2<
         auto i0 = d[0];
         auto i1 = d[1];
         auto i2 = d[2];
-        Maths::Vec3<float> A = data[i0].position;
-        Maths::Vec3<float> B = data[i1].position;
-        Maths::Vec3<float> C = data[i2].position;
-        Maths::Vec3<float> N = (B - A).cross(C - A);
+        Vec3<float> A = data[i0].position;
+        Vec3<float> B = data[i1].position;
+        Vec3<float> C = data[i2].position;
+        Vec3<float> N = (B - A).cross(C - A);
 
         data[i0].nomal += N;
         data[i1].nomal += N;
@@ -103,24 +104,24 @@ void FunctionPlaneCompact::set() {
     data.clear();
 }
 
-const Blob::Core::Primitive &FunctionPlaneCompact::getPrimitive(const Blob::Core::Material &material) {
+const Blob::Primitive &FunctionPlaneCompact::getPrimitive(const Blob::Material &material) {
     const auto &ro = renderOptions.emplace_back(indices.data(), indices.size());
     const auto &p = primitives.emplace_back(this, &material, &ro);
     return p;
 }
 
-FunctionPlane::FunctionPlane(const Core::Material &material) : primitive(&vertexArrayObject, &material, &renderOptions) {
+FunctionPlane::FunctionPlane(const Material &material) : primitive(&vertexArrayObject, &material, &renderOptions) {
     vertexArrayObject.setBuffer(buffer, sizeof(Data));
-    vertexArrayObject.setArray<float>(3, Core::Shader::AttributeLocation::POSITION, 0);
-    vertexArrayObject.setArray<float>(3, Core::Shader::AttributeLocation::NORMAL, sizeof(Data::position));
+    vertexArrayObject.setArray<float>(3, Shader::AttributeLocation::POSITION, 0);
+    vertexArrayObject.setArray<float>(3, Shader::AttributeLocation::NORMAL, sizeof(Data::position));
 }
 
-void FunctionPlane::load(const Function2D &function2D, const Maths::Vec2<unsigned int> &numOfPlanes, const Blob::Maths::Vec2<float> &offset,
-                         const Blob::Maths::Vec2<float> &planeSize) {
+void FunctionPlane::load(const Function2D &function2D, const Vec2<unsigned int> &numOfPlanes, const Blob::Vec2<float> &offset,
+                         const Blob::Vec2<float> &planeSize) {
     data.resize(numOfPlanes.x * numOfPlanes.y * 6);
 
     if (numOfPlanes.x == 0 or numOfPlanes.y == 0)
-        throw Blob::Core::Exception("numOfPlanes is null");
+        throw Blob::Exception("numOfPlanes is null");
 
     size_t cursor = 0;
     for (unsigned int i = 0; i < numOfPlanes.x; i++) {
@@ -133,14 +134,14 @@ void FunctionPlane::load(const Function2D &function2D, const Maths::Vec2<unsigne
             // TODO: Use  GL_UNSIGNED_INT_2_10_10_10_REV
             if (function2D.exist(x1 + offset.x, y1 + offset.y) || function2D.exist(x1 + offset.x, y2 + offset.y) ||
                 function2D.exist(x2 + offset.x, y1 + offset.y) || function2D.exist(x2 + offset.x, y2 + offset.y)) {
-                Maths::Vec3<float> A = {x1, y1, (float) function2D.get(x1 + offset.x, y1 + offset.y)};
-                Maths::Vec3<float> B = {x1, y2, (float) function2D.get(x1 + offset.x, y2 + offset.y)};
-                Maths::Vec3<float> C = {x2, y1, (float) function2D.get(x2 + offset.x, y1 + offset.y)};
-                Maths::Vec3<float> D = {x2, y2, (float) function2D.get(x2 + offset.x, y2 + offset.y)};
+                Vec3<float> A = {x1, y1, (float) function2D.get(x1 + offset.x, y1 + offset.y)};
+                Vec3<float> B = {x1, y2, (float) function2D.get(x1 + offset.x, y2 + offset.y)};
+                Vec3<float> C = {x2, y1, (float) function2D.get(x2 + offset.x, y1 + offset.y)};
+                Vec3<float> D = {x2, y2, (float) function2D.get(x2 + offset.x, y2 + offset.y)};
 
                 // TODO: Use with GL_UNSIGNED_INT_10F_11F_11F_REV
-                Maths::Vec3<float> N1 = (C - A).cross(B - A).normalize();
-                Maths::Vec3<float> N2 = (C - B).cross(D - B).normalize();
+                Vec3<float> N1 = (C - A).cross(B - A).normalize();
+                Vec3<float> N2 = (C - B).cross(D - B).normalize();
                 data[cursor + 0] = {A, N1};
                 data[cursor + 1] = {C, N1};
                 data[cursor + 2] = {B, N1};
@@ -158,12 +159,12 @@ void FunctionPlane::load(const Function2D &function2D, const Maths::Vec2<unsigne
         data.resize(cursor);
 }
 
-void FunctionPlane::load(const Function3D &function3D, const Maths::Vec3<unsigned int> &numOfPlanes, const Blob::Maths::Vec3<float> &offset,
-                         const Blob::Maths::Vec3<float> &planeSize) {
+void FunctionPlane::load(const Function3D &function3D, const Vec3<unsigned int> &numOfPlanes, const Blob::Vec3<float> &offset,
+                         const Blob::Vec3<float> &planeSize) {
     data.resize(numOfPlanes.x * numOfPlanes.y * numOfPlanes.z * 6);
 
     if (numOfPlanes.x == 0 or numOfPlanes.y == 0 or numOfPlanes.z == 0)
-        throw Blob::Core::Exception("numOfPlanes is null");
+        throw Blob::Exception("numOfPlanes is null");
 
     size_t cursor = 0;
     for (unsigned int i = 0; i < numOfPlanes.x; i++) {
@@ -179,14 +180,14 @@ void FunctionPlane::load(const Function3D &function3D, const Maths::Vec3<unsigne
                 // TODO: Use  GL_UNSIGNED_INT_2_10_10_10_REV
                 if (function3D.exist(x1 + offset.x, y1 + offset.y, z1 + offset.z) || function3D.exist(x1 + offset.x, y2 + offset.y, z2 + offset.z) ||
                     function3D.exist(x2 + offset.x, y1 + offset.y, z1 + offset.z) || function3D.exist(x2 + offset.x, y2 + offset.y, z2 + offset.z)) {
-                    Maths::Vec3<float> A = {x1, y1, (float) function3D.get(x1 + offset.x, y1 + offset.y, z1 + offset.z)};
-                    Maths::Vec3<float> B = {x1, y2, (float) function3D.get(x1 + offset.x, y2 + offset.y, z2 + offset.z)};
-                    Maths::Vec3<float> C = {x2, y1, (float) function3D.get(x2 + offset.x, y1 + offset.y, z1 + offset.z)};
-                    Maths::Vec3<float> D = {x2, y2, (float) function3D.get(x2 + offset.x, y2 + offset.y, z2 + offset.z)};
+                    Vec3<float> A = {x1, y1, (float) function3D.get(x1 + offset.x, y1 + offset.y, z1 + offset.z)};
+                    Vec3<float> B = {x1, y2, (float) function3D.get(x1 + offset.x, y2 + offset.y, z2 + offset.z)};
+                    Vec3<float> C = {x2, y1, (float) function3D.get(x2 + offset.x, y1 + offset.y, z1 + offset.z)};
+                    Vec3<float> D = {x2, y2, (float) function3D.get(x2 + offset.x, y2 + offset.y, z2 + offset.z)};
 
                     // TODO: Use with GL_UNSIGNED_INT_10F_11F_11F_REV
-                    Maths::Vec3<float> N1 = (C - A).cross(B - A).normalize();
-                    Maths::Vec3<float> N2 = (C - B).cross(D - B).normalize();
+                    Vec3<float> N1 = (C - A).cross(B - A).normalize();
+                    Vec3<float> N2 = (C - B).cross(D - B).normalize();
                     data[cursor + 0] = {A, N1};
                     data[cursor + 1] = {C, N1};
                     data[cursor + 2] = {B, N1};

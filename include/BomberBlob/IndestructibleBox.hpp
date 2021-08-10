@@ -8,5 +8,5 @@ private:
     bool destroyed = false;
 
 public:
-    IndestructibleBox(const Blob::Maths::Vec2<float> &pos, Blob::Core::Material &material, b2World &world, float width = 1.0f);
+    IndestructibleBox(const Blob::Vec2<float> &pos, Blob::Material &material, b2World &world, float width = 1.0f);
 };
