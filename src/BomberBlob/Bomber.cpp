@@ -4,18 +4,27 @@
 
 using namespace Blob;
 
-Bomber::Bomber(b2World &world, const Blob::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures, float scale)
-    : textures(textures), player(player), bombs(bombs), world(world), DynamicCube(world, pos, scale, material, UserData::PLAYER),
-      material(player.color) {}
+Bomber::Bomber(b2World &world,
+               const Blob::Vec2<float> &pos,
+               std::list<BombManager> &bombs,
+               Player &player,
+               float scale) :
+    player(player),
+    bombs(bombs),
+    world(world),
+    DynamicCube(world, pos, scale, material, UserData::PLAYER),
+    material(player.color) {}
 
 void Bomber::updateInputs() {
     speed = 0;
     bool pauseBomb;
 
     if (player.control) {
-        if (*player.joystickAxes[Player::x] * *player.joystickAxes[Player::x] > 0.1)
+        if (*player.joystickAxes[Player::x] * *player.joystickAxes[Player::x] >
+            0.1)
             speed.x = *player.joystickAxes[Player::x];
-        if (*player.joystickAxes[Player::y] * *player.joystickAxes[Player::y] > 0.1)
+        if (*player.joystickAxes[Player::y] * *player.joystickAxes[Player::y] >
+            0.1)
             speed.y = -*player.joystickAxes[Player::y];
 
         pauseBomb = *player.buttons[Player::action];
@@ -41,7 +50,7 @@ void Bomber::updateInputs() {
         pauseBomb = *player.keys[Player::action];
     }
 
-    if(!speed.isNull())
+    if (!speed.isNull())
         speed.setLength(maxSpeed);
 
     /*if (speed.length2() < deceleration * deceleration)
@@ -67,7 +76,9 @@ void Bomber::updateInputs() {
                 }
 
                 if (noBomb) {*/
-        bombs.emplace_front(world, position.cast<int>().cast<float>() + 0.5f, *this, textures);
+        bombs.emplace_front(world,
+                            position.cast<int>().cast<float>() + 0.5f,
+                            *this);
         lastBomb = &bombs.front();
         // onBomb = true;
         bombPosed++;
@@ -86,7 +97,7 @@ void Bomber::updateInputs() {
 
 void Bomber::hit(Collider *c) {
     if (onBomb && c->id == BOMB && c == lastBomb->getBomb()) {
-        //setReaction(IGNORE);
+        // setReaction(IGNORE);
         return;
     }
     if (c->id == EXTRABOMB) {
@@ -97,8 +108,8 @@ void Bomber::hit(Collider *c) {
         bombPower++;
     } else if (c->id == EXPLOSION) {
         alive = false;
-        //setReaction(IGNORE);
-        //disableCollision();
+        // setReaction(IGNORE);
+        // disableCollision();
         return;
     }
 
@@ -106,7 +117,8 @@ void Bomber::hit(Collider *c) {
 }
 
 void Bomber::drawInfo() const {
-    // ImGui::Image(&textures.player[player.number], textures.player[player.number].getTextureSize());
+    // ImGui::Image(&textures.player[player.number],
+    // textures.player[player.number].getTextureSize());
     ImGui::SameLine();
     ImGui::Text("%s", player.name.c_str());
     // ImGui::Image(&textures.extraBomb, textures.extraBomb.getTextureSize());

@@ -4,11 +4,12 @@
 
 using namespace Blob;
 using namespace Blob::Time;
-using namespace Blob::Maths;
 
-BombManager::BombManager(b2World &world, const Vec2<float> &pos, Bomber &bomber, Textures &textures)
-    : bomber(bomber), textures(textures), world(world) {
-    bomb = new Bomb(pos, textures.bombMat, world);
+BombManager::BombManager(b2World &world,
+                         const Vec2<float> &pos,
+                         Bomber &bomber) :
+    bomber(bomber), world(world) {
+    bomb = new Bomb(pos, world);
 
     addChild(bomb);
 
@@ -43,16 +44,25 @@ bool BombManager::update() {
             exRI = nullptr;
         }
 
-        return exUP == nullptr && exDO == nullptr && exRI == nullptr && exLE == nullptr;
+        return exUP == nullptr && exDO == nullptr && exRI == nullptr &&
+               exLE == nullptr;
     } else if (flow.count() > bombDelay || bomb->isDestroyed()) {
         bomber.bombPosed--;
 
         b2Vec2 p = bomb->body->GetPosition();
         Blob::Vec2<float> position = {p.x, p.y};
-        exRI = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, 1), bomber.bombPower);
-        exLE = new Explosion(world, textures.explosionMat, position, Vec2<float>(0, -1), bomber.bombPower);
-        exDO = new Explosion(world, textures.explosionMat, position, Vec2<float>(1, 0), bomber.bombPower);
-        exUP = new Explosion(world, textures.explosionMat, position, Vec2<float>(-1, 0), bomber.bombPower);
+        exRI =
+            new Explosion(world, position, Vec2<float>(0, 1), bomber.bombPower);
+        exLE = new Explosion(world,
+                             position,
+                             Vec2<float>(0, -1),
+                             bomber.bombPower);
+        exDO =
+            new Explosion(world, position, Vec2<float>(1, 0), bomber.bombPower);
+        exUP = new Explosion(world,
+                             position,
+                             Vec2<float>(-1, 0),
+                             bomber.bombPower);
 
         addChild(exRI);
         addChild(exLE);

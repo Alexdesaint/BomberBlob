@@ -1,5 +1,5 @@
-#include <BlobSurvive/Survivor.hpp>
 #include <Blob/GLFW.hpp>
+#include <BlobSurvive/Survivor.hpp>
 #include <numbers>
 
 using namespace std;
@@ -33,8 +33,12 @@ void Survivor::cursorPosUpdate(double xpos, double ypos) {
     cameraAngle.y = sin(ypos);
 }
 
-Survivor::Survivor(b2World &world, const Blob::Vec2<float> &pos, Function2D &groundFunction)
-    : DynamicCollider(world, pos, 0.2, 0), groundFunction(groundFunction), position(pos, 0.2) {
+Survivor::Survivor(b2World &world,
+                   const Blob::Vec2<float> &pos,
+                   Function2D &groundFunction) :
+    DynamicCollider(world, pos, 0.2, 0),
+    groundFunction(groundFunction),
+    position(pos, 0.2) {
     setScale({0.2, 0.2, 1});
     setPosition(position);
 }
@@ -51,7 +55,9 @@ void Survivor::update() {
         body->SetLinearVelocity({0, 0});
 
     b2Vec2 p = body->GetPosition();
-    position = {p.x, p.y, (float) groundFunction.get(position.x, position.y) + 1};
+    position = {p.x,
+                p.y,
+                (float) groundFunction.get(position.x, position.y) + 1};
 
     if (position.z < 0)
         position.z = 0;

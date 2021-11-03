@@ -28,7 +28,8 @@ private:
     // Game
     Player &player;
 
-    float acceleration = 2.5f, deceleration = 1.5f, maxSpeed = 2.f, bombPower = 2.f;
+    float acceleration = 2.5f, deceleration = 1.5f, maxSpeed = 2.f,
+          bombPower = 2.f;
     bool alive = true, onBomb = false;
 
     unsigned int maxBomb = 1, bombPosed = 0;
@@ -38,10 +39,12 @@ private:
     BombManager *lastBomb = nullptr;
 
     Blob::Materials::SingleColor material;
-    Textures &textures;
 
 public:
-    Bomber(b2World &world, const Blob::Vec2<float> &pos, std::list<BombManager> &bombs, Player &player, Textures &textures,
+    Bomber(b2World &world,
+           const Blob::Vec2<float> &pos,
+           std::list<BombManager> &bombs,
+           Player &player,
            float scale = 0.8f);
 
     void updateInputs();

@@ -1,13 +1,18 @@
 #include <BomberBlob/Explosion.hpp>
 #include <BomberBlob/UserData.hpp>
 
-Explosion::Explosion(b2World &world, const Blob::Material &material, const Blob::Vec2<float> &initialPosition,
-                     const Blob::Vec2<float> &d, float distanceMax)
-    : DynamicCube(world, initialPosition, 0.4f, material, UserData::EXPLOSION), distanceMax(distanceMax), initialPosition(initialPosition), direction(d) {
+Explosion::Explosion(b2World &world,
+                     const Blob::Vec2<float> &initialPosition,
+                     const Blob::Vec2<float> &d,
+                     float distanceMax) :
+    DynamicCube(world, initialPosition, 0.4f, material, UserData::EXPLOSION),
+    distanceMax(distanceMax),
+    initialPosition(initialPosition),
+    direction(d) {
 
     speed = direction.normalize() * maxSpeed;
 
-//    body->SetLinearVelocity({direction.x, direction.y});
+    //    body->SetLinearVelocity({direction.x, direction.y});
 }
 
 void Explosion::hit(Collider *c) {

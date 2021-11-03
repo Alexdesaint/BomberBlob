@@ -9,7 +9,7 @@ using namespace Blob;
 int main() {
 
     try {
-        //Camera camera;
+        // Camera camera;
 
         Window window;
 

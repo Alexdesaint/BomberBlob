@@ -59,7 +59,9 @@ public:
     PerlinNoise perlinNoise;
     explicit WaterFunction(Function2D &ground) : ground(ground) {}
 
-    double get(double x, double y) const final { return perlinNoise.noise(x, y, 0.5); }
+    double get(double x, double y) const final {
+        return perlinNoise.noise(x, y, 0.5);
+    }
 
     bool exist(double x, double y) const final { return ground.get(x, y) < 0; }
 };
@@ -79,9 +81,14 @@ private:
         bool _ready = false;
 
     public:
-        Tile(const Terrain &terrain, const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Vec2<float> &tileCenter);
+        Tile(const Terrain &terrain,
+             const GroundFunction &groundFunction,
+             const WaterFunction &waterFunction,
+             const Blob::Vec2<float> &tileCenter);
         ~Tile();
-        void load(const GroundFunction &groundFunction, const WaterFunction &waterFunction, const Blob::Vec2<float> &tileCenter);
+        void load(const GroundFunction &groundFunction,
+                  const WaterFunction &waterFunction,
+                  const Blob::Vec2<float> &tileCenter);
 
         bool ready();
     };
@@ -101,7 +108,9 @@ private:
     std::deque<Tree> trees;
 
     const Blob::Vec2<unsigned int> numOfTiles{6, 4};
-    inline static const Blob::Vec2<unsigned int> tilesSize{500, 500}; /// Must be a multiple of 10
+    inline static const Blob::Vec2<unsigned int> tilesSize{
+        500,
+        500}; /// Must be a multiple of 10
 
 public:
     bool loaded = false;
@@ -110,12 +119,13 @@ public:
 
     bool finished();
 
-    void generate(b2World &world, const GroundFunction &groundFunction, const WaterFunction &waterFunction);
+    void generate(b2World &world,
+                  const GroundFunction &groundFunction,
+                  const WaterFunction &waterFunction);
 };
 
 class BlobSurvive : public Game, private Blob::KeyboardEvents {
 private:
-    Blob::AssetManager assetManager;
     b2World world{{0, 0}};
     Terrain terrain;
     Survivor survivor;

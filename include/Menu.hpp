@@ -7,7 +7,7 @@
 
 class Menu {
 private:
-    //Textures textures;
+    // Textures textures;
 
     Blob::Window &window;
     std::map<int, Player> players;

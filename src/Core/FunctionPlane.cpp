@@ -1,7 +1,7 @@
 #include <Core/FunctionPlane.hpp>
 
-#include <Blob/Core/Exception.hpp>
 #include <Blob/Core/AttributeLocation.hpp>
+#include <Blob/Core/Exception.hpp>
 #include <iostream>
 
 using namespace Blob;
@@ -13,13 +13,17 @@ FunctionPlaneCompact::FunctionPlaneCompact() {
     setArray<float>(3, AttributeLocation::NORMAL, sizeof(Data::position));
 }
 
-void FunctionPlaneCompact::load(const Function2D &function2D, const Vec2<unsigned int> &numOfPlanes, const Vec2<float> &offset) {
+void FunctionPlaneCompact::load(const Function2D &function2D,
+                                const Vec2<unsigned int> &numOfPlanes,
+                                const Vec2<float> &offset) {
     //    cout << "width : " << numOfPlanes << endl;
     //    cout << "Num of faces : " << numOfPlanes.x * numOfPlanes.y << endl;
-    //    cout << "Num of triangles : " << numOfPlanes.x * numOfPlanes.y * 2 << endl;
-    //    cout << "Number of points : " << (numOfPlanes.x + 1) * (numOfPlanes.y + 1) << endl;
+    //    cout << "Num of triangles : " << numOfPlanes.x * numOfPlanes.y * 2 <<
+    //    endl; cout << "Number of points : " << (numOfPlanes.x + 1) *
+    //    (numOfPlanes.y + 1) << endl;
 
-    //    cout << "Allocating " << (numOfPlanes.x + 1) * (numOfPlanes.y + 1) * sizeof(Data) << " " << endl;
+    //    cout << "Allocating " << (numOfPlanes.x + 1) * (numOfPlanes.y + 1) *
+    //    sizeof(Data) << " " << endl;
     data.resize((numOfPlanes.x + 1) * (numOfPlanes.y + 1));
     //    cout << "I got " << data.size() * sizeof(Data) << endl;
 
@@ -34,7 +38,10 @@ void FunctionPlaneCompact::load(const Function2D &function2D, const Vec2<unsigne
             size_t cursor = i * (numOfPlanes.y + 1) + j;
             float x1 = i - numOfPlanes.x / 2.f;
             float y1 = j - numOfPlanes.y / 2.f;
-            data[cursor].position = {x1, y1, (float) function2D.get(x1 + offset.x, y1 + offset.y)};
+            data[cursor].position = {
+                x1,
+                y1,
+                (float) function2D.get(x1 + offset.x, y1 + offset.y)};
         }
     }
     //    cout << "First pos : " << data[0].position << endl;
@@ -47,16 +54,28 @@ void FunctionPlaneCompact::load(const Function2D &function2D, const Vec2<unsigne
             unsigned int p2 = (i + 1) * (numOfPlanes.y + 1) + j;
             unsigned int p3 = (i + 1) * (numOfPlanes.y + 1) + j + 1;
 
-            if (data[p0].position.z > data[p1].position.z && data[p0].position.z > data[p2].position.z ||
-                data[p3].position.z > data[p1].position.z && data[p3].position.z > data[p2].position.z) { // p0 ou p3 plus grand que p1 et p2
-                float h1 = (data[p0].position.z + data[p1].position.z + data[p2].position.z) / 3.f;
-                float h2 = (data[p1].position.z + data[p2].position.z + data[p3].position.z) / 3.f;
+            if (data[p0].position.z > data[p1].position.z &&
+                    data[p0].position.z > data[p2].position.z ||
+                data[p3].position.z > data[p1].position.z &&
+                    data[p3].position.z >
+                        data[p2]
+                            .position.z) { // p0 ou p3 plus grand que p1 et p2
+                float h1 = (data[p0].position.z + data[p1].position.z +
+                            data[p2].position.z) /
+                           3.f;
+                float h2 = (data[p1].position.z + data[p2].position.z +
+                            data[p3].position.z) /
+                           3.f;
 
                 orderedMap.emplace(h1, array<unsigned int, 3>{p0, p2, p1});
                 orderedMap.emplace(h2, array<unsigned int, 3>{p1, p2, p3});
             } else { // p1 ou p2 le plus grand
-                float h1 = (data[p0].position.z + data[p3].position.z + data[p1].position.z) / 3.f;
-                float h2 = (data[p0].position.z + data[p3].position.z + data[p2].position.z) / 3.f;
+                float h1 = (data[p0].position.z + data[p3].position.z +
+                            data[p1].position.z) /
+                           3.f;
+                float h2 = (data[p0].position.z + data[p3].position.z +
+                            data[p2].position.z) /
+                           3.f;
 
                 orderedMap.emplace(h1, array<unsigned int, 3>{p0, p3, p1});
                 orderedMap.emplace(h2, array<unsigned int, 3>{p0, p2, p3});
@@ -104,19 +123,25 @@ void FunctionPlaneCompact::set() {
     data.clear();
 }
 
-const Blob::Primitive &FunctionPlaneCompact::getPrimitive(const Blob::Material &material) {
-    const auto &ro = renderOptions.emplace_back(indices.data(), indices.size());
+const Blob::Primitive &
+FunctionPlaneCompact::getPrimitive(const Blob::Material &material) {
+    auto &ro = renderOptions.emplace_back(indices.data(), indices.size());
     const auto &p = primitives.emplace_back(this, &material, &ro);
     return p;
 }
 
-FunctionPlane::FunctionPlane(const Material &material) : primitive(&vertexArrayObject, &material, &renderOptions) {
+FunctionPlane::FunctionPlane(const Material &material) :
+    primitive(&vertexArrayObject, &material, &renderOptions) {
     vertexArrayObject.setBuffer(buffer, sizeof(Data));
-    vertexArrayObject.setArray<float>(3, Shader::AttributeLocation::POSITION, 0);
-    vertexArrayObject.setArray<float>(3, Shader::AttributeLocation::NORMAL, sizeof(Data::position));
+    vertexArrayObject.setArray<float>(3, AttributeLocation::POSITION, 0);
+    vertexArrayObject.setArray<float>(3,
+                                      AttributeLocation::NORMAL,
+                                      sizeof(Data::position));
 }
 
-void FunctionPlane::load(const Function2D &function2D, const Vec2<unsigned int> &numOfPlanes, const Blob::Vec2<float> &offset,
+void FunctionPlane::load(const Function2D &function2D,
+                         const Vec2<unsigned int> &numOfPlanes,
+                         const Blob::Vec2<float> &offset,
                          const Blob::Vec2<float> &planeSize) {
     data.resize(numOfPlanes.x * numOfPlanes.y * 6);
 
@@ -126,18 +151,36 @@ void FunctionPlane::load(const Function2D &function2D, const Vec2<unsigned int> 
     size_t cursor = 0;
     for (unsigned int i = 0; i < numOfPlanes.x; i++) {
         for (unsigned int j = 0; j < numOfPlanes.y; j++) {
-            float x1 = planeSize.x * (static_cast<float>(i) - numOfPlanes.x / 2.f);
-            float x2 = planeSize.x * (static_cast<float>(i) + 1.f - numOfPlanes.x / 2.f);
-            float y1 = planeSize.y * (static_cast<float>(j) - numOfPlanes.y / 2.f);
-            float y2 = planeSize.y * (static_cast<float>(j) + 1.f - numOfPlanes.y / 2.f);
+            float x1 =
+                planeSize.x * (static_cast<float>(i) - numOfPlanes.x / 2.f);
+            float x2 = planeSize.x *
+                       (static_cast<float>(i) + 1.f - numOfPlanes.x / 2.f);
+            float y1 =
+                planeSize.y * (static_cast<float>(j) - numOfPlanes.y / 2.f);
+            float y2 = planeSize.y *
+                       (static_cast<float>(j) + 1.f - numOfPlanes.y / 2.f);
 
             // TODO: Use  GL_UNSIGNED_INT_2_10_10_10_REV
-            if (function2D.exist(x1 + offset.x, y1 + offset.y) || function2D.exist(x1 + offset.x, y2 + offset.y) ||
-                function2D.exist(x2 + offset.x, y1 + offset.y) || function2D.exist(x2 + offset.x, y2 + offset.y)) {
-                Vec3<float> A = {x1, y1, (float) function2D.get(x1 + offset.x, y1 + offset.y)};
-                Vec3<float> B = {x1, y2, (float) function2D.get(x1 + offset.x, y2 + offset.y)};
-                Vec3<float> C = {x2, y1, (float) function2D.get(x2 + offset.x, y1 + offset.y)};
-                Vec3<float> D = {x2, y2, (float) function2D.get(x2 + offset.x, y2 + offset.y)};
+            if (function2D.exist(x1 + offset.x, y1 + offset.y) ||
+                function2D.exist(x1 + offset.x, y2 + offset.y) ||
+                function2D.exist(x2 + offset.x, y1 + offset.y) ||
+                function2D.exist(x2 + offset.x, y2 + offset.y)) {
+                Vec3<float> A = {
+                    x1,
+                    y1,
+                    (float) function2D.get(x1 + offset.x, y1 + offset.y)};
+                Vec3<float> B = {
+                    x1,
+                    y2,
+                    (float) function2D.get(x1 + offset.x, y2 + offset.y)};
+                Vec3<float> C = {
+                    x2,
+                    y1,
+                    (float) function2D.get(x2 + offset.x, y1 + offset.y)};
+                Vec3<float> D = {
+                    x2,
+                    y2,
+                    (float) function2D.get(x2 + offset.x, y2 + offset.y)};
 
                 // TODO: Use with GL_UNSIGNED_INT_10F_11F_11F_REV
                 Vec3<float> N1 = (C - A).cross(B - A).normalize();
@@ -159,7 +202,9 @@ void FunctionPlane::load(const Function2D &function2D, const Vec2<unsigned int> 
         data.resize(cursor);
 }
 
-void FunctionPlane::load(const Function3D &function3D, const Vec3<unsigned int> &numOfPlanes, const Blob::Vec3<float> &offset,
+void FunctionPlane::load(const Function3D &function3D,
+                         const Vec3<unsigned int> &numOfPlanes,
+                         const Blob::Vec3<float> &offset,
                          const Blob::Vec3<float> &planeSize) {
     data.resize(numOfPlanes.x * numOfPlanes.y * numOfPlanes.z * 6);
 
@@ -170,20 +215,52 @@ void FunctionPlane::load(const Function3D &function3D, const Vec3<unsigned int> 
     for (unsigned int i = 0; i < numOfPlanes.x; i++) {
         for (unsigned int j = 0; j < numOfPlanes.y; j++) {
             for (unsigned int k = 0; k < numOfPlanes.z; k++) {
-                float x1 = planeSize.x * (static_cast<float>(i) - numOfPlanes.x / 2.f);
-                float x2 = planeSize.x * (static_cast<float>(i) + 1.f - numOfPlanes.x / 2.f);
-                float y1 = planeSize.y * (static_cast<float>(j) - numOfPlanes.y / 2.f);
-                float y2 = planeSize.y * (static_cast<float>(j) + 1.f - numOfPlanes.y / 2.f);
-                float z1 = planeSize.z * (static_cast<float>(k) - numOfPlanes.z / 2.f);
-                float z2 = planeSize.z * (static_cast<float>(k) + 1.f - numOfPlanes.z / 2.f);
+                float x1 =
+                    planeSize.x * (static_cast<float>(i) - numOfPlanes.x / 2.f);
+                float x2 = planeSize.x *
+                           (static_cast<float>(i) + 1.f - numOfPlanes.x / 2.f);
+                float y1 =
+                    planeSize.y * (static_cast<float>(j) - numOfPlanes.y / 2.f);
+                float y2 = planeSize.y *
+                           (static_cast<float>(j) + 1.f - numOfPlanes.y / 2.f);
+                float z1 =
+                    planeSize.z * (static_cast<float>(k) - numOfPlanes.z / 2.f);
+                float z2 = planeSize.z *
+                           (static_cast<float>(k) + 1.f - numOfPlanes.z / 2.f);
 
                 // TODO: Use  GL_UNSIGNED_INT_2_10_10_10_REV
-                if (function3D.exist(x1 + offset.x, y1 + offset.y, z1 + offset.z) || function3D.exist(x1 + offset.x, y2 + offset.y, z2 + offset.z) ||
-                    function3D.exist(x2 + offset.x, y1 + offset.y, z1 + offset.z) || function3D.exist(x2 + offset.x, y2 + offset.y, z2 + offset.z)) {
-                    Vec3<float> A = {x1, y1, (float) function3D.get(x1 + offset.x, y1 + offset.y, z1 + offset.z)};
-                    Vec3<float> B = {x1, y2, (float) function3D.get(x1 + offset.x, y2 + offset.y, z2 + offset.z)};
-                    Vec3<float> C = {x2, y1, (float) function3D.get(x2 + offset.x, y1 + offset.y, z1 + offset.z)};
-                    Vec3<float> D = {x2, y2, (float) function3D.get(x2 + offset.x, y2 + offset.y, z2 + offset.z)};
+                if (function3D.exist(x1 + offset.x,
+                                     y1 + offset.y,
+                                     z1 + offset.z) ||
+                    function3D.exist(x1 + offset.x,
+                                     y2 + offset.y,
+                                     z2 + offset.z) ||
+                    function3D.exist(x2 + offset.x,
+                                     y1 + offset.y,
+                                     z1 + offset.z) ||
+                    function3D.exist(x2 + offset.x,
+                                     y2 + offset.y,
+                                     z2 + offset.z)) {
+                    Vec3<float> A = {x1,
+                                     y1,
+                                     (float) function3D.get(x1 + offset.x,
+                                                            y1 + offset.y,
+                                                            z1 + offset.z)};
+                    Vec3<float> B = {x1,
+                                     y2,
+                                     (float) function3D.get(x1 + offset.x,
+                                                            y2 + offset.y,
+                                                            z2 + offset.z)};
+                    Vec3<float> C = {x2,
+                                     y1,
+                                     (float) function3D.get(x2 + offset.x,
+                                                            y1 + offset.y,
+                                                            z1 + offset.z)};
+                    Vec3<float> D = {x2,
+                                     y2,
+                                     (float) function3D.get(x2 + offset.x,
+                                                            y2 + offset.y,
+                                                            z2 + offset.z)};
 
                     // TODO: Use with GL_UNSIGNED_INT_10F_11F_11F_REV
                     Vec3<float> N1 = (C - A).cross(B - A).normalize();

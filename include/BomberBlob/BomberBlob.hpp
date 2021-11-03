@@ -3,8 +3,8 @@
 #include <Blob/Core/Window.hpp>
 #include <Blob/Shapes.hpp>
 
-#include <Game.hpp>
 #include <Core/ContactListener.hpp>
+#include <Game.hpp>
 
 #include <BomberBlob/BombManager.hpp>
 #include <BomberBlob/Bomber.hpp>
@@ -15,7 +15,6 @@
 
 class BomberBlob : public Game {
 private:
-    Textures textures;
     b2World world;
 
     Blob::Camera camera;
@@ -31,7 +30,11 @@ private:
 
     ContactListener contactListener;
 
+    Blob::TextureAsset<"data/Grass.bmp">::Instance groundTexture;
+    Blob::Materials::SingleTexture groundMat{*groundTexture};
+
     void gameLoop();
+
 public:
     BomberBlob(Blob::Window &window, std::map<int, Player> &players);
 

@@ -1,8 +1,12 @@
 #include <Core/StaticCube.hpp>
 
-StaticCube::StaticCube(b2World &world, const Blob::Vec2<float> &pos, float width, Blob::Material &material, unsigned int id)
-    : Blob::Shapes::Cube(material), Collider(id), world(world) {
-    //std::lock_guard<std::mutex> guard(mutex);
+StaticCube::StaticCube(b2World &world,
+                       const Blob::Vec2<float> &pos,
+                       float width,
+                       Blob::Material &material,
+                       unsigned int id) :
+    Blob::Shapes::Cube(material), Collider(id), world(world) {
+    // std::lock_guard<std::mutex> guard(mutex);
     bodyDef.position.Set(pos.x, pos.y);
     bodyDef.userData = this;
     body = world.CreateBody(&bodyDef);
@@ -16,9 +20,13 @@ StaticCube::StaticCube(b2World &world, const Blob::Vec2<float> &pos, float width
     setScale(width);
 }
 
-StaticCube::StaticCube(b2World &world, const Blob::Vec3<float> &pos, float width, Blob::Material &material, unsigned int id)
-    : Blob::Shapes::Cube(material), Collider(id), world(world) {
-    //std::lock_guard<std::mutex> guard(mutex);
+StaticCube::StaticCube(b2World &world,
+                       const Blob::Vec3<float> &pos,
+                       float width,
+                       Blob::Material &material,
+                       unsigned int id) :
+    Blob::Shapes::Cube(material), Collider(id), world(world) {
+    // std::lock_guard<std::mutex> guard(mutex);
     bodyDef.position.Set(pos.x, pos.y);
     bodyDef.userData = this;
     body = world.CreateBody(&bodyDef);
@@ -32,10 +40,13 @@ StaticCube::StaticCube(b2World &world, const Blob::Vec3<float> &pos, float width
     setScale(width);
 }
 
-StaticCube::StaticCube(b2World &world, const Blob::Vec3<float> &pos, const Blob::Vec3<float> &size,
-                       Blob::Material &material, unsigned int id)
-    : Blob::Shapes::Cube(material), Collider(id), world(world) {
-    //std::lock_guard<std::mutex> guard(mutex);
+StaticCube::StaticCube(b2World &world,
+                       const Blob::Vec3<float> &pos,
+                       const Blob::Vec3<float> &size,
+                       Blob::Material &material,
+                       unsigned int id) :
+    Blob::Shapes::Cube(material), Collider(id), world(world) {
+    // std::lock_guard<std::mutex> guard(mutex);
     bodyDef.position.Set(pos.x, pos.y);
     bodyDef.userData = this;
     body = world.CreateBody(&bodyDef);
@@ -50,6 +61,6 @@ StaticCube::StaticCube(b2World &world, const Blob::Vec3<float> &pos, const Blob:
 }
 
 StaticCube::~StaticCube() {
-    //std::lock_guard<std::mutex> guard(mutex);
+    // std::lock_guard<std::mutex> guard(mutex);
     world.DestroyBody(body);
 }

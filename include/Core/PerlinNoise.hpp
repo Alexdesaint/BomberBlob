@@ -15,7 +15,9 @@ public:
     virtual bool exist(double x, double y, double z) const { return true; };
 };
 
-class PerlinNoise : public Function2D, public Function3D { /// Source : https://cs.nyu.edu/~perlin/noise/
+class PerlinNoise :
+    public Function2D,
+    public Function3D { /// Source : https://cs.nyu.edu/~perlin/noise/
 private:
     // The permutation vector
     std::vector<int> p;
@@ -37,7 +39,9 @@ public:
     // Get a noise value, for 2D images z can have any value
     double noise(double x, double y, double z) const;
 
-    [[nodiscard]] double get(double x, double y) const final { return noise(x, y, 0.5); }
+    double get(double x, double y) const final { return noise(x, y, 0.5); }
 
-    [[nodiscard]] double get(double x, double y, double z) const final { return noise(x, y, z); }
+    double get(double x, double y, double z) const final {
+        return noise(x, y, z);
+    }
 };

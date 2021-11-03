@@ -48,8 +48,9 @@ struct ComboMenu {
 Menu::Menu(Window &window) : window(window) {
     ImGui::ShowDemoWindow();
     ImGuiIO &io = ImGui::GetIO();
-    // ImFont *font1 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f);
-    // ImFont *font2 = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
+    // ImFont *font1 =
+    // io.Fonts->AddFontFromFileTTF("data/fonts/PetMe.ttf", 16.f); ImFont *font2
+    // = io.Fonts->AddFontFromFileTTF("data/fonts/PetMe128.ttf", 48.f);
 
     // ImGui::GetIO().FontDefault = font1;
     // window.rebuildFontImGUI();
@@ -57,16 +58,19 @@ Menu::Menu(Window &window) : window(window) {
     std::vector<std::string> games{"BlobJump", "BomberBlob", "BlobSurvive"};
 
     Game *game = new BlobJump(window, players);
-    window.setCamera(game->camera);
+    // window.setCamera(game->camera);
 
     while (window.isOpen()) {
 
-        //ImGui::SetNextWindowPos((window.windowSize / 2).cast<float>(), 0, {0.5, 0.5});
+        // ImGui::SetNextWindowPos((window.windowSize / 2).cast<float>(), 0,
+        // {0.5, 0.5});
 
         // ImGui::PushFont(font2);
 
-        ImGui::Begin("BlobEngine Demo", nullptr,
-                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize);
+        ImGui::Begin("BlobEngine Demo",
+                     nullptr,
+                     ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                         ImGuiWindowFlags_AlwaysAutoResize);
 
         comboGame.show(games);
         if (comboGame.updated) {
@@ -82,7 +86,7 @@ Menu::Menu(Window &window) : window(window) {
                 game = new BlobJump(window, players);
                 break;
             }
-            window.setCamera(game->camera);
+            // window.setCamera(game->camera);
         }
 
         // ImGui::PopFont();
@@ -95,12 +99,14 @@ Menu::Menu(Window &window) : window(window) {
 
         ImGui::Separator();
 
-        if(game->loadReady())
-            if(ImGui::Button("Load", {ImGui::GetWindowContentRegionWidth(), 0}))
+        if (game->loadReady())
+            if (ImGui::Button("Load",
+                              {ImGui::GetWindowContentRegionWidth(), 0}))
                 game->load();
         bool start = false;
-        if(game->gameReady())
-            start = ImGui::Button("Start", {ImGui::GetWindowContentRegionWidth(), 0});
+        if (game->gameReady())
+            start = ImGui::Button("Start",
+                                  {ImGui::GetWindowContentRegionWidth(), 0});
 
         /*        if (start && players.size() <= 1) {
                     std::cout << "not enough players" << std::endl;
@@ -123,7 +129,13 @@ Menu::Menu(Window &window) : window(window) {
 
 void Menu::playerSelection() {
     static Color::RGB colors[]{
-        Blob::Color::Yellow, Blob::Color::Brown, Blob::Color::Gray, Blob::Color::Red, Blob::Color::Orange, Blob::Color::Green, Blob::Color::Black,
+        Blob::Color::Yellow,
+        Blob::Color::Brown,
+        Blob::Color::Gray,
+        Blob::Color::Red,
+        Blob::Color::Orange,
+        Blob::Color::Green,
+        Blob::Color::Black,
     };
 
     static map<size_t, ComboMenu> comboMenus;
@@ -134,7 +146,9 @@ void Menu::playerSelection() {
     for (size_t i = 0; i < GLFW::Window::joystickCount; i++) {
         if (GLFW::Window::joystickConnected[i]) {
             if (comboMenus.find(i + 1) == comboMenus.end())
-                comboMenus.emplace(i + 1, ComboMenu{i + 2, true, "Player " + std::to_string(i + 1)});
+                comboMenus.emplace(
+                    i + 1,
+                    ComboMenu{i + 2, true, "Player " + std::to_string(i + 1)});
             commands.emplace_back(GLFW::Window::joystickName[i]);
         }
     }
@@ -156,18 +170,24 @@ void Menu::playerSelection() {
                 break;
             case 1:
                 if (it == players.end())
-                    it = players.emplace(key, Player(comboMenu.name, colors[key])).first;
+                    it = players
+                             .emplace(key, Player(comboMenu.name, colors[key]))
+                             .first;
 
                 it->second.controller(false);
-                it->second.setKey(Player::right, &window.keyboard.RIGHT.pressed);
+                it->second.setKey(Player::right,
+                                  &window.keyboard.RIGHT.pressed);
                 it->second.setKey(Player::left, &window.keyboard.LEFT.pressed);
                 it->second.setKey(Player::up, &window.keyboard.UP.pressed);
                 it->second.setKey(Player::down, &window.keyboard.DOWN.pressed);
-                it->second.setKey(Player::action, &window.keyboard.SPACE.pressed);
+                it->second.setKey(Player::action,
+                                  &window.keyboard.SPACE.pressed);
                 break;
             default:
                 if (it == players.end())
-                    it = players.emplace(key, Player(comboMenu.name, colors[key])).first;
+                    it = players
+                             .emplace(key, Player(comboMenu.name, colors[key]))
+                             .first;
 
                 it->second.controller(true);
                 unsigned int controllerNumber = key - 1;
@@ -175,14 +195,29 @@ void Menu::playerSelection() {
                 if (GLFW::Window::joystickAxesCount[controllerNumber] < 2)
                     throw Blob::Exception("Controller don't have any joystick");
 
-                it->second.setJoystickAxe(Player::x, &GLFW::Window::joystickAxes[controllerNumber][0]);
-                it->second.setJoystickAxe(Player::y, &GLFW::Window::joystickAxes[controllerNumber][1]);
-                it->second.setButton(Player::action, &GLFW::Window::joystickButtons[controllerNumber][0]);
-                if (GLFW::Window::joystickButtonsCount[controllerNumber] >= 14) {
-                    it->second.setButton(Player::up, &GLFW::Window::joystickButtons[controllerNumber][11]);
-                    it->second.setButton(Player::right, &GLFW::Window::joystickButtons[controllerNumber][12]);
-                    it->second.setButton(Player::down, &GLFW::Window::joystickButtons[controllerNumber][13]);
-                    it->second.setButton(Player::left, &GLFW::Window::joystickButtons[controllerNumber][14]);
+                it->second.setJoystickAxe(
+                    Player::x,
+                    &GLFW::Window::joystickAxes[controllerNumber][0]);
+                it->second.setJoystickAxe(
+                    Player::y,
+                    &GLFW::Window::joystickAxes[controllerNumber][1]);
+                it->second.setButton(
+                    Player::action,
+                    &GLFW::Window::joystickButtons[controllerNumber][0]);
+                if (GLFW::Window::joystickButtonsCount[controllerNumber] >=
+                    14) {
+                    it->second.setButton(
+                        Player::up,
+                        &GLFW::Window::joystickButtons[controllerNumber][11]);
+                    it->second.setButton(
+                        Player::right,
+                        &GLFW::Window::joystickButtons[controllerNumber][12]);
+                    it->second.setButton(
+                        Player::down,
+                        &GLFW::Window::joystickButtons[controllerNumber][13]);
+                    it->second.setButton(
+                        Player::left,
+                        &GLFW::Window::joystickButtons[controllerNumber][14]);
                 }
                 break;
             }

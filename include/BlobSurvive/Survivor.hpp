@@ -5,7 +5,11 @@
 #include <Core/DynamicCollider.hpp>
 #include <Core/PerlinNoise.hpp>
 
-class Survivor : public DynamicCollider, public Blob::Shapes::Cube, private Blob::KeyboardEvents, private Blob::MouseEvents {
+class Survivor :
+    public DynamicCollider,
+    public Blob::Shapes::Cube,
+    private Blob::KeyboardEvents,
+    private Blob::MouseEvents {
 private:
     Blob::Materials::PBRSingleColor material;
     Function2D &groundFunction;
@@ -20,7 +24,9 @@ private:
 public:
     Blob::Camera camera{};
 
-    Survivor(b2World &world, const Blob::Vec2<float> &pos, Function2D &groundFunction);
+    Survivor(b2World &world,
+             const Blob::Vec2<float> &pos,
+             Function2D &groundFunction);
 
     void update() final;
 };

@@ -15,16 +15,19 @@ private:
     Bomb *bomb;
     float bombDelay = 3;
 
-    Explosion *exUP = nullptr, *exDO = nullptr, *exRI = nullptr, *exLE = nullptr;
+    Explosion *exUP = nullptr, *exDO = nullptr, *exRI = nullptr,
+              *exLE = nullptr;
 
     Blob::Time::TimePoint start;
 
     Bomber &bomber;
 
-    Textures &textures;
     b2World &world;
+
 public:
-    explicit BombManager(b2World &world, const Blob::Vec2<float> &pos, Bomber &bomber, Textures &textures);
+    explicit BombManager(b2World &world,
+                         const Blob::Vec2<float> &pos,
+                         Bomber &bomber);
 
     ~BombManager();
 

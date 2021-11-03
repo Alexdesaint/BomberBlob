@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Blob/Shapes.hpp>
-#include <box2d/box2d.h>
 #include <Core/Collider.hpp>
+#include <box2d/box2d.h>
 
 class StaticCollider : public Collider {
 public:
@@ -12,6 +12,9 @@ public:
     b2PolygonShape polygonShape;
     b2Body *body = nullptr;
 
-    StaticCollider(b2World &world, const Blob::Vec2<float> &pos, const Blob::Vec2<float> &size, unsigned int id = 0);
+    StaticCollider(b2World &world,
+                   const Blob::Vec2<float> &pos,
+                   const Blob::Vec2<float> &size,
+                   unsigned int id = 0);
     ~StaticCollider();
 };
