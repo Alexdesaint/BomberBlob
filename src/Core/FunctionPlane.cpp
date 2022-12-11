@@ -1,6 +1,6 @@
 #include <Core/FunctionPlane.hpp>
 
-#include <Blob/Core/AttributeLocation.hpp>
+#include <Blob/Core/Shader.hpp>
 #include <Blob/Core/Exception.hpp>
 #include <iostream>
 

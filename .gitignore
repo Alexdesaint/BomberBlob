@@ -1,5 +1,10 @@
-.idea
+.idea/
+.cache/
+.ipynb_*/
+build*/
 bin/
 lib/
-build/
 cmake-*/
+compile_commands.json
+.vscode/
+*.blend1
